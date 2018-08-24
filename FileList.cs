@@ -46,7 +46,7 @@ namespace TrickyUnits
                 }
             }
 
-            // Sort if asted
+            // Sort if asked
             if (sorted) w.Sort();
 
 
@@ -56,6 +56,11 @@ namespace TrickyUnits
 
         static public string[] GetTree(string path, bool sorted=true, bool hidden=false){
             return GetDir(path, 3, sorted, hidden);
+        }
+
+        static FileList(){
+            MKL.Version("FL", "FL");
+            MKL.Lic("FL", "FL");
         }
     }
 }
