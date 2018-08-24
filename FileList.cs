@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-namespace TrickyFileList
+namespace TrickyUnits
 {
     public class FileList
     {
