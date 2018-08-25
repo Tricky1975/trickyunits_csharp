@@ -19,6 +19,7 @@
 // EndLic
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 using System;
 
 
@@ -72,15 +73,41 @@ namespace TrickyUnits
         public bool ReadBoolean() { return ReadByte() > 0; }
         public uint ReadUnSignedInt() { return BitConverter.ToUInt32(GrabBytes(4), 0); }
         public ulong ReadUnSignedLong() { return BitConverter.ToUInt64(GrabBytes(8), 0); }
+        public string ReadNullString(){ // Reads a null-terminated string, which is a very common way to end a string in C
+            var np = position;
+            var ln = 0;
+            byte ch;
+            List<byte> chs = List<byte>();
+            do
+            {
+                ch = ReadByte();
+                if (ch > 0)
+                {
+                    ln++;
+                    chs.Add(ch);
+                }
+            } while (ch > 0);
+            return Encoding.Default.GetString(chs.ToArray());
+        }
+
+        public void Close() { mystream.Close();  }
 
     }
-    class QOpen
+    static class QOpen
     {
+        public const byte NoEndian = 0;
+        public const byte LittleEndian = 1;
+        public const byte BigEndian = 2;
 
         static QOpen()
         {
             MKL.Version("Tricky Units for C# - qstream.cs","18.08.25");
             MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
+        }
+
+        public static QuickStream ReadFile(string filename,byte EndianCode=LittleEndian){
+            var s = File.OpenRead(filename);
+            return new QuickStream(s, EndianCode);
         }
     }
 }
