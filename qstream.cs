@@ -17,9 +17,63 @@
 //      misrepresented as being the original software.
 //   3. This notice may not be removed or altered from any source distribution.
 // EndLic
+using System.IO;
+using System.Text;
+using System;
+
+
+
 namespace TrickyUnits
 {
-    class QuickStream { }
+    class QuickStream {
+        Stream mystream;
+        int position;
+        bool LittleEndian = BitConverter.IsLittleEndian;
+        byte Endian = 1; // 0 = Do not check, leave it to the CPU (NOT recommended), 1 = Always LittleEndian (default), 2 = Always big Endian;
+        public long size { get { return mystream.Length; } }
+        public bool EOF { get { return position >= size; } }
+
+        public QuickStream(Stream setstream, byte EndianCode=1){
+            mystream = setstream;
+            position = 0;
+            Endian = EndianCode;
+        }
+
+        byte[] GrabBytes(int num){
+            byte[] ret = new byte[num];
+            mystream.Read(ret, position, num);
+            position += num;
+            switch Endian {
+                case 1:
+                    if (!LittleEndian) { Array.Reverse(ret); }
+                    break;
+                case 2:
+                    if (LittleEndian) { Array.Reverse(ret); }
+                    break;
+            }
+            return ret;
+        }
+
+        public int ReadInt()  { return BitConverter.ToInt32(GrabBytes(4), 0); }
+        public long ReadLong() { return BitConverter.ToInt64(GrabBytes(8), 0); }
+        public byte ReadByte() {
+            byte[] b = new byte[1];
+            mystream.Read(b, position, 1);
+            position++;
+            return b[0];
+        }
+        public string ReadString(int length=0){
+            int l = length;
+            if (l == 0) { l = ReadInt(); }
+            var ret = new byte[l];
+            for (int i = 0; i < l; i++) { ret[i] = ReadByte(); }
+            return Encoding.Default.GetString(ret);
+        }
+        public bool ReadBoolean() { return ReadByte() > 0; }
+        public uint ReadUnSignedInt() { return BitConverter.ToUInt32(GrabBytes(4), 0); }
+        public ulong ReadUnSignedLong() { return BitConverter.ToUInt64(GrabBytes(8), 0); }
+
+    }
     class QOpen
     {
 
