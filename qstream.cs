@@ -53,7 +53,7 @@ namespace TrickyUnits
         byte[] GrabBytes(int num){
             byte[] ret = new byte[num];
             mystream.Read(ret, 0, num);
-            Position += num;
+            truepos += num;
             switch (Endian) {
                 case 1:
                     if (!LittleEndian) { Array.Reverse(ret); }
@@ -69,7 +69,7 @@ namespace TrickyUnits
             if (checkendian) return GrabBytes(number);
             byte[] ret = new byte[number];
             mystream.Read(ret, 0, number);
-            Position += number;
+            truepos += number;
             return ret;
         }
 
@@ -78,7 +78,7 @@ namespace TrickyUnits
         public byte ReadByte() {
             byte[] b = new byte[1];
             mystream.Read(b, 0, 1);
-            Position++;
+            truepos++;
             return b[0];
         }
         public string ReadString(int length=0){
