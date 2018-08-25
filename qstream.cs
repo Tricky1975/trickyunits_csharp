@@ -28,22 +28,23 @@ namespace TrickyUnits
 {
     class QuickStream {
         Stream mystream;
-        int position;
+        int truepos;
+        public int Position { set { truepos = value; if (EOF) truepos = size; } get { return truepos; }};
         bool LittleEndian = BitConverter.IsLittleEndian;
         byte Endian = 1; // 0 = Do not check, leave it to the CPU (NOT recommended), 1 = Always LittleEndian (default), 2 = Always big Endian;
-        public long size { get { return mystream.Length; } }
-        public bool EOF { get { return position >= size; } }
+        public long Size { get { return mystream.Length; } }
+        public bool EOF { get { return Position >= Size; } }
 
         public QuickStream(Stream setstream, byte EndianCode=1){
             mystream = setstream;
-            position = 0;
+            Position = 0;
             Endian = EndianCode;
         }
 
         byte[] GrabBytes(int num){
             byte[] ret = new byte[num];
-            mystream.Read(ret, position, num);
-            position += num;
+            mystream.Read(ret, Position, num);
+            Position += num;
             switch Endian {
                 case 1:
                     if (!LittleEndian) { Array.Reverse(ret); }
@@ -59,8 +60,8 @@ namespace TrickyUnits
         public long ReadLong() { return BitConverter.ToInt64(GrabBytes(8), 0); }
         public byte ReadByte() {
             byte[] b = new byte[1];
-            mystream.Read(b, position, 1);
-            position++;
+            mystream.Read(b, Position, 1);
+            Position++;
             return b[0];
         }
         public string ReadString(int length=0){
@@ -74,7 +75,7 @@ namespace TrickyUnits
         public uint ReadUnSignedInt() { return BitConverter.ToUInt32(GrabBytes(4), 0); }
         public ulong ReadUnSignedLong() { return BitConverter.ToUInt64(GrabBytes(8), 0); }
         public string ReadNullString(){ // Reads a null-terminated string, which is a very common way to end a string in C
-            var np = position;
+            var np = Position;
             var ln = 0;
             byte ch;
             List<byte> chs = List<byte>();
