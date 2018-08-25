@@ -127,6 +127,10 @@ namespace TrickyUnits
             var s = File.OpenRead(filename);
             return new QuickStream(s, EndianCode);
         }
+
+        public static QuickStream StreamFromBytes(byte[] buffer){
+            return new QuickStream(new MemoryStream(buffer));
+        }
     }
 }
 
