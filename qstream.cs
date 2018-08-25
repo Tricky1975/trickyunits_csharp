@@ -25,8 +25,8 @@ namespace TrickyUnits
 
         static QOpen()
         {
-            MKL.Version();
-            MKL.Lic();
+            MKL.Version("Tricky Units for C# - qstream.cs","18.08.25");
+            MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
         }
     }
 }
