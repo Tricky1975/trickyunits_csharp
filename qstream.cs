@@ -17,4 +17,17 @@
 //      misrepresented as being the original software.
 //   3. This notice may not be removed or altered from any source distribution.
 // EndLic
-namespace TrickyUnits{ class QuickStream {} class QOpen{} }
+namespace TrickyUnits
+{
+    class QuickStream { }
+    class QOpen
+    {
+
+        static QOpen()
+        {
+            MKL.Version();
+            MKL.Lic();
+        }
+    }
+}
+
