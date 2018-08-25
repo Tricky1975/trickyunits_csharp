@@ -29,9 +29,9 @@ namespace TrickyUnits
     class QuickStream {
         Stream mystream;
         int truepos;
-        public int Position { set { truepos = value; if (EOF) truepos = size; } get { return truepos; }};
-        bool LittleEndian = BitConverter.IsLittleEndian;
-        byte Endian = 1; // 0 = Do not check, leave it to the CPU (NOT recommended), 1 = Always LittleEndian (default), 2 = Always big Endian;
+        public int Position { set { truepos = value; if (EOF) truepos = size; } get { return truepos; }}
+        readonly bool LittleEndian = BitConverter.IsLittleEndian;
+        readonly byte Endian = 1; // 0 = Do not check, leave it to the CPU (NOT recommended), 1 = Always LittleEndian (default), 2 = Always big Endian;
         public long Size { get { return mystream.Length; } }
         public bool EOF { get { return Position >= Size; } }
 
@@ -45,7 +45,7 @@ namespace TrickyUnits
             byte[] ret = new byte[num];
             mystream.Read(ret, Position, num);
             Position += num;
-            switch Endian {
+            switch (Endian) {
                 case 1:
                     if (!LittleEndian) { Array.Reverse(ret); }
                     break;
@@ -53,6 +53,14 @@ namespace TrickyUnits
                     if (LittleEndian) { Array.Reverse(ret); }
                     break;
             }
+            return ret;
+        }
+
+        byte[] ReadBytes(int number,bool checkendian=false){
+            if (checkendian) return GrabBytes(number);
+            byte[] ret = new byte[number];
+            mystream.Read(ret, Position, number);
+            Position += number;
             return ret;
         }
 
