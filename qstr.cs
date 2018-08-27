@@ -1,7 +1,7 @@
 // Lic:
 //   qstr.cs
 //   Quick String Functions
-//   version: 18.08.25
+//   version: 18.08.27
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,7 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs","18.08.25");
+            MKL.Version("Tricky Units for C# - qstr.cs","18.08.27");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -35,8 +35,13 @@ namespace TrickyUnits
 
         public static string Left(string s, int l=1){
             if (l > s.Length) return s;
-            return s.Substring(s, l);
+            return s.Substring(0, l);
 
+        }
+
+        public static string Mid(string s, int pos, int l=1){
+            if (pos + l > s.Length) return s;
+            return s.Substring(pos - 1, l);
         }
 
         public static int Len(string s) { return s.Length; } // The only reason why I put this one in, was for quick translations from BlitzMax.
