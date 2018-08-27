@@ -1,7 +1,7 @@
 // Lic:
 //   qstream.cs
 //   
-//   version: 18.08.25
+//   version: 18.08.27
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -65,7 +65,7 @@ namespace TrickyUnits
             return ret;
         }
 
-        byte[] ReadBytes(int number,bool checkendian=false){
+        public byte[] ReadBytes(int number,bool checkendian=false){
             if (checkendian) return GrabBytes(number);
             byte[] ret = new byte[number];
             mystream.Read(ret, 0, number);
@@ -108,6 +108,45 @@ namespace TrickyUnits
             return Encoding.Default.GetString(chs.ToArray());
         }
 
+        void PutBytes(byte[] bytes){
+            switch (Endian)
+            {
+                case 1:
+                    if (!LittleEndian) { Array.Reverse(bytes); }
+                    break;
+                case 2:
+                    if (LittleEndian) { Array.Reverse(bytes); }
+                    break;
+            }
+            mystream.Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteBytes(byte[] bytes,bool checkendian=false){
+            if (checkendian) { PutBytes(bytes); return; }
+            mystream.Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteByte(byte b){
+            byte[] ba = new byte[1]; ba[0] = b;
+            mystream.Write(ba, 0, 1);
+        }
+
+        public void WriteInt(int i){
+            byte[] bytes = BitConverter.GetBytes(i);
+            PutBytes(bytes);
+        }
+
+        public void WriteLong(long i){
+            byte[] bytes = BitConverter.GetBytes(i);
+            PutBytes(bytes);
+        }
+
+        public void WriteString(string s, bool raw = false){
+            byte[] bytes = Encoding.UTF8.GetBytes(s);
+            if (!raw) WriteInt(s.Length);
+            PutBytes(bytes);
+        }
+
         public void Close() { mystream.Close();  }
 
     }
@@ -119,7 +158,7 @@ namespace TrickyUnits
 
         static QOpen()
         {
-            MKL.Version("Tricky Units for C# - qstream.cs","18.08.25");
+            MKL.Version("Tricky Units for C# - qstream.cs","18.08.27");
             MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
         }
 
@@ -128,8 +167,13 @@ namespace TrickyUnits
             return new QuickStream(s, EndianCode);
         }
 
-        public static QuickStream StreamFromBytes(byte[] buffer){
-            return new QuickStream(new MemoryStream(buffer));
+        public static QuickStream WriteFile(string filename,byte EndiancCode=LittleEndian){
+            var s = File.OpenWrite(filename);
+            return new QuickStream(s, EndiancCode);
+        }
+
+        public static QuickStream StreamFromBytes(byte[] buffer,byte Endian=LittleEndian){
+            return new QuickStream(new MemoryStream(buffer),Endian);
         }
     }
 }
