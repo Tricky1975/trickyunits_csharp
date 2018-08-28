@@ -1,7 +1,7 @@
 // Lic:
 //   qstream.cs
 //   
-//   version: 18.08.28
+//   version: 18.08.29
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -29,6 +29,7 @@ namespace TrickyUnits
     class QuickStream {
         Stream mystream;
         long truepos;
+        bool closed = false;
         public long Size { get { return mystream.Length; } }
         public long Position
         {
@@ -119,16 +120,19 @@ namespace TrickyUnits
                     break;
             }
             mystream.Write(bytes, 0, bytes.Length);
+            truepos += bytes.Length;
         }
 
         public void WriteBytes(byte[] bytes,bool checkendian=false){
             if (checkendian) { PutBytes(bytes); return; }
             mystream.Write(bytes, 0, bytes.Length);
+            truepos += bytes.Length;
         }
 
         public void WriteByte(byte b){
             byte[] ba = new byte[1]; ba[0] = b;
             mystream.Write(ba, 0, 1);
+            truepos++;
         }
 
         public void WriteInt(int i){
@@ -149,9 +153,16 @@ namespace TrickyUnits
 
         public void WriteBool(bool b){
             if (b) { WriteByte(1); } else { WriteByte(0); }
+            truepos++;
         }
 
-        public void Close() { mystream.Close();  }
+        public void Close()
+        {
+            if (!closed) { mystream.Close(); }
+            closed = true;
+        }
+
+        ~QuickStream() { Close(); }
 
     }
     static class QOpen
@@ -162,7 +173,7 @@ namespace TrickyUnits
 
         static QOpen()
         {
-            MKL.Version("Tricky Units for C# - qstream.cs","18.08.28");
+            MKL.Version("Tricky Units for C# - qstream.cs","18.08.29");
             MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
         }
 
