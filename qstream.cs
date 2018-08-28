@@ -1,7 +1,7 @@
 // Lic:
 //   qstream.cs
 //   
-//   version: 18.08.27
+//   version: 18.08.28
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -147,6 +147,10 @@ namespace TrickyUnits
             PutBytes(bytes);
         }
 
+        public void WriteBool(bool b){
+            if (b) { WriteByte(1); } else { WriteByte(0); }
+        }
+
         public void Close() { mystream.Close();  }
 
     }
@@ -158,7 +162,7 @@ namespace TrickyUnits
 
         static QOpen()
         {
-            MKL.Version("Tricky Units for C# - qstream.cs","18.08.27");
+            MKL.Version("Tricky Units for C# - qstream.cs","18.08.28");
             MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
         }
 
