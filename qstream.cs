@@ -203,6 +203,13 @@ namespace TrickyUnits
             bt.Close();
             return st;
         }
+
+        public static byte[] GetFile(string filename){
+            var bt = ReadFile(filename);
+            var ret = bt.ReadBytes((int)bt.Size);
+            bt.Close();
+            return ret;
+        }
     }
 }
 
