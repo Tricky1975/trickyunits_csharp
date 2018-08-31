@@ -20,3 +20,8 @@ If the list is empty or if the file is not listed, then only mkl.cs is required 
 If I forgot any, just write an issue about it, so I can update this list :P
 (Can I do that with a pull request? --> Of course you can!)
 
+
+
+- GINI Is Not Ini.cs
+  - qstr.cs
+  - qstream.cs

@@ -510,5 +510,10 @@ namespace TrickyUnits
         static public void DBGChat(string a){
             if (debug) { Console.WriteLine(a); }
         }
+
+        public GINI(){
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.08.31");
+            MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
+        }
     }
 }
