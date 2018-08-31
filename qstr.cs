@@ -1,7 +1,7 @@
 // Lic:
 //   qstr.cs
 //   Quick String Functions
-//   version: 18.08.27
+//   version: 18.08.31
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,7 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs","18.08.27");
+            MKL.Version("Tricky Units for C# - qstr.cs","18.08.31");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
