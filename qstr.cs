@@ -44,6 +44,7 @@ namespace TrickyUnits
             return s.Substring(pos - 1, l);
         }
 
-        public static int Len(string s) { return s.Length; } // The only reason why I put this one in, was for quick translations from BlitzMax.
+        public static int Len(string s) =>  s.Length;  // The only reason why I put this one in, was for quick translations from BlitzMax.
+        public static string MyString(string s) => s.Trim(); // The only reason why I put this one in, was for Quick translations from Go, where I used this function, as the Trim feature in Go was impractical.
     }
 }
