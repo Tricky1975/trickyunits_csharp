@@ -96,9 +96,9 @@ namespace TrickyUnits
         // Creates a list
         public void CL(string a, bool onlyifnotexist = true)
         {
-            var g = this; //g.init1st(); 
+            //var g = this; //g.init1st(); 
             var ca = a.ToUpper();
-            if (g.vars.ContainsKey(ca)) {
+            if (vars.ContainsKey(ca)) {
                 if (onlyifnotexist)
                 {
                     return;
@@ -108,7 +108,7 @@ namespace TrickyUnits
             //fmt.Printf("Creating list: %s\n",a)
             //g.lists[strings.ToUpper(a)] = qll.CreateStringList() // make([]string,0)
             //g.lists[strings.ToUpper(a)] = make([]string,0)
-            g.lists[ca] = new List<string>();
+            lists[ca] = new List<string>();
             //g.listpointer[strings.ToUpper(a)] = len(g.lists) - 1
         }
 
