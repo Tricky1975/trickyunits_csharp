@@ -98,13 +98,14 @@ namespace TrickyUnits
         {
             //var g = this; //g.init1st(); 
             var ca = a.ToUpper();
-            if (vars.ContainsKey(ca)) {
+            if (lists.ContainsKey(ca)) {
                 if (onlyifnotexist)
                 {
                     return;
 
                 }
             }
+            //GTK.QuickGTK.Warn($"Creating {ca} // {onlyifnotexist} "); // DEBUG ONLY!!!
             //fmt.Printf("Creating list: %s\n",a)
             //g.lists[strings.ToUpper(a)] = qll.CreateStringList() // make([]string,0)
             //g.lists[strings.ToUpper(a)] = make([]string,0)
@@ -382,7 +383,10 @@ namespace TrickyUnits
                     ldone[list] = true;
                     //} else {
                     ret += "[List:" + slists + "]\n";
-                    foreach (string v in lists[list]) { ret += v + "\n"; }
+                    foreach (string v in lists[list]) { 
+                        ret += v + "\n";
+                        //TrickyUnits.GTK.QuickGTK.Info($"I save {v} from {list} // {lists[list].Count}"); // DEBUG ONLY!!!!
+                    }
                     //for _, v:= range list { ret += v + "\n"}
                     ret += "\n";
 
