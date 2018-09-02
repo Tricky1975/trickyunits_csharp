@@ -39,7 +39,7 @@ namespace TrickyUnits
      * 
      */
 
-    // This type is used by GINI to store stuff in.
+    /// <summary>This type is used by GINI to store stuff in.</summary>
     class TGINI
     {
 
@@ -70,7 +70,7 @@ namespace TrickyUnits
         }
 
 
-        // Define var
+        /// <summary>Define var</summary>
         public void D(string s, string v)
         {
             //g.init1st()
@@ -78,7 +78,11 @@ namespace TrickyUnits
             vars[s.ToUpper()] = v;
         }
 
-        // Read (call) var
+        /// <summary>
+        /// Read (call) var
+        /// </summary>
+        /// <returns>The variable's value</returns>
+        /// <param name="s">Variable name</param>
         public string C(string s)
         {
             var g = this;//g.init1st(); 
@@ -93,7 +97,7 @@ namespace TrickyUnits
             }
         }
 
-        // Creates a list
+        /// <summary>Creates a list if needed</summary> 
         public void CL(string a, bool onlyifnotexist = true)
         {
             //var g = this; //g.init1st(); 
@@ -113,7 +117,9 @@ namespace TrickyUnits
             //g.listpointer[strings.ToUpper(a)] = len(g.lists) - 1
         }
 
-        // Add value to a list. If not existent create it
+        /// <summary>
+        /// Add value to a list. If not existent create the list.
+        /// </summary> 
         public void Add(string nlist, string value)
         {
             CL(nlist, true);
@@ -122,7 +128,7 @@ namespace TrickyUnits
             //qll.StringListAddLast(&(g.lists[l]),value)
         }
 
-        // Just returns the list. Creates it if it doesn't yet exist!
+        /// <summary> Just returns the list. Creates it if it doesn't yet exist!</summary>
         public List<string> List(string nlist)
         {
             CL(nlist, true);
@@ -130,11 +136,20 @@ namespace TrickyUnits
             return lists[nlist.ToUpper()];
         }
 
-        // Returns 'true' if a list exist, otherwise it returns false (duh!)
+        /// <summary>
+        /// Returns 'true' if a list exist, otherwise it returns false (duh!)
+        /// </summary>
+        /// <returns><c>true</c>, if exists was listed, <c>false</c> otherwise.</returns>
+        /// <param name="list">List reference name</param>
         public bool ListExists(string list) => lists.ContainsKey(list.ToUpper());
 
-        // Returns the string at the given index.
-        // If out of bounds an empty string is returned
+        /// <summary>
+        /// Returns the string at the given index.
+        ///  If out of bounds an empty string is returned
+        /// </summary>
+        /// <returns>The string stored at that specific index.</returns>
+        /// <param name="list">List referrence.</param>
+        /// <param name="idx">Index number.</param>
         public string ListIndex(string list, int idx)
         {
             var l = List(list);
@@ -142,10 +157,11 @@ namespace TrickyUnits
             return l[idx];
         }
 
-        // Duplicates the pointer of a list to a new list name
-        // If the original list does not exist the request will be ignored!
-        // Also note if the target destination already has a list it will remain there
-        // And the garbage collector won't pick it up unless the entire GINI var is destroyed)
+        /// <summary>Duplicates the pointer of a list to a new list name
+        /// If the original list does not exist the request will be ignored!
+        /// Also note if the target destination already has a list it will remain there
+        /// And the garbage collector won't pick it up unless the entire GINI var is destroyed)
+        /// </summary>
         public void ListDupe(string source, string target)
         {
             var cs = source.ToUpper();
@@ -340,7 +356,7 @@ namespace TrickyUnits
         } // func
 
 
-        // Converts gini data into a string you can save as a GINI file
+        /// <summary>Converts gini data into a string you can save as a GINI file</summary>
         public string ToSource()
         {
             var tme = DateTime.Now.ToString(); //:=time.Now()
@@ -395,7 +411,8 @@ namespace TrickyUnits
             return ret;
         }
 
-        // Save as a source file (editable in text editors)
+        /// <summary>Save as a source file (editable in text editors)</summary>
+        /// <seealso cref="ToSource"/>
         public void SaveSource(string filename)
         {
             var src = ToSource();
@@ -404,6 +421,11 @@ namespace TrickyUnits
 
     }
 
+
+    /// <summary>
+    /// GINI Is Not Ini
+    /// This is the base "core" class of GINI.
+    /// </summary>
     class GINI
     {
         const string allowedChars = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '.";
