@@ -137,7 +137,7 @@ namespace TrickyUnits
         public string ListIndex(string list, int idx)
         {
             var l = List(list);
-            if (idx < 0 || idx >= l.Count) { return "" }
+            if (idx < 0 || idx >= l.Count) { return ""; }
             return l[idx];
         }
 
