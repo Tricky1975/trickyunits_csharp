@@ -1,7 +1,7 @@
 // Lic:
 //   mkl.cs
 //   MKL
-//   version: 18.08.24
+//   version: 18.09.10
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -22,22 +22,24 @@ using System.Collections.Generic;
 
 namespace TrickyUnits
 {
+    /// <summary>MKL (MaKe License) was a system I set up for automatically adding license texts and version numbering. This way I can always be sure version changes never go without nummeric changes. It's a very simplistic system, but it does what it has to do. :)</summary>
     class MKL
     {
         static SortedDictionary<string, string> VERSIONS = new SortedDictionary<string, string>();
         static SortedDictionary<string, string> LICENSES = new SortedDictionary<string, string>();
 
-        // Defines version number
+        /// <summary>Defines version number</summary>
         static public void Version(string f, string v){
             VERSIONS[f] = v;
         }
 
-        // Defines license field
+        // <summary>Defines license field</summary>
         static public void Lic(string f, string l){
             LICENSES[f] = l;
         }
 
-        // Shows all version information
+        /// <summary>Shows all version information</summary>
+        /// <remarks>A weakness in this system is that C# requires classes and that those classes are only loaded if actually needed, or rather the first time they are called, or created for a variable. Due to this version summaries can change if this function is called before all require classes are loaded.</remarks>
         static public string All(bool showlic=true){
             var ret = "";
             var dots = ""; for (var i = 0; i <= 40; i++) { dots += "."; }
@@ -50,7 +52,7 @@ namespace TrickyUnits
         }
 
         static MKL(){
-            MKL.Version("Tricky Units for C# - mkl.cs","18.08.24");
+            MKL.Version("Tricky Units for C# - mkl.cs","18.09.10");
             MKL.Lic    ("Tricky Units for C# - mkl.cs","ZLib License");
         }
 
