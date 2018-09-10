@@ -1,7 +1,7 @@
 // Lic:
 //   QuickGTK.cs
 //   
-//   version: 18.09.02
+//   version: 18.09.10
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -32,14 +32,33 @@ namespace TrickyUnits.GTK{
         static public Window MyMainWindow;
 
         /// <summary>
-        /// Used for "Yes" on questions. Change if your application is not in English
+        /// Yes/No question
         /// </summary>
-        static public string Yes = "Yes";
+        static public bool Confirm(string Question,MessageType mt= MessageType.Info)
+        {
+            bool ret;
+            MessageDialog md1 = new MessageDialog(null, DialogFlags.Modal,
+                                                  mt, ButtonsType.YesNo, Question);
+            ResponseType response = (ResponseType)md1.Run();
 
+            md1.Show();
+            ret = (response == ResponseType.Yes);
+            md1.Dispose();
+            return ret;
+        }
         /// <summary>
-        /// Used for "No" on questions. Change if your application is not in English
+        /// Asks a question with Yes, No and Cancel for answers
         /// </summary>
-        static public string No = "No";
+        /// <returns>-1 if user chose cancel, 0 if no and 1 if yes</returns>
+        /// <param name="Question">Question.</param>
+        static public short Proceed(string Question, MessageType mt = MessageType.Info)
+        {
+            // This approach was needed, since GTK does not support Yes/No/Cancel questions, or so it seems.
+            if (Confirm(Question+"\n\nCanceling is possible after saying 'no'", mt)) return 1;
+            if (Confirm(Question + "\n\nDo you want to cancel the operation entirely?", mt)) return -1;
+            // Hopefully a more "elegant" solution may be possible later... :-/
+            return 0;
+        }
 
 
         static void MessageDialogBox(string message,MessageType MT,Window pwin=null){
@@ -49,7 +68,7 @@ namespace TrickyUnits.GTK{
                  ButtonsType.Close, message);
             md.Run();
             md.Destroy();
-        }
+        }        
 
         /// <summary>
         /// Throw an error message box
