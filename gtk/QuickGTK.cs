@@ -1,7 +1,7 @@
 // Lic:
 //   QuickGTK.cs
 //   
-//   version: 18.09.10
+//   version: 18.09.11
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -34,18 +34,20 @@ namespace TrickyUnits.GTK{
         /// <summary>
         /// Yes/No question
         /// </summary>
-        static public bool Confirm(string Question,MessageType mt= MessageType.Info)
+        static public bool Confirm(string Question,MessageType mt= MessageType.Question)
         {
             bool ret;
             MessageDialog md1 = new MessageDialog(null, DialogFlags.Modal,
                                                   mt, ButtonsType.YesNo, Question);
+            md1.DefaultResponse = ResponseType.Yes;
             ResponseType response = (ResponseType)md1.Run();
-
-            md1.Show();
+            //md1.Show();
             ret = (response == ResponseType.Yes);
-            md1.Dispose();
+            md1.Destroy();
+            //md1.Dispose();
             return ret;
         }
+
         /// <summary>
         /// Asks a question with Yes, No and Cancel for answers
         /// </summary>
