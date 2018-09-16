@@ -1,7 +1,7 @@
 // Lic:
 //   qstr.cs
 //   Quick String Functions
-//   version: 18.09.09
+//   version: 18.09.16
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -28,7 +28,7 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs","18.09.09");
+            MKL.Version("Tricky Units for C# - qstr.cs","18.09.16");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -65,6 +65,12 @@ namespace TrickyUnits
         public static bool Prefixed(string mystring, string prefix) => Left(mystring, prefix.Length) == prefix;
         public static bool Suffixed(string mystring, string suffix) => Right(mystring, suffix.Length) == suffix;
 
+        public static byte ASC(string s,int offs=0){
+            byte[] asciiBytes = System.Text.Encoding.ASCII.GetBytes(s);
+            int o = offs;
+            if (o >= asciiBytes.Length || o<0) return 0;
+            return asciiBytes[o];
+        }
 
     }
 }
