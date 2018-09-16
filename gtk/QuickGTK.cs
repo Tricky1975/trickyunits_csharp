@@ -1,7 +1,7 @@
 // Lic:
 //   QuickGTK.cs
 //   
-//   version: 18.09.11
+//   version: 18.09.16
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -21,15 +21,53 @@ using Gtk;
 namespace TrickyUnits.GTK{
 
     /// <summary>
+    /// Quick GTK Color class used to store the data SelectColor returns.
+    /// </summary>
+    class QuickGTKColor {
+        public QuickGTKColor(ColorSelection acs) { cs = acs; }
+        ColorSelection cs;
+
+        public int red { get => cs.CurrentColor.Red; }
+        public int green { get => cs.CurrentColor.Green; }
+        public int blue { get => cs.CurrentColor.Blue; }
+        public int alpha { get => cs.CurrentAlpha; }
+
+
+    }
+
+    /// <summary>
     /// This class contains functions that you may just want to use quickly
     /// without any crap of creating and disposing stuff.
     /// </summary>
-    class QuickGTK{
+    class QuickGTK
+    {
 
         /// <summary>
         /// When you do not assign any windows to the functions put in here, QuickGTK will simply us this one.
         /// </summary>
         static public Window MyMainWindow;
+
+        /// <summary>
+        /// Shows a dialog box to select a color
+        /// </summary>
+        /// <returns>The color.</returns>
+        static public QuickGTKColor SelectColor()
+        {
+            ColorSelection ret = null;
+            ColorSelectionDialog cdia = new ColorSelectionDialog("Select color");
+            cdia.Response += delegate (object o, ResponseArgs resp)
+            {
+
+                if (resp.ResponseId == ResponseType.Ok)
+                {
+                    ret = cdia.ColorSelection; //.CurrentColor;
+                }
+            };
+            cdia.Run();
+            cdia.Destroy();
+            return new QuickGTKColor(ret);
+        }
+
 
         /// <summary>
         /// Yes/No question
