@@ -18,6 +18,9 @@
 //   3. This notice may not be removed or altered from any source distribution.
 // EndLic
 
+
+using System;
+
 namespace TrickyUnits
 {
     /// <summary>
@@ -28,33 +31,37 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs","18.09.16");
-            MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
+            MKL.Version("Tricky Units for C# - qstr.cs", "18.09.16");
+            MKL.Lic("Tricky Units for C# - qstr.cs", "ZLib License");
         }
 
-        public static string Right(string s, int l=1){
+        public static string Right(string s, int l = 1)
+        {
             if (l > s.Length) return s;
             return s.Substring(s.Length - l, l);
         }
 
-        public static string Left(string s, int l=1){
+        public static string Left(string s, int l = 1)
+        {
             if (l > s.Length) return s;
             return s.Substring(0, l);
 
         }
 
-        public static string Mid(string s, int pos, int l=1){
+        public static string Mid(string s, int pos, int l = 1)
+        {
             if (pos + l > s.Length) return s;
             return s.Substring(pos - 1, l);
         }
 
-        public static int Len(string s) =>  s.Length;  // The only reason why I put this one in, was for quick translations from BlitzMax.
+        public static int Len(string s) => s.Length;  // The only reason why I put this one in, was for quick translations from BlitzMax.
         public static string MyTrim(string s) => s.Trim(); // The only reason why I put this one in, was for Quick translations from Go, where I used this function, as the Trim feature in Go was impractical.
         public static string Chr(int i) => ((char)i).ToString(); // The C# method is just impractical. Sorry!
         public static string Upper(string s) => s.ToUpper(); // BlitzMax conversion
         public static string Lower(string s) => s.ToLower(); // BlitzMax conversion
 
-        public static string ExtractExt(string myFilePath){
+        public static string ExtractExt(string myFilePath)
+        {
             var ret = System.IO.Path.GetExtension(myFilePath);
             if (ret == "") { return ""; }
             return Right(ret, ret.Length - 1);
@@ -65,12 +72,63 @@ namespace TrickyUnits
         public static bool Prefixed(string mystring, string prefix) => Left(mystring, prefix.Length) == prefix;
         public static bool Suffixed(string mystring, string suffix) => Right(mystring, suffix.Length) == suffix;
 
-        public static byte ASC(string s,int offs=0){
+        public static string RemPrefix(string mystring, string fix){
+            var ms = mystring;
+            if (Prefixed(ms, fix)) ms = Right(ms, ms.Length - fix.Length);
+            return ms;
+        }
+
+        public static string RemSuffix(string mystring, string fix)
+        {
+            var ms = mystring;
+            if (Suffixed(ms, fix)) ms = Left(ms, ms.Length - fix.Length);
+            return ms;
+        }
+
+        public static byte ASC(string s, int offs = 0)
+        {
             byte[] asciiBytes = System.Text.Encoding.ASCII.GetBytes(s);
             int o = offs;
-            if (o >= asciiBytes.Length || o<0) return 0;
+            if (o >= asciiBytes.Length || o < 0) return 0;
             return asciiBytes[o];
         }
 
+        /// <summary>
+        /// Converts string to int if possible, and retuns 0 if not possible. You can use "$" as a prefix for hexadecimal numbers and "%" as a prefix for binary numbers.
+        /// </summary>
+        /// <returns>The integer if succesful otherwise 0.</returns>
+        /// <param name="s">The string to convert.</param>
+        public static int ToInt(string s)
+        {
+            var ret = 0;
+            var s2i = s;
+            try
+            {
+                switch (s[0])
+                {
+                    case '$':
+                        s2i = Right(s, s.Length - 1);
+                        return System.Int32.Parse(s2i, System.Globalization.NumberStyles.HexNumber);
+                    case '%':
+                        s2i = Right(s, s.Length - 1);
+                        ret = 0;
+                        int bit = 1;
+                        for (int i = s2i.Length; i > 0; i--)
+                        {
+                            switch (Mid(s2i, i, 1))
+                            {
+                                case "1": ret += bit; break;
+                                case "0": break;
+                                default: return 0;
+                            }
+                            bit += bit;
+                        }
+                        break;
+                }
+                ret = System.Int32.Parse(s2i);
+                return ret;
+            }
+            catch { return 0; }
+        }
     }
 }
