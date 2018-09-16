@@ -20,6 +20,7 @@
 
 using System.Collections.Generic;
 using System;
+
 namespace TrickyUnits
 {
     class Dirry
@@ -35,11 +36,14 @@ namespace TrickyUnits
             Add("$AppSupport$", $"{home}/.Tricky__ApplicationSupport"); // <- This is a dirty method, but unfortunately Mono and C# have very poor (read: no) support for doing this properly!!!
             Add("$UserName$", Environment.UserName);
             Add("$AppDir$", AppDomain.CurrentDomain.BaseDirectory);
+            Add("$LaunchDir$", System.IO.Directory.GetCurrentDirectory()); // <- Please note this only is valid if this class is called right when the application starts up.
             nodollar = true;
        }
 
         static bool nodollar = false;
         static readonly Dictionary<string, string> Troep = new Dictionary<string, string>();
+
+        static public string LaunchedFrom { get => Troep["$LauchDir$"]; }
 
 
         static public void Add(string key, string value)
