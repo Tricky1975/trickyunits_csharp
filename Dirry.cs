@@ -17,4 +17,51 @@
 //      misrepresented as being the original software.
 //   3. This notice may not be removed or altered from any source distribution.
 // EndLic
-namespace TrickyUnits{ class Dirry {} }
+
+using System.Collections.Generic;
+using System;
+namespace TrickyUnits
+{
+    class Dirry
+    {
+       Dirry(){
+            MKL.Version("Tricky Units for C# - Dirry.cs","18.09.16");
+            MKL.Lic    ("Tricky Units for C# - Dirry.cs","ZLib License");
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            Add("$Home$",home );
+            Add("$Documents$", $"{home}/Documents");
+            Add("$MyDocs$", $"{home}/Documents");
+            Add("$AppSupport$", $"{home}/.Tricky__ApplicationSupport"); // <- This is a dirty method, but unfortunately Mono and C# have very poor (read: no) support for doing this properly!!!
+            Add("$UserName$", Environment.UserName);
+            Add("$AppDir$", AppDomain.CurrentDomain.BaseDirectory);
+            nodollar = true;
+       }
+
+        static bool nodollar = false;
+        static readonly Dictionary<string, string> Troep = new Dictionary<string, string>();
+
+
+        static public void Add(string key, string value)
+        {
+            var skey = key;
+            if (nodollar && key[0] == '$') return;
+            if (skey[0] != '*') skey = $"*{key}";
+            if (skey[key.Length - 1] != '*') skey += "*";
+            Troep[skey] = value;
+        }
+
+        /// <summary>
+        /// Returns a string with dirry tags replaced by the proper data
+        /// </summary>
+        static public string C(string str){
+            nodollar = false;
+            Add("$CurrentDir$", System.IO.Directory.GetCurrentDirectory());
+            nodollar = true;
+            var ret = str;
+            foreach (string k in Troep.Keys) ret = ret.Replace(k, Troep[k]);
+            return ret;
+        }
+
+    }
+}
