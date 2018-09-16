@@ -31,8 +31,8 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs", "18.09.16");
-            MKL.Lic("Tricky Units for C# - qstr.cs", "ZLib License");
+            MKL.Version("Tricky Units for C# - qstr.cs","18.09.16");
+            MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
         public static string Right(string s, int l = 1)
