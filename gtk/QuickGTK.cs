@@ -131,6 +131,27 @@ namespace TrickyUnits.GTK{
         /// <param name="pwin">Parent window</param>
         static public void Info(string message, Window pwin = null) => MessageDialogBox(message, MessageType.Info, pwin);
 
+
+        static public string RequestFile(string Title="Please choose a file",Window aw=null)
+        {
+            Window w = aw; 
+            if (w==null) w=MyMainWindow;
+            var filename = "";
+            FileChooserDialog fcd = new FileChooserDialog(Title, w, FileChooserAction.Open, "Open", ResponseType.Accept, "Cancel", ResponseType.Close);
+            fcd.SelectMultiple = false;
+            var r = fcd.Run(); // This opens the window and waits for the response
+            //bool alright = false;
+            if (r == (int)ResponseType.Accept)
+            {
+                filename = fcd.Filename;
+                //alright = true;
+            }
+            fcd.Destroy(); // The dialog does not automatically close when clicking the buttons, so you have to manually close it with this
+            //return alright;
+            return filename;
+        }
+
+
         public QuickGTK(){
             MKL.Version("Tricky Units for C# - QuickGTK.cs","18.09.19");
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
