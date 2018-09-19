@@ -82,7 +82,12 @@ namespace TrickyUnits.GTK
             tvc.AddAttribute(NameCell, "text", 0);
             //ListRecords.HeightRequest = 800 - 390;
             Gadget.AppendColumn(tvc);
+            ListBox.Hello();
+        }
 
+        static public void Hello(){
+            MKL.Version("Tricky Units for C# - ListBox.cs","18.09.19");
+            MKL.Lic    ("Tricky Units for C# - ListBox.cs","ZLib License");
         }
     }
 }
