@@ -1,7 +1,7 @@
 // Lic:
 //   QuickGTK.cs
 //   
-//   version: 18.09.16
+//   version: 18.09.19
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -130,6 +130,16 @@ namespace TrickyUnits.GTK{
         /// <param name="message">Message.</param>
         /// <param name="pwin">Parent window</param>
         static public void Info(string message, Window pwin = null) => MessageDialogBox(message, MessageType.Info, pwin);
+
+        public QuickGTK(){
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.09.19");
+            MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
+        }
+
+        /// <summary>
+        /// Does nothing, but can be used to force the MKL values to be properly parsed
+        /// </summary>
+        static public void Hello() {}
 
 
     }
