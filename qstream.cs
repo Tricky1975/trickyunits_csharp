@@ -177,6 +177,8 @@ namespace TrickyUnits
             MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
         }
 
+        public static void Hello(){} // Basically does nothing, but it forces the MKL data to be parsed when called.
+
         public static QuickStream ReadFile(string filename,byte EndianCode=LittleEndian){
             var s = File.OpenRead(filename);
             return new QuickStream(s, EndianCode);
