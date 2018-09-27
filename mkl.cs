@@ -1,7 +1,7 @@
 // Lic:
 //   mkl.cs
 //   MKL
-//   version: 18.09.10
+//   version: 18.09.27
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -51,8 +51,44 @@ namespace TrickyUnits
             return ret;
         }
 
+        static string Right(string s, int l = 1)
+        {
+            if (l > s.Length) return s;
+            return s.Substring(s.Length - l, l);
+        }
+
+        /// <summary>
+        /// Shows you the 'newest version' based on the used sources
+        /// </summary>
+        static public string Newest{
+            get{
+                var ret = " 0.00.00";
+                var year = 0;
+                var month = 0;
+                var day = 0;
+                foreach(string mvalue in VERSIONS.Values){
+                    var split = mvalue.Split('.');
+                    int sy=0; int sm=0; int sd=0;
+                    try{
+                        sy = Int32.Parse(split[0]);
+                        sm = Int32.Parse(split[1]);
+                        sd = Int32.Parse(split[2]);
+                    } catch {
+                        Console.WriteLine("WARNING! Something DID get wrong with the version parsing!");
+                    }
+                    if (sy>=year && sm>=month && sd>=day){
+                        year = sy;
+                        month = sm;
+                        day = sd;
+                        ret = $"{Right($"0{year}", 2)}.{Right($"0{month}", 2)}.{Right($"0{day}",2)}";
+                    }
+                }
+                return ret;
+            }
+        }
+
         static MKL(){
-            MKL.Version("Tricky Units for C# - mkl.cs","18.09.10");
+            MKL.Version("Tricky Units for C# - mkl.cs","18.09.27");
             MKL.Lic    ("Tricky Units for C# - mkl.cs","ZLib License");
         }
 
