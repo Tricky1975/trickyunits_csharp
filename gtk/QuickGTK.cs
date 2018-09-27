@@ -1,7 +1,7 @@
 // Lic:
 //   QuickGTK.cs
 //   
-//   version: 18.09.19
+//   version: 18.09.27
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -153,15 +153,28 @@ namespace TrickyUnits.GTK{
 
 
         public QuickGTK(){
-            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.09.19");
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.09.27");
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
         }
 
         /// <summary>
         /// Does nothing, but can be used to force the MKL values to be properly parsed
         /// </summary>
-        static public void Hello() {}
+        static public void Hello() {
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.09.27");
+            MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
+        }
 
+        /// <summary>
+        /// Scroll the specified widget and return the scrolled window to add to the parent.
+        /// </summary>
+        /// <returns>The scrolled window.</returns>
+        /// <param name="w">The widget.</param>
+        static public ScrolledWindow Scroll(Widget w){
+            var ret = new ScrolledWindow();
+            ret.Add(w);
+            return ret;
+        }
 
     }
 
