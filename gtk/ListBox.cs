@@ -1,7 +1,7 @@
 // Lic:
 //   ListBox.cs
 //   
-//   version: 18.09.19
+//   version: 18.09.27
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -73,11 +73,11 @@ namespace TrickyUnits.GTK
             }
         }
 
-        public ListBox(){
+        public ListBox(string atitle="Items"){
             Gadget = new TreeView();
             var tvc = new TreeViewColumn();
             var NameCell = new CellRendererText();
-            tvc.Title = "Items";
+            tvc.Title = atitle;
             tvc.PackStart(NameCell, true);
             tvc.AddAttribute(NameCell, "text", 0);
             //ListRecords.HeightRequest = 800 - 390;
@@ -85,8 +85,9 @@ namespace TrickyUnits.GTK
             ListBox.Hello();
         }
 
+
         static public void Hello(){
-            MKL.Version("Tricky Units for C# - ListBox.cs","18.09.19");
+            MKL.Version("Tricky Units for C# - ListBox.cs","18.09.27");
             MKL.Lic    ("Tricky Units for C# - ListBox.cs","ZLib License");
         }
     }
