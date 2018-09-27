@@ -1,7 +1,7 @@
 // Lic:
 //   qstr.cs
 //   Quick String Functions
-//   version: 18.09.16
+//   version: 18.09.27
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -31,7 +31,7 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs","18.09.16");
+            MKL.Version("Tricky Units for C# - qstr.cs","18.09.27");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -72,7 +72,8 @@ namespace TrickyUnits
         public static bool Prefixed(string mystring, string prefix) => Left(mystring, prefix.Length) == prefix;
         public static bool Suffixed(string mystring, string suffix) => Right(mystring, suffix.Length) == suffix;
 
-        public static string RemPrefix(string mystring, string fix){
+        public static string RemPrefix(string mystring, string fix)
+        {
             var ms = mystring;
             if (Prefixed(ms, fix)) ms = Right(ms, ms.Length - fix.Length);
             return ms;
@@ -130,5 +131,42 @@ namespace TrickyUnits
             }
             catch { return 0; }
         }
+
+        /// <summary>
+        /// Same as ToInt(), but then for long (64bit integers)
+        /// </summary>
+        public static long ToLong(string s)
+        {
+            long ret = 0;
+            var s2i = s;
+            try
+            {
+                switch (s[0])
+                {
+                    case '$':
+                        s2i = Right(s, s.Length - 1);
+                        return System.Int64.Parse(s2i, System.Globalization.NumberStyles.HexNumber);
+                    case '%':
+                        s2i = Right(s, s.Length - 1);
+                        ret = 0;
+                        int bit = 1;
+                        for (int i = s2i.Length; i > 0; i--)
+                        {
+                            switch (Mid(s2i, i, 1))
+                            {
+                                case "1": ret += bit; break;
+                                case "0": break;
+                                default: return 0;
+                            }
+                            bit += bit;
+                        }
+                        break;
+                }
+                ret = System.Int64.Parse(s2i);
+                return ret;
+            }
+            catch { return 0; }
+        }
     }
+
 }

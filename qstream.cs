@@ -1,7 +1,7 @@
 // Lic:
 //   qstream.cs
 //   
-//   version: 18.09.19
+//   version: 18.09.27
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -173,7 +173,7 @@ namespace TrickyUnits
 
         static QOpen()
         {
-            MKL.Version("Tricky Units for C# - qstream.cs","18.09.19");
+            MKL.Version("Tricky Units for C# - qstream.cs","18.09.27");
             MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
         }
 
@@ -205,6 +205,18 @@ namespace TrickyUnits
             var st = bt.ReadString((int)bt.Size);
             bt.Close();
             return st;
+        }
+
+        public static Dictionary<string,string> LoadStringMap(string filename){
+            var bt = ReadFile(filename);
+            var ret = new Dictionary<string, string>();
+            while (!bt.EOF){
+                var key = bt.ReadString();
+                var value = bt.ReadString();
+                ret[key] = value;
+            }
+            bt.Close();
+            return ret;
         }
 
         public static byte[] GetFile(string filename){
