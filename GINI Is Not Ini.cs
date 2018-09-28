@@ -1,7 +1,7 @@
 // Lic:
 //   GINI Is Not Ini.cs
 //   
-//   version: 18.09.02
+//   version: 18.09.28
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -538,7 +538,7 @@ namespace TrickyUnits
         }
 
         public GINI(){
-            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.09.02");
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.09.28");
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
         }
     }
