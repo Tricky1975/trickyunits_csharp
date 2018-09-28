@@ -302,7 +302,7 @@ namespace TrickyUnits
                                 Console.WriteLine($"WARNING! I cannot execute line {linenumber} as the [CALL] block is not supported in C#\n");
                                 break;
                             default:
-                                throw new Exception($"ERROR! Unknown tag: {tag} (line #{linenumber}\n");
+                                throw new Exception($"ERROR! Unknown tag: {tag} (line #{linenumber}:{line})\n");
                         } //End Select  
                     } //EndIf
                 } //EndIf       
@@ -523,7 +523,7 @@ namespace TrickyUnits
             }
             else
             {
-                var s = b.ToString();
+                var s = System.Text.Encoding.Default.GetString(b); //Console.WriteLine($"[Parsing]\n{s}\n[/Parsing]");
                 var sl = s.Split('\n');
                 ret = ReadFromLines(sl);
             }
