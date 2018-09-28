@@ -25,11 +25,11 @@ namespace TrickyUnits
 {
     class Dirry
     {
-       Dirry(){
+        static Dirry(){
             MKL.Version("Tricky Units for C# - Dirry.cs","18.09.16");
             MKL.Lic    ("Tricky Units for C# - Dirry.cs","ZLib License");
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
+            nodollar = false;
             Add("$Home$",home );
             Add("$Documents$", $"{home}/Documents");
             Add("$MyDocs$", $"{home}/Documents");
@@ -49,21 +49,29 @@ namespace TrickyUnits
         static public void Add(string key, string value)
         {
             var skey = key;
-            if (nodollar && key[0] == '$') return;
-            if (skey[0] != '*') skey = $"*{key}";
-            if (skey[key.Length - 1] != '*') skey += "*";
+            if (nodollar)
+            {
+                if (key[0] == '$') return;
+                if (key[0] != '*') skey = $"*{key}";
+                if (skey[key.Length - 1] != '*') skey += "*";
+            }
             Troep[skey] = value;
         }
 
         /// <summary>
         /// Returns a string with dirry tags replaced by the proper data
         /// </summary>
-        static public string C(string str){
+        static public string C(string str)
+        {
             nodollar = false;
             Add("$CurrentDir$", System.IO.Directory.GetCurrentDirectory());
             nodollar = true;
             var ret = str;
-            foreach (string k in Troep.Keys) ret = ret.Replace(k, Troep[k]);
+            foreach (string k in Troep.Keys)
+            {
+                Console.WriteLine($"{k} = {Troep[k]}");
+                ret = ret.Replace(k, Troep[k]);
+            }
             return ret;
         }
 
