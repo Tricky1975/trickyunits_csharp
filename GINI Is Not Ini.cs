@@ -1,7 +1,7 @@
 // Lic:
 //   GINI Is Not Ini.cs
 //   
-//   version: 18.10.15
+//   version: 18.10.17
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -290,7 +290,7 @@ namespace TrickyUnits
                                     var temppos = line.IndexOf('=');
                                     tagsplit = new string[2];
                                     tagsplit[0] = qstr.Left(line, temppos);
-                                    tagsplit[1] = qstr.Right(line, line.Length - temppos - 1);
+                                    tagsplit[1] = qstr.Right(line, line.Length - temppos -1 );
                                     D(GINI.UnIniString(tagsplit[0]), GINI.UnIniString(tagsplit[1]));
                                 } //EndIf
                                 break;
@@ -538,7 +538,7 @@ namespace TrickyUnits
         }
 
         public GINI(){
-            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.10.15");
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.10.17");
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
         }
     }
