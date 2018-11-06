@@ -1,7 +1,7 @@
 // Lic:
 //   inputdialog.cs
 //   Quick GTK -- Quick Input Box
-//   version: 18.10.18
+//   version: 18.10.23
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -70,10 +70,18 @@ namespace TrickyUnits.GTK{
         }
 
         static public void Hello(){
-            MKL.Version("Tricky Units for C# - inputdialog.cs","18.10.18");
+            MKL.Version("Tricky Units for C# - inputdialog.cs","18.10.23");
             MKL.Lic    ("Tricky Units for C# - inputdialog.cs","ZLib License");
         }
 
+        /// <summary>
+        /// Creates a window in which a question will be asked, and will destroy the window after the user either confirms or cancels the input.
+        /// </summary>
+        /// <param name="Question">Question to appear on the title bar</param>
+        /// <param name="CallBackFunction">This function is called when the operation is confirmed or cancelled prior to the window's destruction.</param>
+        /// <param name="defaultvalue">Default value.</param>
+        /// <param name="HideMainWindow">Hide main window.</param>
+        /// <param name="AllowRegEx">When set the input MUST match the set up regular expression or the input will be rejected (System will automatically prefix the regex with ^ and end it with a $)</param>
         static public void Create(string Question, QuickInputBoxCallBack CallBackFunction, string defaultvalue = "", Widget HideMainWindow = null, string AllowRegEx = ""){
             var needlessvar = new QuickInputBox(Question, CallBackFunction, defaultvalue, HideMainWindow, AllowRegEx);
         }
