@@ -1,7 +1,7 @@
 // Lic:
 //   qstr.cs
 //   Quick String Functions
-//   version: 18.09.27
+//   version: 18.10.23
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -31,7 +31,7 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs","18.09.27");
+            MKL.Version("Tricky Units for C# - qstr.cs","18.10.23");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -92,6 +92,25 @@ namespace TrickyUnits
             int o = offs;
             if (o >= asciiBytes.Length || o < 0) return 0;
             return asciiBytes[o];
+        }
+
+        public static string SafeString(string a){
+            var ret = "";
+            for (int i = 0; i < a.Length;i++){
+                if (a[i] > 30 && a[i] < 123 && a[i]!='"') ret += Chr(a[i]);
+                else {
+                    switch (a[i]){
+                        case '"': ret += "\\\""; break;
+                        case '\b': ret += "\\b"; break;
+                        case '\n': ret += "\\n"; break;
+                        case '\r': ret += "\\r"; break;
+                        default:
+                            ret += "\\" + Right($"00{Convert.ToString(a[i], 8)}", 3);
+                            break;
+                    }
+                }
+            }
+            return ret;
         }
 
         /// <summary>
