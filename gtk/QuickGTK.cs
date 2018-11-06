@@ -1,7 +1,7 @@
 // Lic:
 //   QuickGTK.cs
 //   
-//   version: 18.10.15
+//   version: 18.10.23
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -151,6 +151,24 @@ namespace TrickyUnits.GTK{
             return filename;
         }
 
+        static public string RequestDir(string Title = "Please choose a directory", Window aw = null){
+            Window w = aw;
+            if (w == null) w = MyMainWindow;
+            var filename = "";
+            FileChooserDialog fcd = new FileChooserDialog(Title, w, FileChooserAction.SelectFolder, "Open", ResponseType.Accept, "Cancel", ResponseType.Close);
+            fcd.SelectMultiple = false;
+            var r = fcd.Run(); // This opens the window and waits for the response
+            //bool alright = false;
+            if (r == (int)ResponseType.Accept)
+            {
+                filename = fcd.Filename;
+                //alright = true;
+            }
+            fcd.Destroy(); // The dialog does not automatically close when clicking the buttons, so you have to manually close it with this
+            //return alright;
+            return filename;
+        }
+
         static public string RequestFileSave(string Title="Please choose a file to save",Window aw=null){
             Window w = aw;
             if (w == null) w = MyMainWindow;
@@ -167,12 +185,11 @@ namespace TrickyUnits.GTK{
             fcd.Destroy(); // The dialog does not automatically close when clicking the buttons, so you have to manually close it with this
             //return alright;
             return filename;
-
         }
 
 
         public QuickGTK(){
-            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.10.15");
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.10.23");
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
         }
 
@@ -180,7 +197,7 @@ namespace TrickyUnits.GTK{
         /// Does nothing, but can be used to force the MKL values to be properly parsed
         /// </summary>
         static public void Hello() {
-            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.10.15");
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.10.23");
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
         }
 
