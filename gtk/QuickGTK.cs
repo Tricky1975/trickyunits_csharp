@@ -1,7 +1,7 @@
 // Lic:
 //   QuickGTK.cs
 //   
-//   version: 18.10.23
+//   version: 18.11.06
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -45,7 +45,7 @@ namespace TrickyUnits.GTK{
         /// <summary>
         /// When you do not assign any windows to the functions put in here, QuickGTK will simply us this one.
         /// </summary>
-        static public Window MyMainWindow;
+        static public Window MyMainWindow = null;
 
         /// <summary>
         /// Shows a dialog box to select a color
@@ -189,7 +189,7 @@ namespace TrickyUnits.GTK{
 
 
         public QuickGTK(){
-            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.10.23");
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.11.06");
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
         }
 
@@ -197,7 +197,7 @@ namespace TrickyUnits.GTK{
         /// Does nothing, but can be used to force the MKL values to be properly parsed
         /// </summary>
         static public void Hello() {
-            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.10.23");
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","18.11.06");
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
         }
 
