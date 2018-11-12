@@ -1,7 +1,7 @@
 // Lic:
 //   GINI Is Not Ini.cs
 //   
-//   version: 18.11.06
+//   version: 18.11.12
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -69,6 +69,13 @@ namespace TrickyUnits
             GINI.DBGChat("TGINI class destroyed");
         }
 
+        /// <summary>Returns an array with all variable names!</summary>
+        public string[] Vars(){
+            var tret = new List<string>();
+            foreach (string key in vars.Keys) tret.Add(key);
+            tret.Sort();
+            return tret.ToArray();
+        }
 
         /// <summary>Define var</summary>
         public void D(string s, string v)
@@ -282,7 +289,7 @@ namespace TrickyUnits
                             case "VARS":
                                 if (line.IndexOf('=') < 0)
                                 {
-                                    Console.WriteLine($"Warning! Invalid var definition: {line} in line #{linenumber}\n");
+                                    Console.WriteLine($"Warning! Invalid var definition: {line} in line #{linenumber} \t=> {line}\n");
                                 }
                                 else
                                 {
@@ -291,7 +298,7 @@ namespace TrickyUnits
                                     tagsplit = new string[2];
                                     tagsplit[0] = qstr.Left(line, temppos);
                                     tagsplit[1] = qstr.Right(line, line.Length - temppos -1 );
-                                    D(GINI.UnIniString(tagsplit[0]), GINI.UnIniString(tagsplit[1]));
+                                    D(GINI.UnIniString(GINI.UnIniString(tagsplit[0])), GINI.UnIniString(tagsplit[1]));
                                 } //EndIf
                                 break;
                             case "LIST":
@@ -470,7 +477,7 @@ namespace TrickyUnits
             {
                 //ret = strings.Replace(ret, fmt.Sprintf("#(%d)",i),string (i),-900)
                 //ret = string.Replace(ret,"#u("+i+")",string(i))
-                ret = ret.Replace($"#(i)", ((char)i).ToString());
+                ret = ret.Replace($"#({i})", ((char)i).ToString());
             } //Next
             return ret;
         } //End Function
@@ -538,7 +545,7 @@ namespace TrickyUnits
         }
 
         public GINI(){
-            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.11.06");
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.11.12");
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
             var tb = debug;
         }
