@@ -1,7 +1,7 @@
 // Lic:
 //   FileList.cs
 //   Quick File List
-//   version: 18.08.24
+//   version: 18.11.12
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -28,10 +28,12 @@ namespace TrickyUnits
         // This variable contains the error message if something went wrong
         static string FLError = "";
 
-        // Just gets a string list of all files in a path
-        // path   = the path to search (duh!)
-        // gt     = search type 0 is files only, with setting 1 directories can be listed as well, 2 will list directories only, and 3 will generate a tree with all directories.
-        // hidden = Allow hidden files in the search results. Please note, hidden means by UNIX STANDARDS, so it will only check if a file is prefixed with a "." or not!
+        /// <summary>
+        /// Just gets a string list of all files in a path
+        /// path   = the path to search (duh!)
+        /// gt     = search type 0 is files only, with setting 1 directories can be listed as well, 2 will list directories only, and 3 will generate a tree with all directories.
+        /// hidden = Allow hidden files in the search results. Please note, hidden means by UNIX STANDARDS, so it will only check if a file is prefixed with a "." or not!
+        /// </summary>
         static public string[] GetDir(string path, int gt=0, bool sorted=true, bool hidden=false){
             // init
             FLError = "";
@@ -73,12 +75,18 @@ namespace TrickyUnits
             return w.ToArray();
         }
 
-        static public string[] GetTree(string path, bool sorted=true, bool hidden=false){
-            return GetDir(path, 3, sorted, hidden);
-        }
+        /// <summary>
+        /// Gets the directory tree.
+        /// </summary>
+        /// <returns>The tree.</returns>
+        /// <param name="path">Path to be turned into a tree</param>
+        /// <param name="sorted">If set to <c>true</c> all entries will be sorted.</param>
+        /// <param name="hidden">If set to <c>true</c> hidden files/directories will also be taken into account.</param>
+        static public string[] GetTree(string path, bool sorted=true, bool hidden=false) => GetDir(path, 3, sorted, hidden);
+
 
         static FileList(){
-            MKL.Version("Tricky Units for C# - FileList.cs","18.08.24");
+            MKL.Version("Tricky Units for C# - FileList.cs","18.11.12");
 MKL.Lic    ("Tricky Units for C# - FileList.cs","ZLib License");
         }
     }
