@@ -1,7 +1,7 @@
 // Lic:
 //   GINI Is Not Ini.cs
 //   
-//   version: 18.11.12
+//   version: 18.11.13
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -321,6 +321,8 @@ namespace TrickyUnits
         {
             // This is a new approach for GINI.
             // The BlitzMax variant doesn't even support it.
+			// This has not yet been tested as there is no writer for it yet.
+			// I just need to find time to fully complete this experiment XD
             //g.init1st()
 
             var bt = new QuickStream(new MemoryStream(b)); //bytes.NewReader(b)
@@ -545,7 +547,7 @@ namespace TrickyUnits
         }
 
         public GINI(){
-            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.11.12");
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.11.13");
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
             var tb = debug;
         }
