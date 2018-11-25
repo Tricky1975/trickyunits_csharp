@@ -425,7 +425,7 @@ namespace TrickyUnits
         public void SaveSource(string filename)
         {
             var src = ToSource();
-            QOpen.SaveString(filename, src);
+            QuickStream.SaveString(filename, src);
         }
 
     }
@@ -512,7 +512,7 @@ namespace TrickyUnits
                 return null;
             }
             var ret = new TGINI();
-            var b = QOpen.GetFile(file);
+			var b = QuickStream.GetFile(file);
             return ParseBytes(b);
         }
 
