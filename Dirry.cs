@@ -1,7 +1,7 @@
 // Lic:
 //   Dirry.cs
 //   Dirry
-//   version: 18.09.28
+//   version: 18.11.25
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -18,19 +18,23 @@
 //   3. This notice may not be removed or altered from any source distribution.
 // EndLic
 
+#undef DirryDebug
+
 using System.Collections.Generic;
 using System;
+
 
 namespace TrickyUnits
 {
     class Dirry
     {
-        static Dirry(){
-            MKL.Version("Tricky Units for C# - Dirry.cs","18.09.28");
+        static Dirry()
+        {
+            MKL.Version("Tricky Units for C# - Dirry.cs","18.11.25");
             MKL.Lic    ("Tricky Units for C# - Dirry.cs","ZLib License");
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             nodollar = false;
-            Add("$Home$",home );
+            Add("$Home$", home);
             Add("$Documents$", $"{home}/Documents");
             Add("$MyDocs$", $"{home}/Documents");
             Add("$AppSupport$", $"{home}/.Tricky__ApplicationSupport"); // <- This is a dirty method, but unfortunately Mono and C# have very poor (read: no) support for doing this properly!!!
@@ -38,7 +42,7 @@ namespace TrickyUnits
             Add("$AppDir$", AppDomain.CurrentDomain.BaseDirectory);
             Add("$LaunchDir$", System.IO.Directory.GetCurrentDirectory()); // <- Please note this only is valid if this class is called right when the application starts up.
             nodollar = true;
-       }
+        }
 
         static bool nodollar = false;
         static readonly Dictionary<string, string> Troep = new Dictionary<string, string>();
@@ -69,7 +73,9 @@ namespace TrickyUnits
             var ret = str;
             foreach (string k in Troep.Keys)
             {
+#if DirryDebug
                 Console.WriteLine($"{k} = {Troep[k]}");
+#endif
                 ret = ret.Replace(k, Troep[k]);
             }
             return ret;
