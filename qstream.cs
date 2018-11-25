@@ -351,7 +351,7 @@ namespace TrickyUnits
 		public const byte LittleEndian = 1;
 		public const byte BigEndian = 2;
 
-		static void d() => Console.WriteLine("\007WARNING!!!\nA call to the deprecated QOpen class was done! Notify the coder of this program to have it replaced by QuickStream");
+		static void d() => Console.WriteLine($"{((char)7).ToString()}WARNING!!!\nA call to the deprecated QOpen class was done! Notify the coder of this program to have it replaced by QuickStream");
 
 		public void Hello() { d(); QuickStream.Hello(); }
 		public static QuickStream ReadFile(string filename, byte EndianCode = LittleEndian) { d(); return QuickStream.ReadFile(filename, EndianCode); }
