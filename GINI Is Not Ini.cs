@@ -1,7 +1,7 @@
 // Lic:
 //   GINI Is Not Ini.cs
 //   
-//   version: 18.11.13
+//   version: 18.11.25
 //   Copyright (C) 2018 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
@@ -303,7 +303,7 @@ namespace TrickyUnits
                                 break;
                             case "LIST":
                                 //g.lists[lst] = append(g.lists[lst], UnIniString(line)) //ListAddLast lst,uninistring(line)
-                                lst.Add(GINI.UnIniString(line));
+                                lst.Add(GINI.UnIniString(line).Trim());
                                 break;
                             case "CALL":
                                 Console.WriteLine($"WARNING! I cannot execute line {linenumber} as the [CALL] block is not supported in C#\n");
@@ -547,7 +547,7 @@ namespace TrickyUnits
         }
 
         public GINI(){
-            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.11.13");
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.11.25");
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
             var tb = debug;
         }
