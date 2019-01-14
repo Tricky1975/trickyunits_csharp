@@ -1,8 +1,8 @@
 // Lic:
 //   GINI Is Not Ini.cs
 //   
-//   version: 18.11.25
-//   Copyright (C) 2018 Jeroen P. Broks
+//   version: 19.01.14
+//   Copyright (C) 2018, 2019 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
 //   arising from the use of this software.
@@ -45,8 +45,13 @@ namespace TrickyUnits
 
         Dictionary<string, string> vars = new Dictionary<string, string>();
         Dictionary<string, List<string>> lists = new Dictionary<string, List<string>>();
-        //lists map[string] qll.StringList
-        //init bool
+		//lists map[string] qll.StringList
+		//init bool
+
+		/// <summary>
+		/// When set (default) all variables will be returned in trimmed form.
+		/// </summary>
+		public bool AlwaysTrim = true;
 
 
         public TGINI()
@@ -96,7 +101,8 @@ namespace TrickyUnits
             //if v,ok:=g.vars[strings.ToUpper(s)];ok {
             if (g.vars.ContainsKey(s.ToUpper()))
             {
-                return g.vars[s.ToUpper()];
+				if (AlwaysTrim) return g.vars[s.ToUpper()].Trim();
+				return g.vars[s.ToUpper()];
             }
             else
             {
@@ -547,7 +553,7 @@ namespace TrickyUnits
         }
 
         public GINI(){
-            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","18.11.25");
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","19.01.14");
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
             var tb = debug;
         }
