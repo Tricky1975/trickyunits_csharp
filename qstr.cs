@@ -1,8 +1,8 @@
 // Lic:
 //   qstr.cs
 //   Quick String Functions
-//   version: 18.10.23
-//   Copyright (C) 2018 Jeroen P. Broks
+//   version: 19.01.14
+//   Copyright (C) 2018, 2019 Jeroen P. Broks
 //   This software is provided 'as-is', without any express or implied
 //   warranty.  In no event will the authors be held liable for any damages
 //   arising from the use of this software.
@@ -21,6 +21,7 @@
 
 using System;
 
+
 namespace TrickyUnits
 {
     /// <summary>
@@ -31,7 +32,7 @@ namespace TrickyUnits
     {
         static qstr()
         {
-            MKL.Version("Tricky Units for C# - qstr.cs","18.10.23");
+            MKL.Version("Tricky Units for C# - qstr.cs","19.01.14");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -111,6 +112,23 @@ namespace TrickyUnits
                 }
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Returns a string with the wanted suffix if the suffix hasn't already been set yet!
+        /// </summary>
+        public static string SetSuffix(string ori,string suffix,bool casesensitive=false){
+            if (Suffixed(ori, suffix) || (!casesensitive && Suffixed(ori.ToUpper(), suffix.ToUpper()))) return ori;
+            return ori + suffix;
+        }
+
+        /// <summary>
+        /// Returns a string with the wanted prefix if the suffix hasn't already been set yet!
+        /// </summary>
+        public static string SetPrefix(string ori, string prefix, bool casesensitive = false)
+        {
+            if (Prefixed(ori, prefix) || (!casesensitive && Prefixed(ori.ToUpper(), prefix.ToUpper()))) return ori;
+            return prefix+ori;
         }
 
         /// <summary>
