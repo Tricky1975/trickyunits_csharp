@@ -51,8 +51,14 @@ namespace TrickyUnits
 
         public static string Mid(string s, int pos, int l = 1)
         {
+            /*
             if (pos + l > s.Length) return s;
             return s.Substring(pos - 1, l);
+            */
+            // This is slower, but at least it works.... I hope!
+            var ret = "";
+            for (int i = 0; i < l; i++) ret += s.Substring(i+(pos-1),1); 
+            return ret;
         }
 
         public static int Len(string s) => s.Length;  // The only reason why I put this one in, was for quick translations from BlitzMax.
