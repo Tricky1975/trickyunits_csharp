@@ -45,9 +45,10 @@ namespace TrickyUnits
                 return null;
             }
             // Listout
-            foreach (FileInfo fi in di.GetFiles()){
-                if ((gt == 0 || gt == 1 || gt == 3) && (hidden || fi.Name.Substring(0,1)!=".")) w.Add(fi.Name);
-            }
+            
+                foreach (FileInfo fi in di.GetFiles()) {
+                    if ((gt == 0 || gt == 1 || gt == 3) && (hidden || fi.Name.Substring(0, 1) != ".")) w.Add(fi.Name);
+                }            
             foreach (DirectoryInfo fi in di.GetDirectories()){
                 if (hidden || fi.Name.Substring(0, 1) != "."){
                     switch (gt)
