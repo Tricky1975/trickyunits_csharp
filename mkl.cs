@@ -33,7 +33,7 @@ namespace TrickyUnits
             VERSIONS[f] = v;
         }
 
-        // <summary>Defines license field</summary>
+        /// <summary>Defines license field</summary>
         static public void Lic(string f, string l){
             LICENSES[f] = l;
         }
