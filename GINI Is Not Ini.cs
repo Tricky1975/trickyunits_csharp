@@ -764,7 +764,7 @@ namespace TrickyUnits {
         /// <summary>
         /// Does nothing, but calling this function forces C# to init this class, causing the MKL version info to be up-to-date!
         /// </summary>
-        static void Hello() { }
+        static public void Hello() { }
 
         static  GINI() {
             MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","19.04.24");
