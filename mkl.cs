@@ -69,6 +69,13 @@ namespace TrickyUnits {
             return s.Substring(s.Length - l, l);
         }
 
+        static string Left(string s, int l = 1)
+        {
+            if (l > s.Length) return s;
+            return s.Substring(0, l);
+        }
+
+
 
 
         /// <summary>
@@ -99,6 +106,12 @@ namespace TrickyUnits {
                 }
                 return ret;
             }
+        }
+
+        static public string CYear(int iyear) {
+            var nyear = $"20{Left(Newest,2)}";
+            if ($"{iyear}" != nyear) return $"{iyear}-{nyear}";
+            return $"{iyear}";
         }
 
 
