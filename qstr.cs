@@ -19,6 +19,7 @@
 // EndLic
 
 
+
 using System;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
@@ -37,8 +38,8 @@ namespace TrickyUnits {
     /// </summary>
     class qstr {
         static qstr() {
-            MKL.Version("Tricky Units for C# - qstr.cs", "19.04.24");
-            MKL.Lic("Tricky Units for C# - qstr.cs", "ZLib License");
+            MKL.Version("Tricky Units for C# - qstr.cs","19.04.24");
+            MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
         /// <summary>
@@ -300,5 +301,6 @@ namespace TrickyUnits {
 
 
 }
+
 
 
