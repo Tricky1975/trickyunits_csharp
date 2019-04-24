@@ -1,5 +1,28 @@
+// Lic:
+// FlagParse.cs
+// TrickyUnits - Parse Flags
+// version: 19.03.09
+// Copyright (C)  Jeroen P. Broks
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+// 1. The origin of this software must not be misrepresented; you must not
+// claim that you wrote the original software. If you use this software
+// in a product, an acknowledgment in the product documentation would be
+// appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+// misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+// EndLic
+
+
 using System.Collections.Generic;
 using System;
+
+
 
 namespace TrickyUnits
 {
@@ -16,25 +39,29 @@ namespace TrickyUnits
         Dictionary<string, bool> hsd_bool = new Dictionary<string, bool>();
         Dictionary<string, bool> hsd_int = new Dictionary<string, bool>();
         List<string> StrayArgs = new List<string>();
+
         bool parsed = false;
 
-        public FlagParse(string[] parameters)
-        {
-            MKL.Version("", "1.2.3");
-            MKL.Lic("", "");
+
+
+        public FlagParse(string[] parameters) {
+            MKL.Version("Tricky Units for C# - FlagParse.cs","19.03.09");
+            MKL.Lic    ("Tricky Units for C# - FlagParse.cs","ZLib License");
             basis = parameters;
         }
+
+
 
         /// <summary>
         /// Creates string readout flag. When not set up by startup, default value will be created.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defaultvalue"></param>
-        public void CrString(string key, string defaultvalue)
-        {
+        public void CrString(string key, string defaultvalue) {
             def_string[key] = defaultvalue;
             if (!hsd_string.ContainsKey(key)) hsd_string[key] = true;
         }
+
         /// <summary>
         /// Creates string readout flag. User will be required to give a value.
         /// </summary>
@@ -44,6 +71,7 @@ namespace TrickyUnits
             hsd_string[key] = false;
             CrString(key, "");
         }
+
 
         /// <summary>
         /// Creates int readout flag. When not set up by startup, default value will be created.
@@ -115,9 +143,13 @@ namespace TrickyUnits
                     expecting = false;
                 } else if (qstr.Prefixed(w,"-")) {
                     lastflag = qstr.RemPrefix(w, "-");
-                    if (def_string.ContainsKey(lastflag) || def_int.ContainsKey(lastflag))
+                    if (def_int.ContainsKey(lastflag) || def_int.ContainsKey(lastflag)) {
                         expecting = true;
-                    else if (def_bool.ContainsKey(lastflag))
+                        lastype = 2;
+                    } else if (def_string.ContainsKey(lastflag) || def_string.ContainsKey(lastflag)) {
+                            expecting = true;
+                            lastype = 1;
+                        } else if (def_bool.ContainsKey(lastflag))
                         val_bool[lastflag] = !def_bool[lastflag];
                 } else {
                     StrayArgs.Add(w);
@@ -131,7 +163,7 @@ namespace TrickyUnits
 
             // Make sure all flags have a value
             foreach (string k in def_string.Keys) { if (!val_string.ContainsKey(k)) { if (chat) Console.WriteLine($"Flag {k} undefined!"); ret = false; } }
-            foreach (string k in def_int.Keys) { if (!val_string.ContainsKey(k)) { if (chat) Console.WriteLine($"Flag {k} undefined!"); ret = false; } }
+            foreach (string k in def_int.Keys) { if (!val_int.ContainsKey(k)) { if (chat) Console.WriteLine($"Flag {k} undefined!"); ret = false; } }
 
             // Return our success! (If it is a success)
             parsed = ret;
@@ -183,3 +215,4 @@ namespace TrickyUnits
 
     }
 }
+
