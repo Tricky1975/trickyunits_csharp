@@ -20,13 +20,14 @@
 
 
 
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 
 
-namespace TrickyUnits { 
+namespace TrickyUnits {
     /*
      * GINI is a very simple config parser and writer, designed for quickly 
      * saving and loading configuration files, which should be readable for the 
@@ -52,11 +53,11 @@ namespace TrickyUnits {
         //lists map[string] qll.StringList
         //init bool
 
-            /// <summary>
-            /// Returns "true" if a variable exists in this GINI config
-            /// </summary>
-            /// <param name="k"></param>
-            /// <returns></returns>
+        /// <summary>
+        /// Returns "true" if a variable exists in this GINI config
+        /// </summary>
+        /// <param name="k"></param>
+        /// <returns></returns>
         public bool HasVar(string k) => vars.ContainsKey(k.ToUpper());
 
         /// <summary>
@@ -69,18 +70,16 @@ namespace TrickyUnits {
         }
 
 
-		/// <summary>
-		/// When set (default) all variables will be returned in trimmed form.
-		/// </summary>
-		public bool AlwaysTrim = true;
+        /// <summary>
+        /// When set (default) all variables will be returned in trimmed form.
+        /// </summary>
+        public bool AlwaysTrim = true;
 
 
 
 
 
-        public TGINI()
-
-        {
+        public TGINI() {
 
             var g = this;
 
@@ -108,9 +107,7 @@ namespace TrickyUnits {
 
 
 
-        ~TGINI()
-
-        {
+        ~TGINI() {
 
             GINI.DBGChat("TGINI class destroyed");
 
@@ -120,7 +117,7 @@ namespace TrickyUnits {
 
         /// <summary>Returns an array with all variable names!</summary>
 
-        public string[] Vars(){
+        public string[] Vars() {
 
             var tret = new List<string>();
 
@@ -136,9 +133,7 @@ namespace TrickyUnits {
 
         /// <summary>Define var</summary>
 
-        public void D(string s, string v)
-
-        {
+        public void D(string s, string v) {
 
             //g.init1st()
 
@@ -160,27 +155,19 @@ namespace TrickyUnits {
 
         /// <param name="s">Variable name</param>
 
-        public string C(string s)
-
-        {
+        public string C(string s) {
 
             var g = this;//g.init1st(); 
 
             //if v,ok:=g.vars[strings.ToUpper(s)];ok {
 
-            if (g.vars.ContainsKey(s.ToUpper()))
+            if (g.vars.ContainsKey(s.ToUpper())) {
 
-            {
+                if (AlwaysTrim) return g.vars[s.ToUpper()].Trim();
 
-				if (AlwaysTrim) return g.vars[s.ToUpper()].Trim();
+                return g.vars[s.ToUpper()];
 
-				return g.vars[s.ToUpper()];
-
-            }
-
-            else
-
-            {
+            } else {
 
                 return "";
 
@@ -192,9 +179,7 @@ namespace TrickyUnits {
 
         /// <summary>Creates a list if needed</summary> 
 
-        public void CL(string a, bool onlyifnotexist = true)
-
-        {
+        public void CL(string a, bool onlyifnotexist = true) {
 
             //var g = this; //g.init1st(); 
 
@@ -202,9 +187,7 @@ namespace TrickyUnits {
 
             if (lists.ContainsKey(ca)) {
 
-                if (onlyifnotexist)
-
-                {
+                if (onlyifnotexist) {
 
                     return;
 
@@ -236,9 +219,7 @@ namespace TrickyUnits {
 
         /// </summary> 
 
-        public void Add(string nlist, string value)
-
-        {
+        public void Add(string nlist, string value) {
 
             CL(nlist, true);
 
@@ -254,9 +235,7 @@ namespace TrickyUnits {
 
         /// <summary> Just returns the list. Creates it if it doesn't yet exist!</summary>
 
-        public List<string> List(string nlist)
-
-        {
+        public List<string> List(string nlist) {
 
             CL(nlist, true);
 
@@ -296,9 +275,7 @@ namespace TrickyUnits {
 
         /// <param name="idx">Index number.</param>
 
-        public string ListIndex(string list, int idx)
-
-        {
+        public string ListIndex(string list, int idx) {
 
             var l = List(list);
 
@@ -320,9 +297,7 @@ namespace TrickyUnits {
 
         /// </summary>
 
-        public void ListDupe(string source, string target)
-
-        {
+        public void ListDupe(string source, string target) {
 
             var cs = source.ToUpper();
 
@@ -330,9 +305,7 @@ namespace TrickyUnits {
 
 
 
-            if (ListExists(cs))
-
-            {
+            if (ListExists(cs)) {
 
                 lists[ct] = lists[cs];
 
@@ -348,8 +321,7 @@ namespace TrickyUnits {
 
         // want to merge, use the regular functions ;)
 
-        public void ParseLines(string[] l)
-        {
+        public void ParseLines(string[] l) {
             // this entire function has been translated from BlitzMax, however the [OLD] tag has been removed. (it was deprecated anyway).
             //g.init1st()
             //lst:=make([]string,0)
@@ -365,26 +337,20 @@ namespace TrickyUnits {
             var line = "";
             var listkeys = new string[0];
             var linenumber = 0;// Not present in BMax, but required in go, and makes it even easier of debugging too :P (And for C# I made a different loop function JUST for the ocassion).
-            for (linenumber = 0; linenumber < l.Length; linenumber++)
-            {
+            for (linenumber = 0; linenumber < l.Length; linenumber++) {
                 line = l[linenumber];
-                if (line != "")
-                {
-                    if (qstr.Left(qstr.MyTrim(line), 1) == "[" && qstr.Right(qstr.MyTrim(line), 1) == "]")
-                    {
+                if (line != "") {
+                    if (qstr.Left(qstr.MyTrim(line), 1) == "[" && qstr.Right(qstr.MyTrim(line), 1) == "]") {
                         var wTag = qstr.Mid(qstr.MyTrim(line), 2, qstr.Len(qstr.MyTrim(line)) - 2);
-                        if (wTag.ToUpper() == "OLD")
-                        {
+                        if (wTag.ToUpper() == "OLD") {
                             throw new Exception($"[OLD] has been removed in the Go and C# versions of GINI! (line #{linenumber})");
                             //fmt.Printf("ERROR! The [old] tag is NOT supported in this Go version of GINI (and in the original BlitzMax version it's deprecated) in line %d", linenumber)
                             //return
                         }
                         tagsplit = wTag.Split(':');
                         tag = tagsplit[0].ToUpper();
-                        if (tagsplit[0].ToUpper() == "LIST")
-                        {
-                            if (tagsplit[0].Length < 2)
-                            {
+                        if (tagsplit[0].ToUpper() == "LIST") {
+                            if (tagsplit[0].Length < 2) {
                                 throw new Exception($"ERROR! Incorrectly defined list in line #{linenumber}");
                                 //return;
                             }
@@ -394,8 +360,7 @@ namespace TrickyUnits {
                             var templist = new List<string>();
                             lst = templist;
                             listkeys = tagsplit[1].Split(',');
-                            foreach (string K in listkeys)
-                            {
+                            foreach (string K in listkeys) {
                                 //'ini.clist(UnIniString(K))
                                 //fmt.Printf("Creating list: %s\n",K)
                                 //g.lists[strings.ToUpper(UnIniString(K))] = lst
@@ -404,7 +369,7 @@ namespace TrickyUnits {
                             } //Next
                               //'lst=ini.list(UnIniString(K)) 
                         }//EndIf
-                    } else { 
+                    } else {
                         switch (tag) { //Select tag
                             case "REM":
                             case "LIC": // This for full compatibility with MKL in the future.
@@ -413,16 +378,14 @@ namespace TrickyUnits {
                             case "SYSTEM":
                                 tline = qstr.MyTrim(line);
                                 pos = tline.IndexOf(' ', 0); //tline.find(" ")
-                                if (pos <= -1)
-                                {
+                                if (pos <= -1) {
                                     pos = tline.Length;
                                 }
                                 cmd = qstr.Left(tline, pos).ToUpper();
                                 para = qstr.Mid(tline, pos, tline.Length - pos);
                                 //cmd  = strings.ToUpper(tline[:pos])
                                 //para = tline[pos + 1:]
-                                switch (cmd)
-                                {
+                                switch (cmd) {
                                     case "IMPORT":
                                     case "INCLUDE":
                                         //pos = strings.IndexAny(para,"/") //para.find("/")<0
@@ -476,17 +439,15 @@ namespace TrickyUnits {
             } // Next
         } //End Function
 
-        public void ReadFromBytes(byte[] b)
-
-        {
+        public void ReadFromBytes(byte[] b) {
 
             // This is a new approach for GINI.
 
             // The BlitzMax variant doesn't even support it.
 
-			// This has not yet been tested as there is no writer for it yet.
+            // This has not yet been tested as there is no writer for it yet.
 
-			// I just need to find time to fully complete this experiment XD
+            // I just need to find time to fully complete this experiment XD
 
             //g.init1st()
 
@@ -496,23 +457,17 @@ namespace TrickyUnits {
 
             var head = bt.ReadString(5);
 
-            if (head != "GINI\x1a")
-
-            {
+            if (head != "GINI\x1a") {
 
                 throw new Exception("The buffer read is not a GINI binary");
 
             }
 
-            while (true)
-
-            {
+            while (true) {
 
                 var tag = bt.ReadByte();
 
-                switch (tag)
-
-                {
+                switch (tag) {
 
                     case 1: // Basic Variable
 
@@ -574,9 +529,7 @@ namespace TrickyUnits {
 
         /// <summary>Converts gini data into a string you can save as a GINI file</summary>
 
-        public string ToSource()
-
-        {
+        public string ToSource() {
 
             var tme = DateTime.Now.ToString(); //:=time.Now()
 
@@ -610,9 +563,7 @@ namespace TrickyUnits {
 
             var ldone = new Dictionary<string, bool>();
 
-            foreach (string list in lists.Keys)
-
-            {
+            foreach (string list in lists.Keys) {
 
                 var point = lists[list];
 
@@ -620,19 +571,13 @@ namespace TrickyUnits {
 
                 //for k,p:=range g.listpointer
 
-                if (!ldone.ContainsKey(list))
+                if (!ldone.ContainsKey(list)) {
 
-                {
-
-                    foreach (string k in lists.Keys)
-
-                    {
+                    foreach (string k in lists.Keys) {
 
                         var p = lists[k];
 
-                        if (p == point)
-
-                        {
+                        if (p == point) {
 
                             if (slists != "") { slists += ","; }
 
@@ -658,7 +603,7 @@ namespace TrickyUnits {
 
                     ret += "[List:" + slists + "]\n";
 
-                    foreach (string v in lists[list]) { 
+                    foreach (string v in lists[list]) {
 
                         ret += v + "\n";
 
@@ -686,9 +631,7 @@ namespace TrickyUnits {
 
         /// <seealso cref="ToSource"/>
 
-        public void SaveSource(string filename)
-
-        {
+        public void SaveSource(string filename) {
 
             var src = ToSource();
 
@@ -703,28 +646,22 @@ namespace TrickyUnits {
 
 
 
+        /// <summary>
+        /// GINI Is Not Ini
+        /// This is the base "core" class of GINI.
+        /// </summary>
+        class GINI {
 
-    /// <summary>
-
-    /// GINI Is Not Ini
-
-    /// This is the base "core" class of GINI.
-
-    /// </summary>
-
-    class GINI {
         const string allowedChars = "qwertyuiopasdfghjklzxcvbnm[]{}1234567890-_+$!@%^&*()_+QWERTYUIOPASDFGHJKL|ZXCVBNM<>?/ '.";
         // The functions below have also been translated from BlitzMax to Go and then been translated to C#... Maybe not the best way to go, but it should work :P
         // It tries to get unwanted characters out, but it's never been fully trustworthy.
         // Any ideas to get this fully working are welcome!
-        static  string IniString(string A)
-        {// XAllow been removed
+        static string IniString(string A) {// XAllow been removed
             var i = 0;
             //Local ret$[] = ["",A]
             var ret = "";
             var allowed = true;
-            for (i = 1; i <= A.Length; i++)
-            {
+            for (i = 1; i <= A.Length; i++) {
                 var found = false;
                 for (int j = 1; j <= allowedChars.Length; j++) { found = found || qstr.Mid(allowedChars, j) == qstr.Mid(A, i); }
                 allowed = allowed && found; //&& allowedChars.IndexAny(allowedChars, string(A[i])) > (-1); //(allowedchars+XAllow).find(Chr(A[i]))>=0
@@ -732,12 +669,9 @@ namespace TrickyUnits {
                 var ascii = qstr.Mid(A, i).ToCharArray();
                 ret += $"#({(byte)ascii[0]})"; //fmt.Sprintf("#(%d)",A[i])
             } //Next
-            if (allowed)
-            {
+            if (allowed) {
                 return A;
-            }
-            else
-            {
+            } else {
                 return ret;
             }
         }// Return ret[allowed]   //End Function
@@ -745,128 +679,74 @@ namespace TrickyUnits {
 
 
         // Undo the inistring
-
-        static public string UnIniString(string A)
-
-        {
-
+                static public string UnIniString(string A) {
             var ret = A;
-
-            for (int i = 0; i < 256; i++)
-
-            {
-
+            for (int i = 0; i < 256; i++) {
                 //ret = strings.Replace(ret, fmt.Sprintf("#(%d)",i),string (i),-900)
-
                 //ret = string.Replace(ret,"#u("+i+")",string(i))
-
                 ret = ret.Replace($"#({i})", ((char)i).ToString());
-
             } //Next
-
             return ret;
-
         } //End Function
 
 
 
-        static public TGINI ReadFromLines(string[] lines)
-
-        {
-
+        static public TGINI ReadFromLines(string[] lines) {
             var ret = new TGINI();
-
             //ret.init1st()
-
             ret.ParseLines(lines);
-
             return ret;
-
         }
 
 
 
-        static  TGINI ReadFromBytes(byte[] thebytes)
-
-        {
-
+        static TGINI ReadFromBytes(byte[] thebytes) {
             var ret = new TGINI();
-
             //ret.init1st()
-
             ret.ReadFromBytes(thebytes);
-
             return ret;
-
         }
 
 
 
 
-
-        // This function can read a GINI file.
-
-        // Either being a 'text' file or 'compiled' file doesn't matter
-
-        // this routine can autodetect that.
-
-        static public TGINI ReadFromFile(string file, bool AcceptNonExistance=false) {
+        /// <summary>
+        /// This function can read a GINI file.
+        /// Either being a 'text' file or 'compiled' file doesn't matter
+        /// this routine can autodetect that.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="AcceptNonExistance"></param>
+        /// <returns></returns>
+        static public TGINI ReadFromFile(string file, bool AcceptNonExistance = false) {
             if (!File.Exists(file)) {
                 if (AcceptNonExistance) return new TGINI();
                 Console.WriteLine($"GINI file {file} doesn't exist");
                 return null;
             }
             var ret = new TGINI();
-			var b = QuickStream.GetFile(file);
+            var b = QuickStream.GetFile(file);
             return ParseBytes(b);
         }
 
 
 
-        // This can be used when you have alternative ways to load a file (like JCR6 for example).
-
-        // Whether these bytes form a text file or a "compiled" gini file doesn't matter, this routine will autoamtically detect it and call the correct parser.
-
-        static TGINI ParseBytes(byte[] b)
-
-        {
-
+        /// <summary>This can be used when you have alternative ways to load a file (like JCR6 for example).
+        /// Whether these bytes form a text file or a "compiled" gini file doesn't matter, this routine will autoamtically detect it and call the correct parser.</summary>
+        static TGINI ParseBytes(byte[] b) {
             TGINI ret;
-
             string head = "";
-
-            if (b.Length > 5)
-
-            {
-
+            if (b.Length > 5) {
                 for (int i = 1; i < 5; i++) { head += qstr.Chr(b[i]); }
-
             }
-
-            if (head == "GINI\x1a")
-
-            {
-
+            if (head == "GINI\x1a") {
                 ret = ReadFromBytes(b);
-
-            }
-
-            else
-
-            {
-
+            } else {
                 var s = System.Text.Encoding.Default.GetString(b); //Console.WriteLine($"[Parsing]\n{s}\n[/Parsing]");
-
                 var sl = s.Split('\n');
-
                 ret = ReadFromLines(sl);
-
             }
-
             return ret;
-
-
-
         }
 
 
@@ -875,20 +755,20 @@ namespace TrickyUnits {
 
 
 
-        static public void DBGChat(string a){
-
-            if (debug) { Console.WriteLine(a); }
-
+        static public void DBGChat(string a) {
+            if (debug) { Console.WriteLine(a); System.Diagnostics.Debug.WriteLine(a); }
         }
 
 
+        
+        /// <summary>
+        /// Does nothing, but calling this function forces C# to init this class, causing the MKL version info to be up-to-date!
+        /// </summary>
+        static void Hello() { }
 
-        public GINI(){
-
+        static  GINI() {
             MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","19.04.24");
-
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
-
             var tb = debug;
 
         }
@@ -896,5 +776,6 @@ namespace TrickyUnits {
     }
 
 }
+
 
 
