@@ -36,16 +36,15 @@ namespace TrickyUnits {
     /// Nothing special :P
     /// </summary>
     class qstr {
-        static qstr()
-
-        {
-
-            MKL.Version("Tricky Units for C# - qstr.cs","19.04.24");
-
-            MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
-
+        static qstr() {
+            MKL.Version("Tricky Units for C# - qstr.cs", "19.04.24");
+            MKL.Lic("Tricky Units for C# - qstr.cs", "ZLib License");
         }
 
+        /// <summary>
+        /// Does nothing, but calling this just forces C# to load this class.
+        /// </summary>
+        public static void Hello() { }
 
 
         /// <summary>
@@ -281,26 +280,15 @@ namespace TrickyUnits {
 
 
 
-        public static string sprintf(string input, params object[] inpVars)
-
-        {
-
+        public static string sprintf(string input, params object[] inpVars) {
             // This function was authored by https://stackoverflow.com/users/598420/anirudha
-
             // https://stackoverflow.com/questions/14482341/c-net-and-sprintf-syntax
-
             // Now I am not fully happy about this, as it does support the basics %s and %d etc, but it has no support for %4d and stuff like that
-
             // But it's a start :P (RegEx has never been my forte).
-
             int i = 0;
-
             input = Regex.Replace(input, "%.", m => ("{" + i++/*increase have to be on right side*/ + "}"));
-
             //Console.WriteLine($"input = {input}");
-
             return string.Format(input, inpVars);
-
         }
 
 

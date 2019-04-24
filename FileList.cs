@@ -24,10 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace TrickyUnits
-{
-    public class FileList
-    {
+namespace TrickyUnits {
+    public class FileList {
         // This variable contains the error message if something went wrong
         static string FLError = "";
 
@@ -37,22 +35,22 @@ namespace TrickyUnits
         /// gt     = search type 0 is files only, with setting 1 directories can be listed as well, 2 will list directories only, and 3 will generate a tree with all directories.
         /// hidden = Allow hidden files in the search results. Please note, hidden means by UNIX STANDARDS, so it will only check if a file is prefixed with a "." or not!
         /// </summary>
-        static public string[] GetDir(string path, int gt=0, bool sorted=true, bool hidden=false){
+        static public string[] GetDir(string path, int gt = 0, bool sorted = true, bool hidden = false) {
             // init
             FLError = "";
             var w = new List<string>();
             var di = new DirectoryInfo(path);
             // Check
             if (!di.Exists) {
-                FLError="TrickyFileList.FileList.GetDir(\""+path+"\","+gt+","+","+sorted+","+hidden+"): Directory does not exist!";
+                FLError = "TrickyFileList.FileList.GetDir(\"" + path + "\"," + gt + "," + "," + sorted + "," + hidden + "): Directory does not exist!";
                 return null;
             }
             // Listout
-                foreach (FileInfo fi in di.GetFiles()) {
-                    if ((gt == 0 || gt == 1 || gt == 3) && (hidden || fi.Name.Substring(0, 1) != ".")) w.Add(fi.Name);
-                }            
-            foreach (DirectoryInfo fi in di.GetDirectories()){
-                if (hidden || fi.Name.Substring(0, 1) != "."){
+            foreach (FileInfo fi in di.GetFiles()) {
+                if ((gt == 0 || gt == 1 || gt == 3) && (hidden || fi.Name.Substring(0, 1) != ".")) w.Add(fi.Name);
+            }
+            foreach (DirectoryInfo fi in di.GetDirectories()) {
+                if (hidden || fi.Name.Substring(0, 1) != ".") {
                     switch (gt) {
                         case 1:
                         case 2:
@@ -61,7 +59,7 @@ namespace TrickyUnits
                         case 3:
                             var gd = GetDir(path + "/" + fi.Name, 3, false, hidden);
                             if (gd == null) return null; // Error catching. FLError has already been defined so no need to do that again!
-                            foreach (string nf in gd){
+                            foreach (string nf in gd) {
                                 w.Add(fi.Name + "/" + nf);
                             }
                             break;
@@ -83,16 +81,18 @@ namespace TrickyUnits
         /// <param name="path">Path to be turned into a tree</param>
         /// <param name="sorted">If set to <c>true</c> all entries will be sorted.</param>
         /// <param name="hidden">If set to <c>true</c> hidden files/directories will also be taken into account.</param>
-        static public string[] GetTree(string path, bool sorted=true, bool hidden=false) => GetDir(path, 3, sorted, hidden);
+        static public string[] GetTree(string path, bool sorted = true, bool hidden = false) => GetDir(path, 3, sorted, hidden);
 
 
+        /// <summary>
+        /// Does nothing, but calling this forces C# to initiate this class updating the MKL version stuff in the process!
+        /// </summary>
+        static public void Hello() { }
 
 
-
-        static FileList(){
-            MKL.Version("Tricky Units for C# - FileList.cs","19.03.09");
-
-            MKL.Lic    ("Tricky Units for C# - FileList.cs","ZLib License");
+        static FileList() {
+            MKL.Version("Tricky Units for C# - FileList.cs", "19.03.09");
+            MKL.Lic("Tricky Units for C# - FileList.cs", "ZLib License");
         }
 
     }
