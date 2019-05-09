@@ -1,7 +1,7 @@
 // Lic:
 // QuickConsoleColors.cs
 // Quick Console Colors
-// version: 19.04.24
+// version: 19.05.09
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -19,13 +19,14 @@
 // EndLic
 
 
+
 using System;
 using System.Text;
 
 namespace TrickyUnits {
     static class QCol {
         static QCol() {
-            MKL.Version("Tricky Units for C# - QuickConsoleColors.cs","19.04.24");
+            MKL.Version("Tricky Units for C# - QuickConsoleColors.cs","19.05.09");
             MKL.Lic    ("Tricky Units for C# - QuickConsoleColors.cs","ZLib License");
         }
 
@@ -64,4 +65,5 @@ namespace TrickyUnits {
         }
     }
 }
+
 
