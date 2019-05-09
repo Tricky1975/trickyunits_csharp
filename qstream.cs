@@ -111,229 +111,122 @@ namespace TrickyUnits
 
 
 
-		/// <summary>
-
-		/// Reads a set of bytes into a byte array. The checkendian bool can be used to auto-reverse the array based on the endian settings of your CPU and the setting you gave while opening this stream.
-
-		/// </summary>
-
-		/// <returns>The byte array.</returns>
-
-		/// <param name="number">Number bytesto be read.</param>
-
-		/// <param name="checkendian">If set to <c>true</c> checkendian.</param>
-
-		public byte[] ReadBytes(int number, bool checkendian = false)
-
-		{
-
-			if (checkendian) return GrabBytes(number);
-
-			byte[] ret = new byte[number];
-
-			mystream.Read(ret, 0, number);
-
-			truepos += number;
-
-			return ret;
-
-		}
+        /// <summary>
+        /// Reads a set of bytes into a byte array. The checkendian bool can be used to auto-reverse the array based on the endian settings of your CPU and the setting you gave while opening this stream.
+        /// </summary>
+        /// <returns>The byte array.</returns>
+        /// <param name="number">Number bytesto be read.</param>
+        /// <param name="checkendian">If set to <c>true</c> checkendian.</param>
+        public byte[] ReadBytes(int number, bool checkendian = false) {
+            if (checkendian) return GrabBytes(number);
+            byte[] ret = new byte[number];
+            mystream.Read(ret, 0, number);
+            truepos += number;
+            return ret;
+        }
 
 
 
 		/// <summary>
-
 		/// Reads a 32bit integer from the stream.
-
 		/// </summary>
-
 		/// <returns>The int.</returns>
-
 		public int ReadInt() { return BitConverter.ToInt32(GrabBytes(4), 0); }
 
 
 
 		/// <summary>
-
 		/// Reads a 64bit integer from the stream
-
 		/// </summary>
-
 		/// <returns>The long.</returns>
-
 		public long ReadLong() { return BitConverter.ToInt64(GrabBytes(8), 0); }
 
 
+        /// <summary>
+        /// Reads a single byte.
+        /// </summary>
+        /// <returns>The byte.</returns>
+        public byte ReadByte() {
+            byte[] b = new byte[1];
+            mystream.Read(b, 0, 1);
+            truepos++;
+            return b[0];
+        }
 
-		/// <summary>
-
-		/// Reads a single byte.
-
-		/// </summary>
-
-		/// <returns>The byte.</returns>
-
-		public byte ReadByte()
-
-		{
-
-			byte[] b = new byte[1];
-
-			mystream.Read(b, 0, 1);
-
-			truepos++;
-
-			return b[0];
-
-		}
-
-		public string ReadString(int length = 0)
-
-		{
-
-			int l = length;
-
-			if (l == 0) { l = ReadInt(); }
-
-			var ret = new byte[l];
-
-			for (int i = 0; i < l; i++) { ret[i] = ReadByte(); }
-
-			return Encoding.Default.GetString(ret);
-
-		}
+        public string ReadString(int length = 0) {
+            int l = length;
+            if (l == 0) { l = ReadInt(); }
+            var ret = new byte[l];
+            for (int i = 0; i < l; i++) { ret[i] = ReadByte(); }
+            return Encoding.Default.GetString(ret);
+        }
 
 
 
         /// <summary>
-
         /// Reads a line and returns it as a string. 
-
         /// This function should be compatible with both Unix and Windows new-line markers.
-
         /// </summary>
-
         /// <returns>Line as a string</returns>
-
-        public string ReadLine()
-
-        {
-
+        public string ReadLine() {
             /* faster but doesn't work
-
             var o = Position;
-
             var x = ReadByte();
-
             while ((!EOF) && x != 10 && x != 13) {
-
                 x = ReadByte();
-
                 Position++;
-
             }
-
             var e = Position;
-
             var c = e;
-
             if (!EOF) {
-
                 e = Position - 1;
-
                 x = ReadByte();
-
                 if (x == 10 || x == 13) c++;
-
             }
-
             Position = o;
-
             int l = (int)e - (int)o;
-
             string ret = ReadString(l);
-
             if (ret.Contains("\n") || ret.Contains("\r"))
-
                 throw new Exception($"INTERNAL ERROR! -- ReadLine output not correct!\nPosition {Position} / {ret} / \\n{ret.IndexOf('\n')} / \\r{ret.IndexOf('\r')} / o{o} / c{c} / e{e} / l{l}");
-
             return ret;
-
             */
 
 
-
             // This is very extremely slow, but at least it should work... right?
-
-            var ret = "";
-
+            var ret = new StringBuilder();
             byte x;
-
             byte x2;
-
             while (true) {
-
                 x = ReadByte();
-
                 if (x == 10 || x == 13 || EOF) break;
-
-                ret += qstr.Chr(x); // <<<--- THIS WILL SLOW THINGS DOWN!!!
-
+                ret.Append(qstr.Chr(x)); // <<<--- THIS WILL SLOW THINGS DOWN!!!
             }
-
             if (!EOF) {
-
                 x2 = ReadByte();
-
-                if (x != 13 || x != 10 || x==x2) Position--;
-
+                if (x != 13 || x != 10 || x == x2) Position--;
             }
-
-            return ret;
-
+            return ret.ToString();
         }
 
 
 
 		public bool ReadBoolean() { return ReadByte() > 0; }
-
 		public uint ReadUnSignedInt() { return BitConverter.ToUInt32(GrabBytes(4), 0); }
-
 		public ulong ReadUnSignedLong() { return BitConverter.ToUInt64(GrabBytes(8), 0); }
-
-		public string ReadNullString()
-
-		{ // Reads a null-terminated string, which is a very common way to end a string in C
-
-			var np = Position;
-
-			var ln = 0;
-
-			byte ch;
-
-			List<byte> chs = new List<byte>();
-
-			do
-
-			{
-
-				ch = ReadByte();
-
-				if (ch > 0)
-
-				{
-
-					ln++;
-
-					chs.Add(ch);
-
-				}
-
-			} while (ch > 0);
-
-			return Encoding.Default.GetString(chs.ToArray());
-
-		}
+        public string ReadNullString() { // Reads a null-terminated string, which is a very common way to end a string in C
+            var np = Position;
+            var ln = 0;
+            byte ch;
+            List<byte> chs = new List<byte>();
+            do {
+                ch = ReadByte();
+                if (ch > 0) {
+                    ln++;
+                    chs.Add(ch);
+                }
+            } while (ch > 0);
+            return Encoding.Default.GetString(chs.ToArray());
+        }
 
 
 
@@ -582,21 +475,19 @@ namespace TrickyUnits
 
 
 		/// <summary>
-
 		/// Saves an entire string as a file
-
 		/// </summary>
-
 		/// <param name="filename">Filename.</param>
-
 		/// <param name="thestring">The string.</param>
-
 		public static void SaveString(string filename, string thestring) {
             File.WriteAllText(filename, thestring);
             // var bt = WriteFile(filename);
 			// bt.WriteString(thestring, true);
 			//bt.Close();
 		}
+
+        public static void SaveBytes(string filename, byte[] buf) => File.WriteAllBytes(filename, buf);
+        
 
 
 
