@@ -30,6 +30,9 @@ namespace TrickyUnits {
     /// <summary>MKL (MaKe License) was a system I set up for automatically adding license texts and version numbering. This way I can always be sure version changes never go without nummeric changes. It's a very simplistic system, but it does what it has to do. :)</summary>
     class MKL
     {
+        static public string MyExe => System.Reflection.Assembly.GetEntryAssembly().Location;
+
+
         static SortedDictionary<string, string> VERSIONS = new SortedDictionary<string, string>();
         static SortedDictionary<string, string> LICENSES = new SortedDictionary<string, string>();
 
