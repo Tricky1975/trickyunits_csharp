@@ -20,6 +20,7 @@
 
 
 using System;
+using System.Text;
 
 namespace TrickyUnits {
     static class QCol {
@@ -29,7 +30,7 @@ namespace TrickyUnits {
         }
 
         /// <summary>Does nothing at all. But calling it forces C# to load this class making sure the version data is up-to-date!</summary>
-        static public void Hello();
+        static public void Hello() { }
 
         static ConsoleColor obcl = Console.BackgroundColor;
         static ConsoleColor ofcl = Console.ForegroundColor;
@@ -44,7 +45,23 @@ namespace TrickyUnits {
         public static void Cyan(string m) => ColWrite(ConsoleColor.Cyan, m);
         public static void White(string m) => ColWrite(ConsoleColor.White, m);
         public static void Green(string m) => ColWrite(ConsoleColor.Green, m);
+        public static void Blue(string m) => ColWrite(ConsoleColor.Blue, m);
 
+        public static int DoingTab = 10;
+        public static void Doing(string a,string b,string ending="\n") {
+            var aa = new StringBuilder( a+": ");
+            while (aa.Length < DoingTab) aa .Append( " ");
+            Yellow(aa.ToString());
+            Cyan($"{b}{ending}");            
+        }
+
+
+        public static void QuickError(string a) { // for non-fatal errors!
+            var aa = new StringBuilder("ERROR! ");
+            while (aa.Length < DoingTab) aa.Append(" ");
+            Red(aa.ToString());
+            Yellow($"{a}\n");
+        }
     }
 }
 
