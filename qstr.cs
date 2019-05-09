@@ -279,6 +279,8 @@ namespace TrickyUnits {
             return ret;
         }
 
+        public static string[] Split(string str, string splitstring) => Regex.Split(str, splitstring);
+
 
 
         public static string sprintf(string input, params object[] inpVars) {
