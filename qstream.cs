@@ -21,6 +21,7 @@
 
 
 
+
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -231,168 +232,92 @@ namespace TrickyUnits
 
 
 
-		void PutBytes(byte[] bytes)
-
-		{
-
-			switch (Endian)
-
-			{
-
-				case 1:
-
-					if (!IsLittleEndian) { Array.Reverse(bytes); }
-
-					break;
-
-				case 2:
-
-					if (IsLittleEndian) { Array.Reverse(bytes); }
-
-					break;
-
-			}
-
-			mystream.Write(bytes, 0, bytes.Length);
-
-			truepos += bytes.Length;
-
-		}
+        void PutBytes(byte[] bytes) {
+            switch (Endian) {
+                case 1:
+                    if (!IsLittleEndian) { Array.Reverse(bytes); }
+                    break;
+                case 2:
+                    if (IsLittleEndian) { Array.Reverse(bytes); }
+                    break;
+            }
+            mystream.Write(bytes, 0, bytes.Length);
+            truepos += bytes.Length;
+        }
 
 
 
 		/// <summary>
-
 		/// Writes a byte array into a stream. The checkendian bool can be used to auto-reverse the array based on the endian settings of your CPU and the setting you gave while opening this stream.
-
 		/// </summary>
-
 		/// <param name="bytes">Bytes.</param>
-
 		/// <param name="checkendian">If set to <c>true</c> checkendian.</param>
-
 		public void WriteBytes(byte[] bytes, bool checkendian = false) {
-
 			if (checkendian) { PutBytes(bytes); return; }
-
 			mystream.Write(bytes, 0, bytes.Length);
-
 			truepos += bytes.Length;
-
 		}
 
 
 
 		/// <summary>
-
 		/// Writes a byte to the file
-
 		/// </summary>
-
 		/// <param name="b">The blue component.</param>
-
 		public void WriteByte(byte b) {
-
 			byte[] ba = new byte[1]; ba[0] = b;
-
 			mystream.Write(ba, 0, 1);
-
 			truepos++;
-
 		}
 
-
-
 		/// <summary>
-
 		/// Writes a 32bit integer to the file
-
 		/// </summary>
-
 		/// <param name="i">The index.</param>
-
 		public void WriteInt(int i) {
-
 			byte[] bytes = BitConverter.GetBytes(i);
-
 			PutBytes(bytes);
-
 		}
 
 
-
 		/// <summary>
-
 		/// Writes a 64bit integer to the file
-
 		/// </summary>
-
 		/// <param name="i">The index.</param>
-
 		public void WriteLong(long i) {
-
 			byte[] bytes = BitConverter.GetBytes(i);
-
 			PutBytes(bytes);
-
 		}
 
-
-
 		/// <summary>
-
 		/// Writes a string. When "raw" is set to true, WriteString will only write the string itself. When set to false, it will prefix it with an 32bit integer containing the length of the string. (the byteorder of this interger depends on the Endian Settings given when opening the stream).
-
 		/// </summary>
-
 		/// <param name="s">S.</param>
-
 		/// <param name="raw">If set to <c>true</c> raw.</param>
-
 		public void WriteString(string s, bool raw = false) {
-
 			byte[] bytes = Encoding.UTF8.GetBytes(s);
-
 			if (!raw) WriteInt(s.Length);
-
 			PutBytes(bytes);
-
 		}
 
 
-
 		/// <summary>
-
 		/// Writes a boolean value as a byte (1 for true and 0 for <see langword="false"/>)
-
 		/// </summary>
-
 		/// <param name="b">If set to <c>true</c> b.</param>
-
 		public void WriteBool(bool b) {
-
 			if (b) { WriteByte(1); } else { WriteByte(0); }
-
 			truepos++;
-
 		}
-
 
 
 		/// <summary>
-
 		/// Closes the QuickStream
-
 		/// </summary>
-
 		public void Close() {
-
 			if (!closed) { mystream.Close(); }
-
 			closed = true;
-
 		}
-
 
 
 		~QuickStream() { Close(); }
@@ -400,25 +325,14 @@ namespace TrickyUnits
 
 
 		// former QOpen class
-
 		public const byte NoEndian = 0;
-
 		public const byte LittleEndian = 1;
-
 		public const byte BigEndian = 2;
 
-
-
-
-
 		public static void Hello() {
-
 			MKL.Version("Tricky Units for C# - qstream.cs","19.05.09");
-
 			MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
-
 		} // Basically does nothing, but it forces the MKL data to be parsed when called.
-
 
 
 		/// <summary>
@@ -454,23 +368,14 @@ namespace TrickyUnits
 		}
 
 
-
 		/// <summary>
-
 		/// Creates a QuickStream from a byte buffer
-
 		/// </summary>
-
 		/// <returns>The QuickStream</returns>
-
 		/// <param name="buffer">Buffer.</param>
-
 		/// <param name="Endian">Endian.</param>
-
 		public static QuickStream StreamFromBytes(byte[] buffer, byte Endian = LittleEndian) {
-
 			return new QuickStream(new MemoryStream(buffer), Endian);
-
 		}
 
 
@@ -489,9 +394,6 @@ namespace TrickyUnits
 
         public static void SaveBytes(string filename, byte[] buf) => File.WriteAllBytes(filename, buf);
         
-
-
-
 		/// <summary>
 		/// Loads an entire file as a string
 		/// </summary>
@@ -531,63 +433,36 @@ namespace TrickyUnits
         public static string[] LoadLines(string filename) { bool ignore=false; return LoadLines(filename, ref ignore); }
 
 
-
             /// <summary>
-
             /// A routine that loads a stringmap file into a full string Dictionary.
-
             /// </summary>
-
             /// <returns>The string map.</returns>
-
             /// <param name="filename">Filename.</param>
-
             public static Dictionary<string, string> LoadStringMap(string filename) {
-
 			var bt = ReadFile(filename);
-
 			var ret = new Dictionary<string, string>();
-
 			while (!bt.EOF) {
-
 				var key = bt.ReadString();
-
 				var value = bt.ReadString();
-
 				ret[key] = value;
-
 			}
-
 			bt.Close();
-
 			return ret;
-
 		}
 
 
 
 		/// <summary>
-
 		/// Loads a file into a byte array
-
 		/// </summary>
-
 		/// <returns>The file.</returns>
-
 		/// <param name="filename">Filename.</param>
-
 		public static byte[] GetFile(string filename) {
-
 			var bt = ReadFile(filename);
-
 			var ret = bt.ReadBytes((int)bt.Size);
-
 			bt.Close();
-
 			return ret;
-
 		}
-
 	}
 
 
@@ -603,44 +478,31 @@ namespace TrickyUnits
 
 
 	/// <summary>
-
 	/// Deprecated! Do not use! Use the QuickStream class in stead!
-
 	/// </summary>
-
 	class QOpen {
-
 		public const byte NoEndian = 0;
-
 		public const byte LittleEndian = 1;
-
 		public const byte BigEndian = 2;
 
-
-
-		static void d() => Console.WriteLine($"{((char)7).ToString()}WARNING!!!\nA call to the deprecated QOpen class was done! Notify the coder of this program to have it replaced by QuickStream");
-
+        static void d() { Console.Beep(); Console.WriteLine($"{((char)7).ToString()}WARNING!!!\nA call to the deprecated QOpen class was done! Notify the coder of this program to have it replaced by QuickStream"); }
 
 
 		public static void Hello() { d(); QuickStream.Hello(); }
-
 		public static QuickStream ReadFile(string filename, byte EndianCode = LittleEndian) { d(); return QuickStream.ReadFile(filename, EndianCode); }
-
 		public static QuickStream WriteFile(string filename, byte EndiancCode = LittleEndian) { d(); return QuickStream.WriteFile(filename, EndiancCode); }
-
 		public static QuickStream StreamFromBytes(byte[] buffer, byte Endian = LittleEndian) { d(); return QuickStream.StreamFromBytes(buffer, Endian); }
-
 		public static void SaveString(string filename, string thestring) { d(); QuickStream.SaveString(filename, thestring); }
-
 		public static string LoadString(string filename) { d(); return QuickStream.LoadString(filename); }
-
 		public static Dictionary<string, string> LoadStringMap(string filename) { d(); return QuickStream.LoadStringMap(filename); }
-
 		public static byte[] GetFile(string filename) { d(); return QuickStream.GetFile(filename); }
+
+        static QOpen() => d();
 
 	}
 
 }
+
 
 
 
