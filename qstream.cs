@@ -323,9 +323,33 @@ namespace TrickyUnits
 		~QuickStream() { Close(); }
 
 
+        /// <summary>
+        /// Opens the first entry it can find embedded in the Assembly suffixed with the given suffix as a Quickstream.
+        /// </summary>
+        /// <param name="suffix"></param>
+        /// <param name="Endian"></param>
+        /// <returns></returns>
+        static public QuickStream OpenEmbedded(string suffix,byte Endian = LittleEndian) {
+            foreach (string name in System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames()) {
+                //System.Diagnostics.Debug.WriteLine($"Emb>{name}");
+                if (name.EndsWith(suffix, StringComparison.InvariantCultureIgnoreCase)) {
+                    Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
+                    return new QuickStream(stream, Endian);
 
-		// former QOpen class
-		public const byte NoEndian = 0;
+                }
+            }
+            throw new Exception($"No embedded entries suffixed {suffix} found, in this Assembly!");
+        }
+
+        static public string StringFromEmbed(string suffix) {
+            var bt = OpenEmbedded(suffix);
+            var ret = bt.ReadString((int)bt.Size);
+            bt.Close();
+            return ret;
+        }
+
+        // former QOpen class
+        public const byte NoEndian = 0;
 		public const byte LittleEndian = 1;
 		public const byte BigEndian = 2;
 
