@@ -18,10 +18,27 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 
+
 using System.Diagnostics;
 namespace TrickyUnits {
+    /// <summary>
+    /// File request dialogs. Does require System.Windows.Forms in order to be used!
+    /// </summary>
     class FFS { // Not that internet slang abbreviation :-P
 
+        static FFS() {
+            MKL.Lic    ("Tricky Units for C# - FormSelectFiles.cs","ZLib License");
+            MKL.Version("Tricky Units for C# - FormSelectFiles.cs","19.06.15");
+        }
+
+        ///<summary>Only used to make sure all version info is loaded!</summary> 
+        public static void Hello() { }
+
+
+        /// <summary>
+        /// Request a directory through a dialog box.
+        /// </summary>
+        /// <returns></returns>
         public static string RequestDir() {
             string ret = "";
             using (var dialog = new System.Windows.Forms.FolderBrowserDialog()) {
@@ -84,6 +101,11 @@ namespace TrickyUnits {
             return ret;
         }
 
+        /// <summary>
+        /// Request a file.
+        /// </summary>
+        /// <param name="save">If set, the window will be set most of all for saving!</param>
+        /// <returns></returns>
         public static string RequestFile(bool save = false) {
             switch (save) {
                 case false:
@@ -97,4 +119,5 @@ namespace TrickyUnits {
 
     }
 }
+
 
