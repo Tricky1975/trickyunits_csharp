@@ -70,7 +70,9 @@ namespace TrickyUnits {
         static public void MapInsert(TMap M, object key, object value) => M.Map[key] = value;
         static public object MapValueForKey(TMap M,object key) {
             if (M.Map.ContainsKey(key)) return M.Map[key]; else return null;
+            
         }
+        static public Dictionary<object,object>.KeyCollection MapKeys(TMap M) => M.Map.Keys;
     }
 
     /// <summary>
@@ -164,76 +166,76 @@ Type RPGPoints
 	End Type
     */
 
-/* Moved to top of code in its own class
-Type RPGStat 
-	Field Pure
-	Field ScriptFile$
-	Field CallFunction$
-	Field Value
-	Field Modifier
-	End Type
-    */
-	
-            /*
-             * Moved to top of code in its own class
+        /* Moved to top of code in its own class
+        Type RPGStat 
+            Field Pure
+            Field ScriptFile$
+            Field CallFunction$
+            Field Value
+            Field Modifier
+            End Type
+            */
+
+        /*
+         * Moved to top of code in its own class
 Rem
 bbdoc: Contains character data.
 End Rem
 Type RPGCharacter
-	Field Name$
-	'Field StrData:StringMap = New StringMap
-	Field StrData:TMap = New TMap
-	Field Stats:TMap = New TMap
-	Field Lists:TMap = New TMap
-	Field Points:TMap = New TMap
-	Field PortraitBank:TBank
-	Field Portrait:TImage
-	
-	Method Stat:RPGStat(St$)
-	Return RPGStat(MapValueForKey(Stats,St))
-	End Method
-	
-	Method List:TList(lst$)
-	Return TList(MapValueForKey(Lists,lst))
-	End Method
-	
-	Method Point:RPGPoints(p$)
-	Return rpgpoints(MapValueForKey(Points,p))
-	End Method
-	
-	End Type
+Field Name$
+'Field StrData:StringMap = New StringMap
+Field StrData:TMap = New TMap
+Field Stats:TMap = New TMap
+Field Lists:TMap = New TMap
+Field Points:TMap = New TMap
+Field PortraitBank:TBank
+Field Portrait:TImage
+
+Method Stat:RPGStat(St$)
+Return RPGStat(MapValueForKey(Stats,St))
+End Method
+
+Method List:TList(lst$)
+Return TList(MapValueForKey(Lists,lst))
+End Method
+
+Method Point:RPGPoints(p$)
+Return rpgpoints(MapValueForKey(Points,p))
+End Method
+
+End Type
 */
-Global RPGChars:TMap = New TMap
-Global RPGParty$[] = New String[6]
+        static public TMap RPGChars = new TMap();
+        static public string[] RPGParty = new string[6];
 
 
-Rem
-returns: The character data tied to the requested tag
-End Rem
-Function GrabChar:RPGCharacter(Ch$)
-Return RPGCharacter(MapValueForKey(rpgchars,ch))
-End Function
+        /// <summary>
+        /// returns: The character data tied to the requested tag
+        /// </summary>        
+        static public RPGCharacter GrabChar(string Ch) => (RPGCharacter)TMap.MapValueForKey(RPGChars, Ch);
 
-Type TMe ' Deprecated
-	Field Char$,Stat$
-	End Type
 
-Private
-'Type linkeddata
-'	Field c1$,c2$,d$
-'	End Type
-'Global linkeddatalist:TList = New TList
-Type TRPGData
-	Field d$
-	End Type	
-Function dstr:StringMap(A:TMap)
-Local k$
-Local ret:StringMap = New StringMap
-For k=EachIn MapKeys(A)
-	MapInsert ret,k,TRPGData(MapValueForKey(A,k)).d
-	Next
-Return ret
-End Function
+        class TMe { // Deprecated. Only included to make sure conflicts never occur.
+            string Char = "", Stat = "";
+        }
+
+        //Private
+        //'Type linkeddata
+        //'	Field c1$,c2$,d$
+        //'	End Type
+        //'Global linkeddatalist:TList = New TList
+        class TRPGData {
+            string d;
+        }
+        static StringMap dstr(TMap A) {
+            //var k = "";
+            var ret = new StringMap();
+            foreach (string k in TMap.MapKeys(A))
+                TMap.MapInsert(ret, k, (TRPGData)TMap.MapValueForKey(A, k)).d;
+
+            return ret;
+        }
+
 Function ddat:TMap(A:StringMap)
 Local k$
 Local ret:TMap = New TMap
