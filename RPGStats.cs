@@ -49,6 +49,7 @@ MKL_Lic     "Tricky's Units - RPGStats.bmx","Mozilla Public License 2.0"
 */
 
 using UseJCR6;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace TrickyUnits {
@@ -78,6 +79,7 @@ namespace TrickyUnits {
             if (M.Map.ContainsKey(key)) return M.Map[key]; else return null;
             
         }
+        static public void ClearMap(TMap M) => M.Map.Clear();
         static public Dictionary<object,object>.KeyCollection MapKeys(TMap M) => M.Map.Keys;
     }
     #endregion
@@ -768,132 +770,149 @@ GALE_Register RPGChar,"RPGStats"
 */
         #endregion
 
-        Rem
-bbdoc: Loads all RPG data from a JCR directory.
-about: The database vars are part of this module, and will only return "True" if succesful"
-End Rem
-Function RPGLoad(LoadFrom:TJCRDir,Dir$="")
-Local D$ = Replace(Dir,"\","/"); If D And Right(D,1)<>"/" D:+"/"
-Local BT:TStream
-Local ak
-Local F$,P$,TN$
-Local LChars:TList = New TList
-Local ch:RPGCharacter
-Local tag
-Local sv:rpgstat
-Local sp:rpgpoints
-DebugLog "Loading party: "+Dir
-' Load party members
-BT = JCR_ReadFile(loadfrom,D+"Party")
-ak = 0
-RPGParty = New String[ ReadInt(BT) ]
-While Not Eof(BT)
-	If ak>= Len(RPGParty) Print "WARNING! Too many party members in party!"; Exit
-	RPGParty[ak] = TrickyReadString(BT)
-	DebugLog "Party Member #"+ak+"> "+RPGParty[ak]
-	ak:+1
-	Wend
-CloseFile bt
-ClearMap RPGChars
-' Let's first determine which characters we actually have?
-For F=EachIn MapKeys(loadfrom.entries)
-	P$ = Upper(D)+"CHARACTER/"
-	If Left(F,Len(P))=P And StripDir(F)="NAME" 
-		TN = ExtractDir(TJCREntry(MapValueForKey(loadfrom.entries,F)).FileName)
-		TN = StripDir(TN)
-		ListAddLast LChars,TN
-		EndIf
-	Next
-' Let's now load the characters
-For F=EachIn LChars
-	ch=New RPGCharacter
-	MapInsert RPGChars,f,ch
-	' Name
-	BT = JCR_ReadFile(LoadFrom,D+"Character/"+F+"/Name")
-	ch.Name = TrickyReadString(BT)
-	CloseFile BT
-	' Data
+        static private void DebugLog(string L) => Debug.WriteLine(L);
+
+        /// <summary>
+        /// Loads all RPG data from a JCR directory.
+        /// The database vars are part of this module, and will only return "True" if succesful"
+        /// </summary>
+static public void RPGLoad(TJCRDIR LoadFrom,string Dir = "") { 
+var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
+            QuickStream BT;
+            int ak;
+            //string F = "";
+            string P = "", TN = "";
+            var LChars = new List<string>();
+            RPGCharacter ch;
+            int tag;
+            RPGStat sv=null; // Compiler is stubborn and stupid, as this '=null' is NOT needed at all!
+            RPGPoints sp=null;
+            DebugLog($"Loading party: {Dir}");
+            // Load party members
+            BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Party"));
+            ak = 0;
+            RPGParty = new string[BT.ReadInt()];
+            while (BT.EOF) {
+                if (ak >= RPGParty.Length) {
+                    DebugLog("WARNING! Too many party members in party!");
+                    break;
+                }
+                RPGParty[ak] = BT.ReadString();
+                DebugLog($"Party Member #{ak}> {RPGParty[ak]}");
+
+                ak++;
+            }
+            BT.Close();
+            TMap.ClearMap(RPGChars);
+            // Let's first determine which characters we actually have?
+            foreach (string F in LoadFrom.Entries.Keys) {
+                P = $"{D.ToUpper()}CHARACTER/";
+                if (qstr.Left(F, qstr.Len(P)) == P && qstr.StripDir(F) == "NAME") {
+                    TN = qstr.ExtractDir(TJCREntry(MapValueForKey(loadfrom.entries, F)).FileName);
+                    TN = qstr.StripDir(TN);
+                    LChars.Add(TN);
+                }
+            }
+            // Let's now load the characters
+            foreach (string F in LChars) { 
+                ch = new RPGCharacter();
+            TMap.MapInsert( RPGChars, F, ch);
+                // Name
+                BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Character/" + F + "/Name"));
+                ch.Name = BT.ReadString();
+                BT.Close();
+	// Data
 	ch.strdata = ddat(LoadStringMap(LoadFrom,D+"Character/"+F+"/StrData"))
-	' Stats
-	bt = JCR_ReadFile(LoadFrom,D+"Character/"+F+"/Stats")
-	While Not Eof(BT)
-		tag = ReadByte(Bt)
-		'Print tag
-		Select tag
-			Case 1
-				TN = TrickyReadString(BT)
-				'Print TN
-				sv = New RPGStat
-				MapInsert ch.Stats,TN,sv
-			Case 2
-				sv.pure = ReadByte(BT)
-			Case 3
-				sv.scriptfile = TrickyReadString(BT)
-				sv.callfunction = TrickyReadString(BT)		
-			Case 4
-				sv.value = ReadInt(BT)
-			Case 5
-				sv.modifier = ReadInt(BT)
-			Default
-				EndGraphics
-				Notify "FATAL ERROR:~n~nUnknown tag in character ("+F+") stat file ("+tag+") within this savegame file "
-				End	
-			End Select
-		Wend	
-	CloseFile bt
-	' Lists
-	bt = JCR_ReadFile(LoadFrom,D+"Character/"+F+"/Lists")
-	While Not Eof(BT)
-		tag = ReadByte(BT)
-		Select tag
-			Case 1	
-				TN = TrickyReadString(BT)
-				MapInsert ch.lists,TN,New TList
-			Case 2
-				ListAddLast ch.list(TN),TrickyReadString(BT)
-			Default
-				EndGraphics
-				Notify "FATAL ERROR:~n~nUnknown tag in character ("+F+") list file ("+tag+") within this savegame file "
-				End			
-			End Select
-		Wend
-	CloseFile bt	
-	' Points
-	bt = JCR_ReadFile(LoadFrom,D+"Character/"+F+"/Points")
-	While Not Eof(BT)
-		tag = ReadByte(BT)
-		Select tag
-			Case 1
-				sp = New rpgpoints
-				TN = TrickyReadString(BT)
-				MapInsert ch.Points,tn,sp
-			Case 2
-				sp.maxcopy = TrickyReadString(BT)
-			Case 3	
-				sp.have = ReadInt(BT)
-			Case 4
-				sp.maximum = ReadInt(Bt)
-			Case 5
-				sp.minimum = ReadInt(bt) 
-			Default
-				EndGraphics
-				Notify "FATAL ERROR:~n~nUnknown tag in character ("+F+") points file ("+tag+") within this savegame file "
-				End
-			End Select
-		Wend
-	CloseFile bt
-	' Portrait
-	If JCR_Exists(loadfrom,D+"Character/"+F+"/Portrait.png")	
-		ch.portraitbank = JCR_B(LoadFrom,D+"Character/"+F+"/Portrait.png")	
-		ch.portrait = LoadImage(ch.portraitbank)	
-		If Not ch.portrait And MustHavePortrait
-			EndGraphics
-			Notify "FATAL ERROR:~n~nPortrait not well retrieved"
-			End
-			EndIf
-		EndIf
-	Next	
-Local linktype$,linkch1$,linkch2$,linkstat$	
+    // Stats
+                BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Stats"));
+                while (!BT.EOF) {
+                    tag = ReadByte(BT);
+                    //Print tag
+                    switch (tag) {
+                        case 1:
+                            TN = BT.ReadString();
+                            //Print TN
+                            sv = new RPGStat();
+                            TMap.MapInsert(ch.Stats, TN, sv);
+                            break;
+                        case 2:
+                            sv.Pure = (BT.ReadByte()!=(byte)0);
+                            break;
+                        case 3:
+                            sv.ScriptFile = BT.ReadString();
+                            sv.CallFunction = BT.ReadString();
+                            break;
+                        case 4:
+                            sv.Value = BT.ReadInt();
+                            break;
+                        case 5:
+                            sv.Modifier = BT.ReadInt();
+                            break;
+                        default:
+                            //EndGraphics
+                            throw new System.Exception($"FATAL ERROR:~n~nUnknown tag in character ({F}) stat file ({tag}) within this savegame file ");
+                    }
+                }
+                BT.Close();
+                // Lists
+                BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Lists"));
+                while (!BT.EOF) {
+                    tag = BT.ReadByte();
+                    switch (tag) {
+                        case 1:
+                            TN = BT.ReadString();
+                            TMap.MapInsert(ch.Lists, TN, new List<string>());
+                            break;
+                        case 2:
+                            ch.List(TN).Add(BT.ReadString());
+                            break;
+                        default:
+                            // EndGraphics
+                            throw new System.Exception($"FATAL ERROR:~n~nUnknown tag in character ({F}) list file ({tag}) within this savegame file ");
+                    }
+                }
+                BT.Close();
+                // Points
+                BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Points"));
+                while (!BT.EOF) {
+                    tag = BT.ReadByte();
+                    switch (tag) {
+                        case 1:
+                            sp = new RPGPoints();
+                            TN = BT.ReadString();
+                            TMap.MapInsert(ch.Points, tn, sp);
+                            break;
+                        case 2:
+                            sp.MaxCopy = BT.ReadString(BT);
+                            break;
+                        case 3:
+                            sp.Have = BT.ReadInt();
+                            break;
+                        case 4:
+                            sp.Maximum = BT.ReadInt();
+                            break;
+                        case 5:
+                            sp.Minimum = BT.ReadInt();
+                            break;
+                        default:
+                            //EndGraphics
+                            throw new System.Exception($"FATAL ERROR:~n~nUnknown tag in character ({F}) points file ({tag}) within this savegame file ");
+                    }
+                }
+                BT.Close();
+                // For the time being no portrait support!
+                // Portrait
+                //If JCR_Exists(loadfrom,D+"Character/"+F+"/Portrait.png")	
+                //	ch.portraitbank = JCR_B(LoadFrom,D+"Character/"+F+"/Portrait.png")	
+                //	ch.portrait = LoadImage(ch.portraitbank)	
+                //	If Not ch.portrait And MustHavePortrait
+                //		EndGraphics
+                //			Notify "FATAL ERROR:~n~nPortrait not well retrieved"
+                //			End
+                //EndIf
+                //		EndIf
+                //	Next	
+                string linktype = "", linkch1 = "", linkch2 = "", linkstat = "";
 If JCR_Exists(LoadFrom,D+"Links")	
 	bt = JCR_ReadFile(Loadfrom,D+"Links")
 	Repeat
