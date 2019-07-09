@@ -59,7 +59,7 @@ namespace TrickyUnits {
     #region Classes needed for quick translation from BlitzMax
     internal class StringMap {
         // This class was only required due to BlitzMax having no real map/dictionary support and using a separate library for this. Translating all the code into "pure" C# code would be too much work, so this solution will have to do.
-        static public void MapInsert(StringMap M,string key, string value) {
+        static public void MapInsert(StringMap M, string key, string value) {
             M.Map[key] = value;
         }
 
@@ -76,12 +76,12 @@ namespace TrickyUnits {
     internal class TMap {
         private Dictionary<object, object> Map = new Dictionary<object, object>();
         static public void MapInsert(TMap M, object key, object value) => M.Map[key] = value;
-        static public object MapValueForKey(TMap M,object key) {
+        static public object MapValueForKey(TMap M, object key) {
             if (M.Map.ContainsKey(key)) return M.Map[key]; else return null;
-            
+
         }
         static public void ClearMap(TMap M) => M.Map.Clear();
-        static public Dictionary<object,object>.KeyCollection MapKeys(TMap M) => M.Map.Keys;
+        static public Dictionary<object, object>.KeyCollection MapKeys(TMap M) => M.Map.Keys;
     }
     #endregion
 
@@ -142,6 +142,11 @@ namespace TrickyUnits {
 
     #region The actual library itself!
     static class RPG {
+        /// <summary>
+        /// Set this to the JCR compression driver you want (make sure the driver is properly loaded!)
+        /// </summary>
+        static public string JCRSTORAGE = "Store";
+
         // Just to prevent myself some headaches!
         const bool True = true;
         const bool False = false;
@@ -237,7 +242,7 @@ End Type
         //'	End Type
         //'Global linkeddatalist:TList = New TList
         class TRPGData {
-            public string d="";
+            public string d = "";
         }
         static StringMap dstr(TMap A) {
             //var k = "";
@@ -1003,113 +1008,116 @@ GALE_Register RPGChar,"RPGStats"
         }
 
 
-Rem 
-bbdoc: Saves the currently available RPG characters and party data
-End Rem
-Function RPGSave(SaveTo:Object,Dir$="")
-Local BT:TJCRCreate
-Local D$ = Replace(Dir,"\","/")
-Local BTE:TJCRCreateStream
-If TJCRCreate(SaveTo)
-	BT = TJCRCreate(Saveto)
-ElseIf String(SaveTo)
-	BT = JCR_Create(String(SaveTo))
-Else
-	GALE_Error "Unknown object to save RPG stats to"
-	EndIf
-If D And Right(D,1)<>"/" D:+"/"
-' Save Party members
-BTE = BT.CreateEntry(D+"Party","zlib")
-WriteInt BTE.Stream,Len(RPGParty)
-For Local P$=EachIn RPGParty
-	TrickyWriteString BTE.Stream,P
-	Next
-BTE.Close()
-' Save all characters
-Local ch:RPGCharacter
-For Local key$=EachIn MapKeys(RPGChars)
-	ch = RPGCharacter(MapValueForKey(RPGChars,key))
-	If Not ch 
-		Print "WARNING! A wrong record in the chars map"
-		Else
-		' Name
-		BTE = BT.CreateEntry(D+"Character/"+key+"/Name","zlib")
-		TrickyWriteString BTE.Stream, ch.Name
-		BTE.Close()
-		' Data
-		SaveStringMap(BT,D+"Character/"+key+"/StrData",dstr(ch.strdata),"zlib")
-		' Stats
-		BTE = BT.CreateEntry(D+"Character/"+key+"/Stats","zlib")
-		For Local skey$=EachIn MapKeys(ch.Stats)
-			Local v:rpgstat = ch.stat(skey)
-			WriteByte bte.stream,1
-			TrickyWriteString bte.stream,skey
-			WriteByte bte.stream,2
-			WriteByte bte.stream,v.pure
-			WriteByte bte.stream,3
-			TrickyWriteString bte.stream,v.scriptfile
-			TrickyWriteString bte.stream,v.callfunction
-			WriteByte bte.stream,4
-			WriteInt bte.stream,v.Value
-			WriteByte bte.stream,5
-			WriteInt bte.stream,v.modifier
-			Next
-		BTE.Close()
-		' Lists
-		BTE = BT.CreateEntry(D+"Character/"+key+"/Lists","zlib")
-		For Local lkey$=EachIn MapKeys(ch.lists)
-			WriteByte bte.stream,1
-			TrickyWriteString bte.stream,lkey
-			For Local item$=EachIn ch.list(lkey)
-				WriteByte bte.stream,2
-				TrickyWriteString bte.stream,item
-				Next
-			Next
-		BTE.Close()	
-		' Points
-		BTE = BT.CreateEntry(D+"Character/"+key+"/Points","zlib")
-		For Local pkey$=EachIn MapKeys(ch.points)
-			WriteByte bte.stream,1
-			TrickyWriteString bte.Stream,pkey
-			WriteByte bte.stream,2
-			TrickyWriteString bte.Stream,ch.point(pkey).maxcopy
-			WriteByte bte.stream,3
-			WriteInt bte.stream,ch.point(pkey).have
-			WriteByte bte.stream,4
-			WriteInt bte.stream,ch.point(pkey).maximum
-			WriteByte bte.stream,5
-			WriteInt bte.stream,ch.point(pkey).minimum
-			Next
-		BTE.Close()	
-		' Picture
-		If ch.portraitbank
-			bt.addentry ch.portraitbank,D+"Character/"+key+"/Portrait.png","zlib"
-			EndIf
-		EndIf
-	Next
-' If there are any links list them in the save file
-BTE = BT.CreateEntry(D+"Links","zlib")	
-Local ch1$,ch2$,stat$,och1:RPGCharacter,och2:RPGCharacter
-For ch1=EachIn MapKeys(RPGChars) For ch2=EachIn MapKeys(RPGChars)
-	If ch1<>ch2
-		och1=RPGCharacter(MapValueForKey(RPGChars,ch1))
-		och2=RPGCharacter(MapValueForKey(RPGChars,ch2))
-		For stat=EachIn MapKeys(och1.stats)
-			If och1.stat(stat)=och2.stat(stat) SaveRPGLink BTE,"Stat",ch1,ch2,stat
-			Next
-		For stat=EachIn MapKeys(och1.strdata)
-			If MapValueForKey(och1.strdata,stat)=MapValueForKey(och2.strdata,stat) SaveRPGLink BTE,"Data",ch1,ch2,stat
-			Next
-		For stat=EachIn MapKeys(och1.points)
-			If MapValueForKey(och1.points,stat)=MapValueForKey(och2.points,stat) SaveRPGLink BTE,"PNTS",ch1,ch2,stat
-			Next
-		For stat=EachIn MapKeys(och1.lists)
-			If MapValueForKey(och1.lists,stat)=MapValueForKey(och2.Lists,stat) SaveRPGLink BTE,"LIST",ch1,ch2,stat
-			Next
-		EndIf	
-	Next Next
-WriteByte bte.stream,255
-bte.close
-' Close if needed
-If String(SaveTo) BT.Close()	
-End Function
+        /// <summary>
+        ///  Saves the currently available RPG characters and party data
+        /// </summary>
+        public static void RPGSave(object SaveTo, string Dir = "") {
+            TJCRCreate BT;
+            var D = Dir.Replace("\\", "/");
+            TJCRCreateStream BTE;
+            if (SaveTo is TJCRCreate Schep)
+                BT = Schep;
+            else if (SaveTo is string SchepString)
+                BT = new TJCRCreate(SchepString, JCRSTORAGE);
+            else
+                throw new System.Exception("Unknown object to save RPG stats to");
+
+            if (D != "" && qstr.Right(D, 1) != "/") D += "/";
+            // Save Party members
+            BTE = BT.NewEntry(D + "Party", JCRSTORAGE);
+            BTE.WriteInt(RPGParty.Length);
+            foreach (string P in RPGParty)
+                BTE.WriteString(P);
+            BTE.Close();
+            // Save all characters
+            RPGCharacter ch;
+            foreach (string key in TMap.MapKeys(RPGChars){
+                ch = (RPGCharacter)TMap.MapValueForKey(RPGChars, key);
+                if (ch != null)
+                    DebugLog("WARNING! A wrong record in the chars map");
+                else {
+                    // Name
+                    BTE = BT.NewEntry(D + "Character/" + key + "/Name", JCRSTORAGE);
+                    BTE.WriteString(ch.Name);
+                    BTE.Close();
+                    // Data
+                    StringMap.SaveStringMap(BT, D + "Character/" + key + "/StrData", dstr(ch.StrData), JCRSTORAGE);
+                    // Stats
+                    BTE = BT.NewEntry(D + "Character/" + key + "/Stats", JCRSTORAGE);
+                    foreach (string skey in TMap.MapKeys(ch.Stats)) {
+                        var v = ch.Stat(skey);
+                        BTE.WriteByte(1);
+                        BTE.WriteString(skey);
+                        BTE.WriteByte(2);
+                        if (v.Pure) BTE.WriteByte(1); else BTE.WriteByte(0);
+                        BTE.WriteByte(3);
+                        BTE.WriteString(v.ScriptFile);
+                        BTE.WriteString(v.CallFunction);
+                        BTE.WriteByte(4);
+                        BTE.WriteInt(v.Value);
+                        BTE.WriteByte(5);
+                        BTE.WriteInt(v.Modifier);
+                    }
+                    BTE.Close();
+                    // Lists
+                    BTE = BT.NewEntry(D + "Character/" + key + "/Lists", JCRSTORAGE);
+                    foreach (string lkey in TMap.MapKeys(ch.Lists)) {
+                        BTE.WriteByte(1);
+                        BTE.WriteString(lkey);
+                        foreach (string item in ch.List(lkey)) {
+                            BTE.WriteByte(2);
+                            BTE.WriteString(item);
+                        }
+                    }
+                    BTE.Close();
+                    // Points
+                    BTE = BT.NewEntry(D + "Character/" + key + "/Points", JCRSTORAGE);
+                    foreach (string pkey in TMap.MapKeys(ch.Points)) {
+                        BTE.WriteByte(1);
+                        BTE.WriteString(pkey);
+                        BTE.WriteByte(2);
+                        BTE.WriteString(ch.Point(pkey).MaxCopy);
+                        BTE.WriteByte(3);
+                        BTE.WriteInt(ch.Point(pkey).Have);
+                        BTE.WriteByte(4);
+                        BTE.WriteInt(ch.Point(pkey).Maximum);
+                        BTE.WriteByte(5);
+                        BTE.WriteInt(ch.Point(pkey).Minimum);
+                    }
+                    BTE.Close();
+                    // Picture
+                    //If ch.portraitbank
+                    //	bt.addentry ch.portraitbank,D+"Character/"+key+"/Portrait.png","zlib"
+                    //	EndIf
+                    //EndIf
+                }
+                // If there are any links list them in the save file
+                BTE = BT.NewEntry(D + "Links", JCRSTORAGE);
+                //var ch1=""
+                //var ch2 = "";
+                //var stat = "";
+                RPGCharacter och1;
+                RPGCharacter och2;
+                foreach (string ch1 in TMap.MapKeys(RPGChars)) foreach (string ch2 in TMap.MapKeys(RPGChars)) {
+                        if (ch1 != ch2) {
+                            och1 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch1));
+                            och2 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch2));
+                            foreach (string stat in TMap.MapKeys(och1.Stats))
+                                if (och1.Stat(stat) == och2.Stat(stat)) SaveRPGLink(BTE, "Stat", ch1, ch2, stat);
+                            foreach (string stat in TMap.MapKeys(och1.StrData))
+                                if (TMap.MapValueForKey(och1.StrData, stat) == TMap.MapValueForKey(och2.StrData, stat)) SaveRPGLink(BTE, "Data", ch1, ch2, stat);
+                            foreach (string stat in TMap.MapKeys(och1.Points))
+                                if (TMap.MapValueForKey(och1.Points, stat) == TMap.MapValueForKey(och2.Points, stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
+                            foreach (string stat in TMap.MapKeys(och1.Lists))
+                                if (TMap.MapValueForKey(och1.Lists, stat) == TMap.MapValueForKey(och2.Lists, stat) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
+
+                        }
+                    }
+            }
+            BTE.WriteByte(255);
+            BTE.Close();
+            // Close if needed
+            if (SaveTo is string whatever) BT.Close();
+        }
+    }
+}
