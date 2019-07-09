@@ -95,7 +95,16 @@ namespace TrickyUnits {
 
         static public Dictionary<string, string>.KeyCollection MapKeys(StringMap M) => M.Map.Keys;
 
+        static public void SaveStringMap(TJCRCreate BT, string EntryName, StringMap M, string storage = "Store") => BT.NewStringMap(M.Map, EntryName, storage);
+        static public StringMap LoadStringMap(TJCRDIR LoadFrom,string entry) {
+            var r = new StringMap();
+            r.Map = LoadFrom.LoadStringMap(entry);
+            return r;
+        }
+
+
         private Dictionary<string, string> Map = new Dictionary<string, string>();
+
     }
 
     // This class was only required due to BlitzMax having no real map/dictionary support and using a separate library for this. Translating all the code into "pure" C# code would be too much work, so this solution will have to do.
