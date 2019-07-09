@@ -1154,5 +1154,44 @@ GALE_Register RPGChar,"RPGStats"
             // Close if needed
             if (SaveTo is string whatever) BT.Close();
         }
+
+        #region Copied from the API (I was lazy back then)
+        /// <summary>
+        /// The stat of two characters will be linked. This means that if one stat changes the other will change and vice versa. Upon this definition, the targetchar's stat will be overwritten.After that the targetchar or the sourcechar do not matter any more, they will basically share the same stat. (This feature came to be due to its need in Star Story) :)<p>Should the targetchar's stat not exist it will be created in this function.
+        /// </summary>
+        /// <param name="sourcechar"></param>
+        /// <param name="targetchar"></param>
+        /// <param name="statname"></param>
+        static public void LinkStat(string sourcechar, string targetchar, string statname) {
+            var func = $"\nFunc:\tLinkStat\nsourcechar\t{sourcechar}\n\ttargetchar\t{targetchar}\nstat\t{statname}";
+            var ch1 = GrabChar(sourcechar);
+            if (ch1 == null) throw new System.Exception($"Source Character doesn't exist{func}");
+            var ch2 = GrabChar(targetchar);
+            if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
+            var ST = ch1.Stat(statname);
+            if (ST == null) throw new System.Exception("Source Character's stat doesn't exis{func}");
+            TMap.MapInsert(ch2.Stats, statname, ST);
+        }
+
+        /// <summary>
+        ///  The list of two characters will be linked. This means that if one list changes the other will change and vice versa. Upon this definition, the targetchar's stat will be overwritten.After that the targetchar or the sourcechar do not matter any more, they will basically share the same stat. (This feature came to be due to its need in Star Story) :)<p>Should the targetchar's stat not exist it will be created in this function.
+        /// </summary>
+        /// <param name=""></param>
+        /// <param name=""></param>
+        /// <param name=""></param>
+        /// <returns></returns>
+        static public void LinkList(string sourcechar, string targetchar, string statname) {
+            var func = $"\nFunc:\tLinkList\nsourcechar\t{sourcechar}\n\ttargetchar\t{targetchar}\nstat\t{statname}";
+            var ch1 = GrabChar(sourcechar);
+            if (ch1 == null) throw new System.Exception($"Source Character doesn't exist{func}");
+            var ch2 = GrabChar(targetchar);
+            if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
+            var ST = ch1.List(statname);
+            if (ST == null) throw new System.Exception($"Source Character's stat doesn't exist{func}");
+            TMap.MapInsert(ch2.Lists, statname, ST);
+        }
+
+        #endregion
     }
+    #endregion
 }
