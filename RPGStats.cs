@@ -1,3 +1,5 @@
+/* 
+    NOTES FROM THE ORIGINAL BLITZMAX CODE
 Rem
         RPGStats.bmx
 	(c) 2015, 2016, 2017, 2018 Jeroen Petrus Broks.
@@ -25,7 +27,10 @@ Rem
 15.10.04 - Added SafeStat() Method
 15.10.17 - Fixed issue not saving minimum values in Points.
 End Rem
+*/
 
+
+/* This is normal code in BlitzMax, but has no value at all in C#
 Strict
 Import tricky_units.StringMap
 Import gale.multiscript
@@ -39,27 +44,53 @@ Import brl.max2d
 
 MKL_Version "Tricky's Units - RPGStats.bmx","18.01.16"
 MKL_Lic     "Tricky's Units - RPGStats.bmx","Mozilla Public License 2.0"
+*/
 
-Private
-Const Chat = True
-Public
-Global MustHavePortrait = True
+using UseJCR6;
 
-Global RPGJCR:TJCRDir
-Global RPGJCRDir$
+namespace TrickyUnits {
 
-Global RPGID$
-Global RPGEngine$
+    delegate void RPGCONSOLEVOID(string msg, byte r = 255, byte g = 255, byte b = 255);
 
-Private
-Function ConsoleWrite(M$,R=255,G=255,B=255) L_ConsoleWrite M,R,G,B End Function
-Public
 
-Rem
-bbdoc: If set to 'true' the lua scripts tied to a stat will be ignored. (Most of meant for quick viewers)
-End Rem
-Global RPG_IgnoreScripts
+    public class RPGPoints {
 
+        public int Have, Maximum, Minimum;
+        public string MaxCopy;
+
+        public void Inc(int a) => Have += a;
+        public void Dec(int a) => Have -= a;
+    }
+
+
+    static class RPG {
+        // Just to prevent myself some headaches!
+        const bool True = true;
+        const bool False = false;
+
+        static private readonly bool Chat = true;
+
+        static public bool MustHavePortrait = true;
+
+        static public TJCRDIR RPGJCR;
+        static public string RPGJCRDir;
+
+        static public string RPGID;
+        static public string RPGEngine;
+
+        static public RPGCONSOLEVOID RPGConsoleWriter;
+        static private void ConsoleWrite(string M, byte R = 255, byte G = 255, byte B = 255) {
+            RPGConsoleWriter?.Invoke(M, R, G, B);
+        }
+
+
+        /// <summary>
+        ///  If set to 'true' the lua scripts tied to a stat will be ignored. (Most of meant for quick viewers)
+        /// </summary>
+
+        static public bool RPG_IgnoreScripts = false;
+
+        /* Moved to top of code in its own class
 Type RPGPoints
 	Field Have,Maximum,Minimum
 	Field MaxCopy$
@@ -67,6 +98,7 @@ Type RPGPoints
 	Method Inc(a) Have:+a End Method
 	Method Dec(a) Have:-a End Method
 	End Type
+    */
 
 Type RPGStat 
 	Field Pure
