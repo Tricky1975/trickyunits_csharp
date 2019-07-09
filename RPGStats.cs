@@ -808,25 +808,25 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
             foreach (string F in LoadFrom.Entries.Keys) {
                 P = $"{D.ToUpper()}CHARACTER/";
                 if (qstr.Left(F, qstr.Len(P)) == P && qstr.StripDir(F) == "NAME") {
-                    TN = qstr.ExtractDir(TJCREntry(MapValueForKey(loadfrom.entries, F)).FileName);
+                    TN = qstr.ExtractDir(LoadFrom.Entries[F].Entry);
                     TN = qstr.StripDir(TN);
                     LChars.Add(TN);
                 }
             }
             // Let's now load the characters
-            foreach (string F in LChars) { 
+            foreach (string F in LChars) {
                 ch = new RPGCharacter();
-            TMap.MapInsert( RPGChars, F, ch);
+                TMap.MapInsert(RPGChars, F, ch);
                 // Name
                 BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Character/" + F + "/Name"));
                 ch.Name = BT.ReadString();
                 BT.Close();
-	// Data
-	ch.strdata = ddat(LoadStringMap(LoadFrom,D+"Character/"+F+"/StrData"))
+                // Data
+                ch.strdata = ddat(LoadStringMap(LoadFrom, D + "Character/" + F + "/StrData"));
     // Stats
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Stats"));
                 while (!BT.EOF) {
-                    tag = ReadByte(BT);
+                    tag = BT.ReadByte();
                     //Print tag
                     switch (tag) {
                         case 1:
@@ -836,7 +836,7 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
                             TMap.MapInsert(ch.Stats, TN, sv);
                             break;
                         case 2:
-                            sv.Pure = (BT.ReadByte()!=(byte)0);
+                            sv.Pure = (BT.ReadByte() != (byte)0);
                             break;
                         case 3:
                             sv.ScriptFile = BT.ReadString();
@@ -880,10 +880,10 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
                         case 1:
                             sp = new RPGPoints();
                             TN = BT.ReadString();
-                            TMap.MapInsert(ch.Points, tn, sp);
+                            TMap.MapInsert(ch.Points, TN, sp);
                             break;
                         case 2:
-                            sp.MaxCopy = BT.ReadString(BT);
+                            sp.MaxCopy = BT.ReadString();
                             break;
                         case 3:
                             sp.Have = BT.ReadInt();
@@ -913,34 +913,36 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
                 //		EndIf
                 //	Next	
                 string linktype = "", linkch1 = "", linkch2 = "", linkstat = "";
-If JCR_Exists(LoadFrom,D+"Links")	
-	bt = JCR_ReadFile(Loadfrom,D+"Links")
-	Repeat
-	tag = ReadByte(bt)
-	Select tag
-		Case 001
-			linktype = TrickyReadString(bt)
-			linkch1  = TrickyReadString(Bt)
-			linkch2  = TrickyReadString(bt)
-			linkstat = TrickyReadString(bt)
-			Select Upper(linktype)
-				Case "STAT"	RPGChar.LinkStat(linkch1,linkch2,linkstat)
-				Case "PNTS"	RPGChar.LinkPoints(linkch1,linkch2,linkstat)
-				Case "DATA"	RPGChar.LinkData(linkch1,linkch2,linkstat)
-				Case "LIST" RPGChar.LinkList(linkch1,linkch2,linkstat)
-				Default	Print "ERROR! I don't know what a "+linktype+" is so I cannot link!"
-				End Select		
-		Case 255
-			Exit
-		Default
-			Print "ERROR! Unknown link command tag ("+tag+")"
-			Exit
-		End Select	
-	Until Eof(bt)
-	CloseFile bt
-	EndIf
-Return True	
-End Function
+                if (LoadFrom.Exists(D + "Links")  {
+                    BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Links"));
+                    do { //Repeat
+                        tag = BT.ReadByte();
+                        switch (tag) {
+                            case 001:
+                                linktype = BT.ReadString();
+                                linkch1 = BT.ReadString();
+                                linkch2 = BT.ReadString();
+                                linkstat = BT.ReadString(bt);
+                                switch (linktype.ToUpper()) {
+                                    case "STAT": RPGChar.LinkStat(linkch1, linkch2, linkstat); break;
+                                    case "PNTS": RPGChar.LinkPoints(linkch1, linkch2, linkstat); break;
+                                    case "DATA": RPGChar.LinkData(linkch1, linkch2, linkstat); break;
+                                    case "LIST": RPGChar.LinkList(linkch1, linkch2, linkstat); break;
+                                    default: DebugLog("ERROR! I don't know what a " + linktype + " is so I cannot link!"); break;
+                                }
+                                break;
+                            case 255:
+                                goto GetOutOfThisLinkLoop; // Nothing I hate more than "goto" commands, but due to the way switches are set up in C-dialects, I got no choice!
+                            default:
+                                throw new System.Exception($"ERROR! Unknown link command tag ({tag})");
+
+                        }
+                    } while (!BT.EOF); //Until Eof(bt)
+                GetOutOfThisLinkLoop:
+                    BT.Close();
+                }
+                //return true;
+            }
 
 Function RPGStr$() ' Undocumented.  
 Local ret$
