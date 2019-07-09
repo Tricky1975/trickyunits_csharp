@@ -51,15 +51,19 @@ using System.Collections.Generic;
 
 namespace TrickyUnits {
 
+
+    #region Classes needed for quick translation from BlitzMax
     internal class StringMap {
         // This class was only required due to BlitzMax having no real map/dictionary support and using a separate library for this. Translating all the code into "pure" C# code would be too much work, so this solution will have to do.
-        static public void Insert(StringMap M,string key, string value) {
+        static public void MapInsert(StringMap M,string key, string value) {
             M.Map[key] = value;
         }
 
         public string Value(string key) {
             if (Map.ContainsKey(key)) return Map[key]; else return "";
         }
+
+        static public Dictionary<string, string>.KeyCollection MapKeys(StringMap M) => M.Map.Keys;
 
         private Dictionary<string, string> Map = new Dictionary<string, string>();
     }
@@ -74,6 +78,7 @@ namespace TrickyUnits {
         }
         static public Dictionary<object,object>.KeyCollection MapKeys(TMap M) => M.Map.Keys;
     }
+    #endregion
 
     /// <summary>
     /// You can assign a console function here allowing RPG Var to put debug value onto a debug console. 
@@ -84,6 +89,7 @@ namespace TrickyUnits {
     /// <param name="b"></param>
     delegate void RPGCONSOLEVOID(string msg, byte r = 255, byte g = 255, byte b = 255);
 
+    #region Data Classes
     /// <summary>
     /// This class is used for "Points" based statistics such as Hitpoints, Mana points etc.
     /// </summary>
@@ -127,8 +133,9 @@ namespace TrickyUnits {
         public List<string> List(string lst) => (List<string>)TMap.MapValueForKey(Lists, lst);
         public RPGPoints Point(string p) => (RPGPoints)TMap.MapValueForKey(Points, p);
     }
+    #endregion
 
-
+    #region The actual library itself!
     static class RPG {
         // Just to prevent myself some headaches!
         const bool True = true;
@@ -225,32 +232,36 @@ End Type
         //'	End Type
         //'Global linkeddatalist:TList = New TList
         class TRPGData {
-            string d;
+            public string d="";
         }
         static StringMap dstr(TMap A) {
             //var k = "";
             var ret = new StringMap();
             foreach (string k in TMap.MapKeys(A))
-                TMap.MapInsert(ret, k, (TRPGData)TMap.MapValueForKey(A, k)).d;
+                StringMap.MapInsert(ret, k, ((TRPGData)TMap.MapValueForKey(A, k)).d);
 
             return ret;
         }
 
-Function ddat:TMap(A:StringMap)
-Local k$
-Local ret:TMap = New TMap
-Local t:TRPGData
-For k=EachIn MapKeys(A)
-	t = New trpgdata
-	t.d = a.value(k)
-	MapInsert ret,k,t
-	Next
-Return ret
-End Function
+        static TMap ddat(StringMap A) {
+            //Local k$
+            var ret = new TMap();
+            TRPGData t;
+            foreach (string k in StringMap.MapKeys(A)) {
+                t = new TRPGData();
+                t.d = A.Value(k);
+                TMap.MapInsert(ret, k, t);
+            }
+            return ret;
+        }
 
-Public
+//Public
 
-Type RPGLuaAPI ' BLD: Object RPGChar\nThis object contains features you need for RPG Character and statistics
+            /* This type in BlitzMax is entirely set up to be used in GALE. 
+             * Since GALE is no longer used in my C# work, and me wanting to have stuff in a more flexible manner this entire type (or class if you like) will NOT be translated but be dummied in stead.
+             * A separate class for the BUBBLE engine (where this code will primarily be used in NALA will be set up separately!
+
+    Type RPGLuaAPI ' BLD: Object RPGChar\nThis object contains features you need for RPG Character and statistics
 	
 	Field Me:TMe = New TMe ' --- no doc. This is deprecated, and not to be used. I only left it in the source to prevent compiler errors. Old BLD desc: Variable with the fields Char and Stat. They can both be used to read the current character and stat being processed. It's best to never assign any data to this. These vars are only to be used by the scripts being called by Stat readers.
 	
@@ -751,6 +762,7 @@ Global RPGChar:RPGLuaAPI = New RPGLuaAPI
 GALE_Register RPGChar,"RPGChar"	
 GALE_Register RPGChar,"RPGStat"
 GALE_Register RPGChar,"RPGStats"
+*/
 
 Rem
 bbdoc: Loads all RPG data from a JCR directory.
