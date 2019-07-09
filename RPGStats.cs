@@ -52,7 +52,9 @@ namespace TrickyUnits {
 
     delegate void RPGCONSOLEVOID(string msg, byte r = 255, byte g = 255, byte b = 255);
 
-
+    /// <summary>
+    /// This class is used for "Points" based statistics such as Hitpoints, Mana points etc.
+    /// </summary>
     public class RPGPoints {
 
         public int Have, Maximum, Minimum;
@@ -60,6 +62,17 @@ namespace TrickyUnits {
 
         public void Inc(int a) => Have += a;
         public void Dec(int a) => Have -= a;
+    }
+
+    /// <summary>
+    /// Used for general stats, such as attack power, and so on!
+    /// </summary>
+    public class RPGStat {
+        public bool Pure = false;
+        public string ScriptFile = "";
+        public string CallFunction = "";
+        public int Value = 0;
+        public int Modifier = 0;
     }
 
 
@@ -100,6 +113,7 @@ Type RPGPoints
 	End Type
     */
 
+/* Moved to top of code in its own class
 Type RPGStat 
 	Field Pure
 	Field ScriptFile$
@@ -107,6 +121,7 @@ Type RPGStat
 	Field Value
 	Field Modifier
 	End Type
+    */
 	
 Rem
 bbdoc: Contains character data.
