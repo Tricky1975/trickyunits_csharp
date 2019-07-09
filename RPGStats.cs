@@ -965,10 +965,10 @@ GALE_Register RPGChar,"RPGStats"
                                 linkch2 = BT.ReadString();
                                 linkstat = BT.ReadString();
                                 switch (linktype.ToUpper()) {
-                                    case "STAT": RPGChar.LinkStat(linkch1, linkch2, linkstat); break;
+                                    case "STAT": LinkStat(linkch1, linkch2, linkstat); break;
                                     case "PNTS": RPGChar.LinkPoints(linkch1, linkch2, linkstat); break;
                                     case "DATA": RPGChar.LinkData(linkch1, linkch2, linkstat); break;
-                                    case "LIST": RPGChar.LinkList(linkch1, linkch2, linkstat); break;
+                                    case "LIST": LinkList(linkch1, linkch2, linkstat); break;
                                     default: DebugLog("ERROR! I don't know what a " + linktype + " is so I cannot link!"); break;
                                 }
                                 break;
