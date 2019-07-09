@@ -267,7 +267,7 @@ End Type
         static public RPGCharacter GrabChar(string Ch) => (RPGCharacter)TMap.MapValueForKey(RPGChars, Ch);
 
 
-        class TMe { // Deprecated. Only included to make sure conflicts never occur.
+        private class TMe { // Deprecated. Only included to make sure conflicts never occur.
             string Char = "", Stat = "";
         }
 
@@ -276,8 +276,8 @@ End Type
         //'	Field c1$,c2$,d$
         //'	End Type
         //'Global linkeddatalist:TList = New TList
-        class TRPGData {
-            public string d = "";
+        private class TRPGData {
+            internal string d = "";
         }
         static StringMap dstr(TMap A) {
             //var k = "";
