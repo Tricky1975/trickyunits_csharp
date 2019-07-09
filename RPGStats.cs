@@ -64,6 +64,15 @@ namespace TrickyUnits {
         private Dictionary<string, string> Map = new Dictionary<string, string>();
     }
 
+    // This class was only required due to BlitzMax having no real map/dictionary support and using a separate library for this. Translating all the code into "pure" C# code would be too much work, so this solution will have to do.
+    internal class TMap {
+        private Dictionary<object, object> Map = new Dictionary<object, object>();
+        static public void MapInsert(TMap M, object key, object value) => M.Map[key] = value;
+        static public object MapValueForKey(TMap M,object key) {
+            if (M.Map.ContainsKey(key)) return M.Map[key]; else return null;
+        }
+    }
+
     /// <summary>
     /// You can assign a console function here allowing RPG Var to put debug value onto a debug console. 
     /// </summary>
@@ -94,6 +103,27 @@ namespace TrickyUnits {
         public string CallFunction = "";
         public int Value = 0;
         public int Modifier = 0;
+    }
+
+
+    /// <summary>
+    /// Contains character data. 
+    /// </summary>
+    class RPGCharacter {
+
+        public string Name = "";
+
+        public TMap StrData = new TMap();
+        public TMap Stats = new TMap();
+        public TMap Lists = new TMap();
+        public TMap Points = new TMap();
+
+        // Field PortraitBank:TBank // For now taken out of use
+        // Field Portrait:TImage // For now taken out of use
+
+        public RPGStat Stat(string St) => (RPGStat)TMap.MapValueForKey(Stats, St);
+        public List<string> List(string lst) => (List<string>)TMap.MapValueForKey(Lists, lst);
+        public RPGPoints Point(string p) => (RPGPoints)TMap.MapValueForKey(Points, p);
     }
 
 
@@ -144,6 +174,8 @@ Type RPGStat
 	End Type
     */
 	
+            /*
+             * Moved to top of code in its own class
 Rem
 bbdoc: Contains character data.
 End Rem
@@ -170,7 +202,7 @@ Type RPGCharacter
 	End Method
 	
 	End Type
-
+*/
 Global RPGChars:TMap = New TMap
 Global RPGParty$[] = New String[6]
 
