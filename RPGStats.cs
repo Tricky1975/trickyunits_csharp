@@ -49,6 +49,7 @@ MKL_Lic     "Tricky's Units - RPGStats.bmx","Mozilla Public License 2.0"
 */
 
 using UseJCR6;
+using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -776,8 +777,8 @@ GALE_Register RPGChar,"RPGStats"
         /// Loads all RPG data from a JCR directory.
         /// The database vars are part of this module, and will only return "True" if succesful"
         /// </summary>
-static public void RPGLoad(TJCRDIR LoadFrom,string Dir = "") { 
-var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
+        static public void RPGLoad(TJCRDIR LoadFrom, string Dir = "") {
+            var D = Dir.Replace("\\", "/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
             QuickStream BT;
             int ak;
             //string F = "";
@@ -785,8 +786,8 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
             var LChars = new List<string>();
             RPGCharacter ch;
             int tag;
-            RPGStat sv=null; // Compiler is stubborn and stupid, as this '=null' is NOT needed at all!
-            RPGPoints sp=null;
+            RPGStat sv = null; // Compiler is stubborn and stupid, as this '=null' is NOT needed at all!
+            RPGPoints sp = null;
             DebugLog($"Loading party: {Dir}");
             // Load party members
             BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Party"));
@@ -823,7 +824,7 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
                 BT.Close();
                 // Data
                 ch.strdata = ddat(LoadStringMap(LoadFrom, D + "Character/" + F + "/StrData"));
-    // Stats
+                // Stats
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Stats"));
                 while (!BT.EOF) {
                     tag = BT.ReadByte();
@@ -913,7 +914,7 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
                 //		EndIf
                 //	Next	
                 string linktype = "", linkch1 = "", linkch2 = "", linkstat = "";
-                if (LoadFrom.Exists(D + "Links")  {
+                if (LoadFrom.Exists(D + "Links")) {
                     BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Links"));
                     do { //Repeat
                         tag = BT.ReadByte();
@@ -922,7 +923,7 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
                                 linktype = BT.ReadString();
                                 linkch1 = BT.ReadString();
                                 linkch2 = BT.ReadString();
-                                linkstat = BT.ReadString(bt);
+                                linkstat = BT.ReadString();
                                 switch (linktype.ToUpper()) {
                                     case "STAT": RPGChar.LinkStat(linkch1, linkch2, linkstat); break;
                                     case "PNTS": RPGChar.LinkPoints(linkch1, linkch2, linkstat); break;
@@ -941,66 +942,66 @@ var D = Dir.Replace("\\","/"); if (D != "" && qstr.Right(D, 1) != "/") D += "/";
                 GetOutOfThisLinkLoop:
                     BT.Close();
                 }
-                //return true;
             }
+            //return true;
+        }
 
-Function RPGStr$() ' Undocumented.  
-Local ret$
-Local ch:RPGCharacter
-For Local P$=EachIn RPGParty
-	ret$ :+ "~nParty:"+P
-	Next
-For Local key$=EachIn MapKeys(RPGChars)
-	ch = RPGCharacter(MapValueForKey(RPGChars,key))
-	If Not ch 
-		Print "WARNING! A wrong record in the chars map"
-		Else
-		' Name
-		ret:+"~nNEW"
-		ret:+"~n~t"+ch.Name
-		' Data
-		For Local k$=EachIn MapKeys(ch.strData) ret:+"~n~tD("+K+")="+dstr(ch.strData).value(K) Next
-		' Stats
-		For Local skey$=EachIn MapKeys(ch.Stats)
-			Local v:rpgstat = ch.stat(skey)
-			ret:+"~n~tSt"
-			ret:+"~n~t~tskey="+skey
-			ret:+"~n~t~tpure="+v.pure
-			ret:+"~n~t~tScript="+v.scriptfile
-			ret:+"~n~t~tFunction="+v.callfunction
-			ret:+"~n~t~tValue="+v.Value
-			ret:+"~n~t~tModifier="+v.modifier
-			Next
-		' Lists
-		ret:+"~n~tLists"
-		For Local lkey$=EachIn MapKeys(ch.lists)
-			ret:+"~t~t"+lkey
-			For Local item$=EachIn ch.list(lkey)
-				ret:+"~t~t~t"+item
-				Next
-			Next
-		' Points
-		ret:+"~n~tPoints"
-		For Local pkey$=EachIn MapKeys(ch.points)
-			ret:+"~n~t~tkey"+pkey
-			ret:+"~n~t~tmaxcopy"+ch.point(pkey).maxcopy
-			ret:+"~n~t~thave"+ch.point(pkey).have
-			ret:+"~n~t~tmax"+ch.point(pkey).maximum
-			Next
-		EndIf
-	Next
-Return ret	
-End Function
+        static public string RPGStr() { // Undocumented.  I don't remember why I brought this in. Must be for debugging. When I see the number of cosmetic errors (just by reading the code), I even think this was never tested or used. I just translated it for safety's sake!
+            var ret = new StringBuilder(1);
+            RPGCharacter ch;
+            foreach (string P in RPGParty) {
+                ret.Append($"\nParty:{P}");
+            }
+            foreach (string key in TMap.MapKeys(RPGChars)) {
+                ch = (RPGCharacter)TMap.MapValueForKey(RPGChars, key);
+                if (ch == null)
+                    DebugLog("WARNING! A wrong record in the chars map");
+                else {
+                    // Name
+                    ret.Append("\nNEW");
+                    ret.Append("\n\t" + ch.Name);
+                    // Data
+                    foreach (string k in TMap.MapKeys(ch.StrData)) ret.Append("\n\tD(" + k + ")=" + dstr(ch.StrData).Value(k);
+                    // Stats
+                    foreach (string skey in TMap.MapKeys(ch.Stats)) {
+                        var v = ch.Stat(skey);
+                        ret.Append("\n\tSt");
+                        ret.Append("\n\t\tskey=" + skey);
+                        ret.Append($"\n\t\tpure={v.Pure}");
+                        ret.Append("\n\t\tScript=" + v.ScriptFile);
+                        ret.Append("\n\t\tFunction=" + v.CallFunction);
+                        ret.Append("\n\t\tValue=" + v.Value);
+                        ret.Append("\n\t\tModifier=" + v.Modifier);
+                    }
+                    // Lists
+                    ret.Append("\n\tLists");
+                    foreach (string lkey in TMap.MapKeys(ch.Lists)) {
+                        ret.Append("\t\t" + lkey);
+                        foreach (string item in ch.List(lkey)) {
+                            ret.Append("\t\t\t" + item);
+                        }
+                    }
+                    // Points
+                    ret.Append("\n\tPoints");
+                    foreach (string pkey in TMap.MapKeys(ch.Points)) {
+                        ret.Append("\n\t\tkey " + pkey);
+                        ret.Append("\n\t\tmaxcopy " + ch.Point(pkey).MaxCopy);
+                        ret.Append("\n\t\thave " + ch.Point(pkey).Have);
+                        ret.Append("\n\t\tmax " + ch.Point(pkey).Maximum);
+                    }
+                }
+            }
+            return ret.ToString();
+        }
 
-Private
-Function SaveRPGLink(BTE:TJCRCreateStream,ltype$,ch1$,ch2$,stat$)
-WriteByte BTE.stream,1 ' marks new entry version 1
-TrickyWriteString bte.stream,ltype
-TrickyWriteString bte.stream,ch1
-TrickyWriteString bte.stream,ch2
-TrickyWriteString bte.stream,stat
-End Function
-Public
+        static private void SaveRPGLink(TJCRCreateStream BTE, string ltype, string ch1, string ch2, string stat) {
+            BTE.WriteByte(1); //' marks new entry version 1
+            BTE.WriteString(ltype);
+            BTE.WriteString(ch1);
+            BTE.WriteString(ch2);
+            BTE.WriteString(stat);
+        }
+
 
 Rem 
 bbdoc: Saves the currently available RPG characters and party data
