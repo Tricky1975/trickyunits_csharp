@@ -864,7 +864,7 @@ GALE_Register RPGChar,"RPGStats"
                 ch.Name = BT.ReadString();
                 BT.Close();
                 // Data
-                ch.strdata = ddat(LoadStringMap(LoadFrom, D + "Character/" + F + "/StrData"));
+                ch.StrData = ddat(StringMap.LoadStringMap(LoadFrom, D + "Character/" + F + "/StrData"));
                 // Stats
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Stats"));
                 while (!BT.EOF) {
@@ -1002,7 +1002,7 @@ GALE_Register RPGChar,"RPGStats"
                     ret.Append("\nNEW");
                     ret.Append("\n\t" + ch.Name);
                     // Data
-                    foreach (string k in TMap.MapKeys(ch.StrData)) ret.Append("\n\tD(" + k + ")=" + dstr(ch.StrData).Value(k);
+                    foreach (string k in TMap.MapKeys(ch.StrData)) ret.Append("\n\tD(" + k + ")=" + dstr(ch.StrData).Value(k));
                     // Stats
                     foreach (string skey in TMap.MapKeys(ch.Stats)) {
                         var v = ch.Stat(skey);
@@ -1067,7 +1067,7 @@ GALE_Register RPGChar,"RPGStats"
             BTE.Close();
             // Save all characters
             RPGCharacter ch;
-            foreach (string key in TMap.MapKeys(RPGChars){
+            foreach (string key in TMap.MapKeys(RPGChars)){
                 ch = (RPGCharacter)TMap.MapValueForKey(RPGChars, key);
                 if (ch != null)
                     DebugLog("WARNING! A wrong record in the chars map");
@@ -1136,8 +1136,8 @@ GALE_Register RPGChar,"RPGStats"
                 RPGCharacter och2;
                 foreach (string ch1 in TMap.MapKeys(RPGChars)) foreach (string ch2 in TMap.MapKeys(RPGChars)) {
                         if (ch1 != ch2) {
-                            och1 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch1));
-                            och2 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch2));
+                            och1 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch1);
+                            och2 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch2);
                             foreach (string stat in TMap.MapKeys(och1.Stats))
                                 if (och1.Stat(stat) == och2.Stat(stat)) SaveRPGLink(BTE, "Stat", ch1, ch2, stat);
                             foreach (string stat in TMap.MapKeys(och1.StrData))
@@ -1145,7 +1145,7 @@ GALE_Register RPGChar,"RPGStats"
                             foreach (string stat in TMap.MapKeys(och1.Points))
                                 if (TMap.MapValueForKey(och1.Points, stat) == TMap.MapValueForKey(och2.Points, stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
                             foreach (string stat in TMap.MapKeys(och1.Lists))
-                                if (TMap.MapValueForKey(och1.Lists, stat) == TMap.MapValueForKey(och2.Lists, stat) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
+                                if (TMap.MapValueForKey(och1.Lists, stat) == TMap.MapValueForKey(och2.Lists, stat)) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
 
                         }
                     }
