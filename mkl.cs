@@ -1,7 +1,7 @@
 // Lic:
 // mkl.cs
 // TrickyUnits - MKL
-// version: 19.05.09
+// version: 19.07.09
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -17,6 +17,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 
 
 
@@ -126,12 +127,13 @@ namespace TrickyUnits {
 
         static MKL(){
             // Despite C# considering this as "obsolete" the "MKL." prefixes MUST be present here, or MKL_Update won't onderstand these values have to be updated.
-            MKL.Version("Tricky Units for C# - mkl.cs","19.05.09");
+            MKL.Version("Tricky Units for C# - mkl.cs","19.07.09");
             MKL.Lic    ("Tricky Units for C# - mkl.cs","ZLib License");
         }
 
     }
 }
+
 
 
 
