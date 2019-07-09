@@ -92,17 +92,21 @@ namespace TrickyUnits {
                 var year = 0;
                 var month = 0;
                 var day = 0;
+                var hitotal = 0;
                 foreach(string mvalue in VERSIONS.Values){
                     var split = mvalue.Split('.');
                     int sy=0; int sm=0; int sd=0;
+                    int total = 0;
                     try{
                         sy = Int32.Parse(split[0]);
                         sm = Int32.Parse(split[1]);
                         sd = Int32.Parse(split[2]);
+                        total = Int32.Parse($"{sy}{sm+10}{sd+10}"); // This looks odd, but guarantees the best outcome. This number is never visible to users anyway. It is a bit dirty, though, I gotta admit that.
                     } catch {
                         Console.WriteLine("WARNING! Something DID get wrong with the version parsing!");
                     }
-                    if (sy>=year && sm>=month && sd>=day){
+                    //if (sy>=year && sm>=month && sd>=day){
+                    if (hitotal < total) { 
                         year = sy;
                         month = sm;
                         day = sd;

@@ -299,6 +299,8 @@ namespace TrickyUnits {
 
         public static void printf(string input, params object[] inpVars) => Console.Write(input, inpVars);
 
+        public static string OrText(string One, string Two) { if (One.Trim() != "") return One; else return Two; }
+
     }
 
 

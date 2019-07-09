@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 
 
@@ -77,41 +78,24 @@ namespace TrickyUnits {
         public bool AlwaysTrim = true;
 
 
-
-
-
         public TGINI() {
-
             var g = this;
-
             //fmt.Println("Init new GINI variable")
-
             //fmt.Printf("before %s\n",g.vars)
-
             //g.init = true
-
             //g.vars = map[string] string{ }
-
             //g.lists = make([][]string,0)
-
             //g.listpointer = map[string]int{ }
-
             //g.lists = map[string] []string{}
-
             //g.lists = map[string] qll.StringList{}
-
             //fmt.Printf("after %s\n",g.vars)
-
             GINI.DBGChat("TGINI class created");
-
         }
 
 
 
         ~TGINI() {
-
             GINI.DBGChat("TGINI class destroyed");
-
         }
 
 
@@ -119,209 +103,139 @@ namespace TrickyUnits {
         /// <summary>Returns an array with all variable names!</summary>
 
         public string[] Vars() {
-
             var tret = new List<string>();
-
             foreach (string key in vars.Keys) tret.Add(key);
-
             tret.Sort();
-
             return tret.ToArray();
-
         }
 
 
 
         /// <summary>Define var</summary>
-
         public void D(string s, string v) {
-
             //g.init1st()
-
             //g.vars  = make(map[string] string) // debug!
-
             vars[s.ToUpper()] = v;
-
         }
 
 
 
         /// <summary>
-
         /// Read (call) var
-
         /// </summary>
-
         /// <returns>The variable's value</returns>
-
         /// <param name="s">Variable name</param>
-
         public string C(string s) {
-
             var g = this;//g.init1st(); 
-
             //if v,ok:=g.vars[strings.ToUpper(s)];ok {
-
             if (g.vars.ContainsKey(s.ToUpper())) {
-
                 if (AlwaysTrim) return g.vars[s.ToUpper()].Trim();
-
                 return g.vars[s.ToUpper()];
-
             } else {
-
                 return "";
-
             }
-
         }
 
 
 
         /// <summary>Creates a list if needed</summary> 
-
         public void CL(string a, bool onlyifnotexist = true) {
-
             //var g = this; //g.init1st(); 
-
             var ca = a.ToUpper();
-
             if (lists.ContainsKey(ca)) {
-
                 if (onlyifnotexist) {
-
                     return;
-
-
-
                 }
-
             }
-
             //GTK.QuickGTK.Warn($"Creating {ca} // {onlyifnotexist} "); // DEBUG ONLY!!!
-
             //fmt.Printf("Creating list: %s\n",a)
-
             //g.lists[strings.ToUpper(a)] = qll.CreateStringList() // make([]string,0)
-
             //g.lists[strings.ToUpper(a)] = make([]string,0)
-
             lists[ca] = new List<string>();
-
             //g.listpointer[strings.ToUpper(a)] = len(g.lists) - 1
-
         }
 
 
 
         /// <summary>
-
         /// Add value to a list. If not existent create the list.
-
         /// </summary> 
-
         public void Add(string nlist, string value) {
-
             CL(nlist, true);
-
             var cl = nlist.ToUpper();
-
             lists[cl].Add(value);
-
             //qll.StringListAddLast(&(g.lists[l]),value)
-
         }
 
 
 
         /// <summary> Just returns the list. Creates it if it doesn't yet exist!</summary>
-
         public List<string> List(string nlist) {
-
             CL(nlist, true);
-
             //lists[strings.ToUpper(nlist)]
-
             return lists[nlist.ToUpper()];
-
         }
 
 
 
         /// <summary>
-
         /// Returns 'true' if a list exist, otherwise it returns false (duh!)
-
         /// </summary>
-
         /// <returns><c>true</c>, if exists was listed, <c>false</c> otherwise.</returns>
-
         /// <param name="list">List reference name</param>
-
         public bool ListExists(string list) => lists.ContainsKey(list.ToUpper());
 
 
-
         /// <summary>
-
         /// Returns the string at the given index.
-
         ///  If out of bounds an empty string is returned
-
         /// </summary>
-
         /// <returns>The string stored at that specific index.</returns>
-
         /// <param name="list">List referrence.</param>
-
         /// <param name="idx">Index number.</param>
-
         public string ListIndex(string list, int idx) {
-
             var l = List(list);
-
             if (idx < 0 || idx >= l.Count) { return ""; }
-
             return l[idx];
-
         }
 
 
 
         /// <summary>Duplicates the pointer of a list to a new list name
-
         /// If the original list does not exist the request will be ignored!
-
         /// Also note if the target destination already has a list it will remain there
-
         /// And the garbage collector won't pick it up unless the entire GINI var is destroyed)
-
         /// </summary>
-
         public void ListDupe(string source, string target) {
-
             var cs = source.ToUpper();
-
             var ct = source.ToUpper();
-
-
-
             if (ListExists(cs)) {
-
                 lists[ct] = lists[cs];
-
             }
+        }
 
+        public void StringToList(string list,string str) {
+            CL(list);
+            List(list).Clear();
+            str = str.Replace("\r\n", "\n");
+            foreach (string s in str.Split('\n')) List(list).Add(s);
+        }
+
+        public string ListToString(string list) {
+            var sb = new StringBuilder(1);
+            var nl = false;
+            foreach(string l in List(list)) {
+                if (nl) sb.Append("\n"); nl = true;
+                sb.Append(l);
+            }
+            return sb.ToString();
         }
 
 
 
         // Parses the lines of a text-based GINI file into the GINI data
-
         // Please note this method is for merging data purposes, if you don't
-
         // want to merge, use the regular functions ;)
-
         public void ParseLines(string[] l) {
             // this entire function has been translated from BlitzMax, however the [OLD] tag has been removed. (it was deprecated anyway).
             //g.init1st()

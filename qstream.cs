@@ -353,12 +353,16 @@ namespace TrickyUnits
         public const byte NoEndian = 0;
 		public const byte LittleEndian = 1;
 		public const byte BigEndian = 2;
+        public static Stack<string> PushedDirs = new Stack<string>();
 
 		public static void Hello() {
 			MKL.Version("Tricky Units for C# - qstream.cs","19.06.15");
 			MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
 		} // Basically does nothing, but it forces the MKL data to be parsed when called.
 
+
+        public static void PushDir() => PushedDirs.Push(Directory.GetCurrentDirectory());
+        public static void PopDir() => Directory.SetCurrentDirectory(PushedDirs.Pop()); 
 
 		/// <summary>
 		/// Opens a file for quick readon
