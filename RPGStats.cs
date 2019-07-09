@@ -47,9 +47,30 @@ MKL_Lic     "Tricky's Units - RPGStats.bmx","Mozilla Public License 2.0"
 */
 
 using UseJCR6;
+using System.Collections.Generic;
 
 namespace TrickyUnits {
 
+    internal class StringMap {
+        // This class was only required due to BlitzMax having no real map/dictionary support and using a separate library for this. Translating all the code into "pure" C# code would be too much work, so this solution will have to do.
+        static public void Insert(StringMap M,string key, string value) {
+            M.Map[key] = value;
+        }
+
+        public string Value(string key) {
+            if (Map.ContainsKey(key)) return Map[key]; else return "";
+        }
+
+        private Dictionary<string, string> Map = new Dictionary<string, string>();
+    }
+
+    /// <summary>
+    /// You can assign a console function here allowing RPG Var to put debug value onto a debug console. 
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="r"></param>
+    /// <param name="g"></param>
+    /// <param name="b"></param>
     delegate void RPGCONSOLEVOID(string msg, byte r = 255, byte g = 255, byte b = 255);
 
     /// <summary>
