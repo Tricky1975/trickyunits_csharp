@@ -15,7 +15,7 @@ namespace TrickyUnits {
 
         static void Hello() { }
 
-        static bool Yes(string Question) {
+        static public bool Yes(string Question) {
             DialogResult dialogResult = MessageBox.Show(Question, "You're sure?", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes) {
                 return true;
@@ -25,7 +25,7 @@ namespace TrickyUnits {
             throw new Exception("Invalid answer from Confirm box!");
         }
 
-        static int YNC(string Question) {
+        public static int YNC(string Question) {
             DialogResult dialogResult = MessageBox.Show(Question, "You're sure?", MessageBoxButtons.YesNoCancel);
             if (dialogResult == DialogResult.Yes) {
                 return 1;
@@ -37,13 +37,13 @@ namespace TrickyUnits {
             throw new Exception("Invalid answer from Confirm box!");
         }
 
-        static DialogResult Failure(string Question) {
+        static public DialogResult Failure(string Question) {
             DialogResult dialogResult = MessageBox.Show(Question, "Something's not right", MessageBoxButtons.AbortRetryIgnore);
             return dialogResult;
         }
 
 
-        static void Annoy(string) { }
+        static public void Annoy(string msg, string caption = "", MessageBoxIcon Icon = MessageBoxIcon.Information) => MessageBox.Show(msg, caption, MessageBoxButtons.OK, Icon);
 
     }
 
