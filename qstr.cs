@@ -74,14 +74,9 @@ namespace TrickyUnits {
 
 
 
-        public static string Right(string s, int l = 1)
-
-        {
-
+        public static string Right(string s, int l = 1) {
             if (l > s.Length) return s;
-
             return s.Substring(s.Length - l, l);
-
         }
 
 
@@ -93,26 +88,15 @@ namespace TrickyUnits {
 
 
 
-        public static string Mid(string s, int pos, int l = 1)
-
-        {
-
+        public static string Mid(string s, int pos, int l = 1) {
             /*
-
             if (pos + l > s.Length) return s;
-
             return s.Substring(pos - 1, l);
-
             */
-
             // This is slower, but at least it works.... I hope!
-
             var ret = "";
-
-            for (int i = 0; i < l; i++) ret += s.Substring(i+(pos-1),1); 
-
+            for (int i = 0; i < l; i++) ret += s.Substring(i + (pos - 1), 1);
             return ret;
-
         }
 
 

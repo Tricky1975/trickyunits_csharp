@@ -56,6 +56,7 @@ Version History: BlitzMax
 15.10.17 - Fixed issue not saving minimum values in Points.
 Version History: C#
 19.07.09 - Lua API dummied to make this class usable for multiple engines and not only GALE (which has been dropped, and will only be maintained if people ask for it)
+19.07.26 - Many fixups as I didn't do the C# conversion right in one go (figures).
 */
 
 
@@ -103,7 +104,7 @@ namespace TrickyUnits {
             return r;
         }
 
-
+        
         private Dictionary<string, string> Map = new Dictionary<string, string>();
 
     }
@@ -116,6 +117,8 @@ namespace TrickyUnits {
             if (M.Map.ContainsKey(key)) return M.Map[key]; else return null;
 
         }
+        static public bool MapContains(TMap amap, string key) => amap.Contains(key);
+        public bool Contains(string key) => Map.ContainsKey(key);
         static public void ClearMap(TMap M) => M.Map.Clear();
         static public Dictionary<object, object>.KeyCollection MapKeys(TMap M) => M.Map.Keys;
     }
@@ -131,6 +134,8 @@ namespace TrickyUnits {
     delegate void RPGCONSOLEVOID(string msg, byte r = 255, byte g = 255, byte b = 255);
 
     #region Data Classes
+
+
     /// <summary>
     /// This class is used for "Points" based statistics such as Hitpoints, Mana points etc.
     /// </summary>
@@ -141,6 +146,10 @@ namespace TrickyUnits {
 
         public void Inc(int a) => Have += a;
         public void Dec(int a) => Have -= a;
+    }
+
+    public class RPGData {
+        public string d = "";
     }
 
     /// <summary>
@@ -170,9 +179,65 @@ namespace TrickyUnits {
         // Field PortraitBank:TBank // For now taken out of use
         // Field Portrait:TImage // For now taken out of use
 
+        public bool HasStat(string st) => Stats.Contains(st);
         public RPGStat Stat(string St) => (RPGStat)TMap.MapValueForKey(Stats, St);
         public List<string> List(string lst) => (List<string>)TMap.MapValueForKey(Lists, lst);
-        public RPGPoints Point(string p) => (RPGPoints)TMap.MapValueForKey(Points, p);
+        public RPGPoints Point(string p, bool CreateIfNeeded = false) {
+            if (CreateIfNeeded && (!Points.Contains(p))) TMap.MapInsert(Points, p, new RPGPoints());
+            return (RPGPoints)TMap.MapValueForKey(Points, p);
+        }
+
+        public void CreateStat(string st, bool overwrite) {
+            if (overwrite || (!Stats.Contains(st))) TMap.MapInsert(Stats, st, new RPGStat());
+        }
+
+        public RPGCharacter(string Char) { // BLD: Create a character (if a character already exists under that name, it will simply be deleted).
+            TMap.MapInsert(RPG.RPGChars, Char, this);
+            //galecon.galeConsoleWrite "Character ~q"+char+"~q has been created"
+        }
+
+        public void SetData(string key, string str) {
+            /*if Not ch
+                GALE_Error("Character doesn't exist", ["F,RPGChar.SetData","char,"+char])
+            EndIf*/
+            RPGData td = null;
+            if (TMap.MapContains(StrData, key))
+                td = (RPGData)TMap.MapValueForKey(StrData, key);
+            else {
+                td = new RPGData();
+                TMap.MapInsert(StrData, key, td);
+            }
+            td.d = str;
+        }
+
+        public bool DataExists(string key) {
+            return TMap.MapContains(StrData, key);
+        }
+
+
+        public bool NewData(string key, string str) { // BLD: If a data field does not exist, create it and define it. If it already exists, ignore it! (1 is returned if a definition took place, 0 is returned when no definition is done)
+            if (!TMap.MapContains(StrData, key)){ SetData(key, str); return true; }
+            return false;
+        }
+
+        public void LinkData(string targetchar, string dataname) {
+            var ch2 = RPG.GrabChar(targetchar);
+            if (ch2 == null) throw new System.Exception($"Target Character `{targetchar}` doesn't exist"); //, ["F,RPGChar.LinkData","sourcechar,"+sourcechar,"targetchar,"+targetchar,"stat,"+dataname])
+            var ST = (RPGData)TMap.MapValueForKey(StrData, dataname);
+            if (ST == null) throw new System.Exception("Source Character's data doesn't exist"); //, ["F,RPGChar.LinkData", "sourcechar," + sourcechar, "targetchar," + targetchar, "stat," + dataname]);
+            TMap.MapInsert(ch2.StrData, dataname, ST);
+        }
+
+
+        public void DefData(string K, string S) => SetData(K, S);
+
+        public string GetData(string key) {
+            if (!StrData.Contains(key)) return "";
+            var td = (RPGData)TMap.MapValueForKey(StrData, key);
+            //If Not td Return ""
+            return td.d;
+        }
+
     }
     #endregion
 
@@ -575,10 +640,6 @@ For Local k$=EachIn MapKeys ( RPGChars )
 Return ret
 End Method
 
-Method CreateChar(Char$) ' BLD: Create a character (if a character already exists under that name, it will simply be deleted).
-MapInsert RPGChars,Char,New RPGCharacter
-galecon.galeConsoleWrite "Character ~q"+char+"~q has been created"
-End Method
 
 Method DelCharacter(char$) ' BLD: Deletes a character
 Local ch:RPGCharacter = grabchar(char)
@@ -857,8 +918,8 @@ GALE_Register RPGChar,"RPGStats"
             }
             // Let's now load the characters
             foreach (string F in LChars) {
-                ch = new RPGCharacter();
-                TMap.MapInsert(RPGChars, F, ch);
+                ch = new RPGCharacter(F);
+                //TMap.MapInsert(RPGChars, F, ch);
                 // Name
                 BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Character/" + F + "/Name"));
                 ch.Name = BT.ReadString();

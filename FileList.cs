@@ -40,7 +40,7 @@ namespace TrickyUnits {
             // init
             FLError = "";
             var w = new List<string>();
-            var di = new DirectoryInfo(path);
+            var di = new DirectoryInfo(Dirry.AD(path));
             // Check
             if (!di.Exists) {
                 FLError = "TrickyFileList.FileList.GetDir(\"" + path + "\"," + gt + "," + "," + sorted + "," + hidden + "): Directory does not exist!";
