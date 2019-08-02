@@ -1,7 +1,7 @@
 // Lic:
 // FileList.cs
 // TrickyUnits - FileList
-// version: 19.04.24
+// version: 19.08.02
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -17,6 +17,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 
 
 
@@ -92,12 +93,13 @@ namespace TrickyUnits {
 
 
         static FileList() {
-            MKL.Version("Tricky Units for C# - FileList.cs","19.04.24");
+            MKL.Version("Tricky Units for C# - FileList.cs","19.08.02");
             MKL.Lic    ("Tricky Units for C# - FileList.cs","ZLib License");
         }
 
     }
 
 }
+
 
 
