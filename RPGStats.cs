@@ -146,6 +146,11 @@ namespace TrickyUnits {
 
         public void Inc(int a) => Have += a;
         public void Dec(int a) => Have -= a;
+
+        public RPGPoints() {
+            Have = 0;Maximum = 0;Minimum = 0;
+            MaxCopy = "";
+        }
     }
 
     public class RPGData {
