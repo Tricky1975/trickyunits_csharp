@@ -63,14 +63,14 @@ Version History: C#
 
 /* This is normal code in BlitzMax, but has no value at all in C#
 Strict
-Import tricky_units.StringMap
+Import tricky_units.RPG_StringMap
 Import gale.multiscript
 Import gale.Main
 Import jcr6.jcr6main
 Import jcr6.zlibdriver
 Import tricky_units.MKL_Version
 Import tricky_units.TrickyReadString
-Import tricky_units.jcr6stringmap
+Import tricky_units.jcr6RPG_StringMap
 Import brl.max2d
 
 MKL_Version "Tricky's Units - RPGStats.bmx","18.01.16"
@@ -85,10 +85,11 @@ using System.Collections.Generic;
 namespace TrickyUnits {
 
 
+
     #region Classes needed for quick translation from BlitzMax
-    internal class StringMap {
+    internal class RPG_StringMap {
         // This class was only required due to BlitzMax having no real map/dictionary support and using a separate library for this. Translating all the code into "pure" C# code would be too much work, so this solution will have to do.
-        static public void MapInsert(StringMap M, string key, string value) {
+        static public void MapInsert(RPG_StringMap M, string key, string value) {
             M.Map[key] = value;
         }
 
@@ -96,34 +97,36 @@ namespace TrickyUnits {
             if (Map.ContainsKey(key)) return Map[key]; else return "";
         }
 
-        static public Dictionary<string, string>.KeyCollection MapKeys(StringMap M) => M.Map.Keys;
+        static public Dictionary<string, string>.KeyCollection MapKeys(RPG_StringMap M) => M.Map.Keys;
 
-        static public void SaveStringMap(TJCRCreate BT, string EntryName, StringMap M, string storage = "Store") => BT.NewStringMap(M.Map, EntryName, storage);
-        static public StringMap LoadStringMap(TJCRDIR LoadFrom,string entry) {
-            var r = new StringMap();
-            r.Map = LoadFrom.LoadStringMap(entry);
+        static public void SaveRPG_StringMap(TJCRCreate BT, string EntryName, RPG_StringMap M, string storage = "Store") => BT.NewRPG_StringMap(M.Map, EntryName, storage);
+        static public RPG_StringMap LoadRPG_StringMap(TJCRDIR LoadFrom, string entry) {
+            var r = new RPG_StringMap();
+            r.Map = LoadFrom.LoadRPG_StringMap(entry);
             return r;
         }
 
-        
+
         private Dictionary<string, string> Map = new Dictionary<string, string>();
 
     }
 
     // This class was only required due to BlitzMax having no real map/dictionary support and using a separate library for this. Translating all the code into "pure" C# code would be too much work, so this solution will have to do.
-    internal class TMap {
+    internal class RPG_TMap {
         private Dictionary<object, object> Map = new Dictionary<object, object>();
-        static public void MapInsert(TMap M, object key, object value) => M.Map[key] = value;
-        static public object MapValueForKey(TMap M, object key) {
+        static public void MapInsert(RPG_TMap M, object key, object value) => M.Map[key] = value;
+        static public object MapValueForKey(RPG_TMap M, object key) {
             if (M.Map.ContainsKey(key)) return M.Map[key]; else return null;
 
         }
-        static public bool MapContains(TMap amap, string key) => amap.Contains(key);
+        static public bool MapContains(RPG_TMap amap, string key) => amap.Contains(key);
         public bool Contains(string key) => Map.ContainsKey(key);
-        static public void ClearMap(TMap M) => M.Map.Clear();
-        static public Dictionary<object, object>.KeyCollection MapKeys(TMap M) => M.Map.Keys;
+        static public void ClearMap(RPG_TMap M) => M.Map.Clear();
+        static public Dictionary<object, object>.KeyCollection MapKeys(RPG_TMap M) => M.Map.Keys;
     }
     #endregion
+
+
 
     /// <summary>
     /// You can assign a console function here allowing RPG Var to put debug value onto a debug console. 
@@ -177,28 +180,28 @@ namespace TrickyUnits {
 
         public string Name = "";
 
-        public TMap StrData = new TMap();
-        public TMap Stats = new TMap();
-        public TMap Lists = new TMap();
-        public TMap Points = new TMap();
+        public RPG_TMap StrData = new RPG_TMap();
+        public RPG_TMap Stats = new RPG_TMap();
+        public RPG_TMap Lists = new RPG_TMap();
+        public RPG_TMap Points = new RPG_TMap();
 
         // Field PortraitBank:TBank // For now taken out of use
         // Field Portrait:TImage // For now taken out of use
 
         public bool HasStat(string st) => Stats.Contains(st);
-        public RPGStat Stat(string St) => (RPGStat)TMap.MapValueForKey(Stats, St);
-        public List<string> List(string lst) => (List<string>)TMap.MapValueForKey(Lists, lst);
+        public RPGStat Stat(string St) => (RPGStat)RPG_TMap.MapValueForKey(Stats, St);
+        public List<string> List(string lst) => (List<string>)RPG_TMap.MapValueForKey(Lists, lst);
         public RPGPoints Point(string p, bool CreateIfNeeded = false) {
-            if (CreateIfNeeded && (!Points.Contains(p))) TMap.MapInsert(Points, p, new RPGPoints());
-            return (RPGPoints)TMap.MapValueForKey(Points, p);
+            if (CreateIfNeeded && (!Points.Contains(p))) RPG_TMap.MapInsert(Points, p, new RPGPoints());
+            return (RPGPoints)RPG_TMap.MapValueForKey(Points, p);
         }
 
         public void CreateStat(string st, bool overwrite) {
-            if (overwrite || (!Stats.Contains(st))) TMap.MapInsert(Stats, st, new RPGStat());
+            if (overwrite || (!Stats.Contains(st))) RPG_TMap.MapInsert(Stats, st, new RPGStat());
         }
 
         public RPGCharacter(string Char) { // BLD: Create a character (if a character already exists under that name, it will simply be deleted).
-            TMap.MapInsert(RPG.RPGChars, Char, this);
+            RPG_TMap.MapInsert(RPG.RPGChars, Char, this);
             //galecon.galeConsoleWrite "Character ~q"+char+"~q has been created"
         }
 
@@ -207,31 +210,31 @@ namespace TrickyUnits {
                 GALE_Error("Character doesn't exist", ["F,RPGChar.SetData","char,"+char])
             EndIf*/
             RPGData td = null;
-            if (TMap.MapContains(StrData, key))
-                td = (RPGData)TMap.MapValueForKey(StrData, key);
+            if (RPG_TMap.MapContains(StrData, key))
+                td = (RPGData)RPG_TMap.MapValueForKey(StrData, key);
             else {
                 td = new RPGData();
-                TMap.MapInsert(StrData, key, td);
+                RPG_TMap.MapInsert(StrData, key, td);
             }
             td.d = str;
         }
 
         public bool DataExists(string key) {
-            return TMap.MapContains(StrData, key);
+            return RPG_TMap.MapContains(StrData, key);
         }
 
 
         public bool NewData(string key, string str) { // BLD: If a data field does not exist, create it and define it. If it already exists, ignore it! (1 is returned if a definition took place, 0 is returned when no definition is done)
-            if (!TMap.MapContains(StrData, key)){ SetData(key, str); return true; }
+            if (!RPG_TMap.MapContains(StrData, key)){ SetData(key, str); return true; }
             return false;
         }
 
         public void LinkData(string targetchar, string dataname) {
             var ch2 = RPG.GrabChar(targetchar);
             if (ch2 == null) throw new System.Exception($"Target Character `{targetchar}` doesn't exist"); //, ["F,RPGChar.LinkData","sourcechar,"+sourcechar,"targetchar,"+targetchar,"stat,"+dataname])
-            var ST = (RPGData)TMap.MapValueForKey(StrData, dataname);
+            var ST = (RPGData)RPG_TMap.MapValueForKey(StrData, dataname);
             if (ST == null) throw new System.Exception("Source Character's data doesn't exist"); //, ["F,RPGChar.LinkData", "sourcechar," + sourcechar, "targetchar," + targetchar, "stat," + dataname]);
-            TMap.MapInsert(ch2.StrData, dataname, ST);
+            RPG_TMap.MapInsert(ch2.StrData, dataname, ST);
         }
 
 
@@ -239,7 +242,7 @@ namespace TrickyUnits {
 
         public string GetData(string key) {
             if (!StrData.Contains(key)) return "";
-            var td = (RPGData)TMap.MapValueForKey(StrData, key);
+            var td = (RPGData)RPG_TMap.MapValueForKey(StrData, key);
             //If Not td Return ""
             return td.d;
         }
@@ -307,11 +310,11 @@ bbdoc: Contains character data.
 End Rem
 Type RPGCharacter
 Field Name$
-'Field StrData:StringMap = New StringMap
-Field StrData:TMap = New TMap
-Field Stats:TMap = New TMap
-Field Lists:TMap = New TMap
-Field Points:TMap = New TMap
+'Field StrData:RPG_StringMap = New RPG_StringMap
+Field StrData:RPG_TMap = New RPG_TMap
+Field Stats:RPG_TMap = New RPG_TMap
+Field Lists:RPG_TMap = New RPG_TMap
+Field Points:RPG_TMap = New RPG_TMap
 Field PortraitBank:TBank
 Field Portrait:TImage
 
@@ -329,14 +332,14 @@ End Method
 
 End Type
 */
-        static public TMap RPGChars = new TMap();
+        static public RPG_TMap RPGChars = new RPG_TMap();
         static public string[] RPGParty = new string[6];
 
 
         /// <summary>
         /// returns: The character data tied to the requested tag
         /// </summary>        
-        static public RPGCharacter GrabChar(string Ch) => (RPGCharacter)TMap.MapValueForKey(RPGChars, Ch);
+        static public RPGCharacter GrabChar(string Ch) => (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, Ch);
 
 
         private class TMe { // Deprecated. Only included to make sure conflicts never occur.
@@ -351,23 +354,23 @@ End Type
         private class TRPGData {
             internal string d = "";
         }
-        static StringMap dstr(TMap A) {
+        static RPG_StringMap dstr(RPG_TMap A) {
             //var k = "";
-            var ret = new StringMap();
-            foreach (string k in TMap.MapKeys(A))
-                StringMap.MapInsert(ret, k, ((TRPGData)TMap.MapValueForKey(A, k)).d);
+            var ret = new RPG_StringMap();
+            foreach (string k in RPG_TMap.MapKeys(A))
+                RPG_StringMap.MapInsert(ret, k, ((TRPGData)RPG_TMap.MapValueForKey(A, k)).d);
 
             return ret;
         }
 
-        static TMap ddat(StringMap A) {
+        static RPG_TMap ddat(RPG_StringMap A) {
             //Local k$
-            var ret = new TMap();
+            var ret = new RPG_TMap();
             TRPGData t;
-            foreach (string k in StringMap.MapKeys(A)) {
+            foreach (string k in RPG_StringMap.MapKeys(A)) {
                 t = new TRPGData();
                 t.d = A.Value(k);
-                TMap.MapInsert(ret, k, t);
+                RPG_TMap.MapInsert(ret, k, t);
             }
             return ret;
         }
@@ -912,7 +915,7 @@ GALE_Register RPGChar,"RPGStats"
                 ak++;
             }
             BT.Close();
-            TMap.ClearMap(RPGChars);
+            RPG_TMap.ClearMap(RPGChars);
             // Let's first determine which characters we actually have?
             foreach (string F in LoadFrom.Entries.Keys) {
                 P = $"{D.ToUpper()}CHARACTER/";
@@ -925,13 +928,13 @@ GALE_Register RPGChar,"RPGStats"
             // Let's now load the characters
             foreach (string F in LChars) {
                 ch = new RPGCharacter(F);
-                //TMap.MapInsert(RPGChars, F, ch);
+                //RPG_TMap.MapInsert(RPGChars, F, ch);
                 // Name
                 BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Character/" + F + "/Name"));
                 ch.Name = BT.ReadString();
                 BT.Close();
                 // Data
-                ch.StrData = ddat(StringMap.LoadStringMap(LoadFrom, D + "Character/" + F + "/StrData"));
+                ch.StrData = ddat(RPG_StringMap.LoadRPG_StringMap(LoadFrom, D + "Character/" + F + "/StrData"));
                 // Stats
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Stats"));
                 while (!BT.EOF) {
@@ -942,7 +945,7 @@ GALE_Register RPGChar,"RPGStats"
                             TN = BT.ReadString();
                             //Print TN
                             sv = new RPGStat();
-                            TMap.MapInsert(ch.Stats, TN, sv);
+                            RPG_TMap.MapInsert(ch.Stats, TN, sv);
                             break;
                         case 2:
                             sv.Pure = (BT.ReadByte() != (byte)0);
@@ -970,7 +973,7 @@ GALE_Register RPGChar,"RPGStats"
                     switch (tag) {
                         case 1:
                             TN = BT.ReadString();
-                            TMap.MapInsert(ch.Lists, TN, new List<string>());
+                            RPG_TMap.MapInsert(ch.Lists, TN, new List<string>());
                             break;
                         case 2:
                             ch.List(TN).Add(BT.ReadString());
@@ -989,7 +992,7 @@ GALE_Register RPGChar,"RPGStats"
                         case 1:
                             sp = new RPGPoints();
                             TN = BT.ReadString();
-                            TMap.MapInsert(ch.Points, TN, sp);
+                            RPG_TMap.MapInsert(ch.Points, TN, sp);
                             break;
                         case 2:
                             sp.MaxCopy = BT.ReadString();
@@ -1060,8 +1063,8 @@ GALE_Register RPGChar,"RPGStats"
             foreach (string P in RPGParty) {
                 ret.Append($"\nParty:{P}");
             }
-            foreach (string key in TMap.MapKeys(RPGChars)) {
-                ch = (RPGCharacter)TMap.MapValueForKey(RPGChars, key);
+            foreach (string key in RPG_TMap.MapKeys(RPGChars)) {
+                ch = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, key);
                 if (ch == null)
                     DebugLog("WARNING! A wrong record in the chars map");
                 else {
@@ -1069,9 +1072,9 @@ GALE_Register RPGChar,"RPGStats"
                     ret.Append("\nNEW");
                     ret.Append("\n\t" + ch.Name);
                     // Data
-                    foreach (string k in TMap.MapKeys(ch.StrData)) ret.Append("\n\tD(" + k + ")=" + dstr(ch.StrData).Value(k));
+                    foreach (string k in RPG_TMap.MapKeys(ch.StrData)) ret.Append("\n\tD(" + k + ")=" + dstr(ch.StrData).Value(k));
                     // Stats
-                    foreach (string skey in TMap.MapKeys(ch.Stats)) {
+                    foreach (string skey in RPG_TMap.MapKeys(ch.Stats)) {
                         var v = ch.Stat(skey);
                         ret.Append("\n\tSt");
                         ret.Append("\n\t\tskey=" + skey);
@@ -1083,7 +1086,7 @@ GALE_Register RPGChar,"RPGStats"
                     }
                     // Lists
                     ret.Append("\n\tLists");
-                    foreach (string lkey in TMap.MapKeys(ch.Lists)) {
+                    foreach (string lkey in RPG_TMap.MapKeys(ch.Lists)) {
                         ret.Append("\t\t" + lkey);
                         foreach (string item in ch.List(lkey)) {
                             ret.Append("\t\t\t" + item);
@@ -1091,7 +1094,7 @@ GALE_Register RPGChar,"RPGStats"
                     }
                     // Points
                     ret.Append("\n\tPoints");
-                    foreach (string pkey in TMap.MapKeys(ch.Points)) {
+                    foreach (string pkey in RPG_TMap.MapKeys(ch.Points)) {
                         ret.Append("\n\t\tkey " + pkey);
                         ret.Append("\n\t\tmaxcopy " + ch.Point(pkey).MaxCopy);
                         ret.Append("\n\t\thave " + ch.Point(pkey).Have);
@@ -1134,8 +1137,8 @@ GALE_Register RPGChar,"RPGStats"
             BTE.Close();
             // Save all characters
             RPGCharacter ch;
-            foreach (string key in TMap.MapKeys(RPGChars)){
-                ch = (RPGCharacter)TMap.MapValueForKey(RPGChars, key);
+            foreach (string key in RPG_TMap.MapKeys(RPGChars)){
+                ch = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, key);
                 if (ch != null)
                     DebugLog("WARNING! A wrong record in the chars map");
                 else {
@@ -1144,10 +1147,10 @@ GALE_Register RPGChar,"RPGStats"
                     BTE.WriteString(ch.Name);
                     BTE.Close();
                     // Data
-                    StringMap.SaveStringMap(BT, D + "Character/" + key + "/StrData", dstr(ch.StrData), JCRSTORAGE);
+                    RPG_StringMap.SaveRPG_StringMap(BT, D + "Character/" + key + "/StrData", dstr(ch.StrData), JCRSTORAGE);
                     // Stats
                     BTE = BT.NewEntry(D + "Character/" + key + "/Stats", JCRSTORAGE);
-                    foreach (string skey in TMap.MapKeys(ch.Stats)) {
+                    foreach (string skey in RPG_TMap.MapKeys(ch.Stats)) {
                         var v = ch.Stat(skey);
                         BTE.WriteByte(1);
                         BTE.WriteString(skey);
@@ -1164,7 +1167,7 @@ GALE_Register RPGChar,"RPGStats"
                     BTE.Close();
                     // Lists
                     BTE = BT.NewEntry(D + "Character/" + key + "/Lists", JCRSTORAGE);
-                    foreach (string lkey in TMap.MapKeys(ch.Lists)) {
+                    foreach (string lkey in RPG_TMap.MapKeys(ch.Lists)) {
                         BTE.WriteByte(1);
                         BTE.WriteString(lkey);
                         foreach (string item in ch.List(lkey)) {
@@ -1175,7 +1178,7 @@ GALE_Register RPGChar,"RPGStats"
                     BTE.Close();
                     // Points
                     BTE = BT.NewEntry(D + "Character/" + key + "/Points", JCRSTORAGE);
-                    foreach (string pkey in TMap.MapKeys(ch.Points)) {
+                    foreach (string pkey in RPG_TMap.MapKeys(ch.Points)) {
                         BTE.WriteByte(1);
                         BTE.WriteString(pkey);
                         BTE.WriteByte(2);
@@ -1201,18 +1204,18 @@ GALE_Register RPGChar,"RPGStats"
                 //var stat = "";
                 RPGCharacter och1;
                 RPGCharacter och2;
-                foreach (string ch1 in TMap.MapKeys(RPGChars)) foreach (string ch2 in TMap.MapKeys(RPGChars)) {
+                foreach (string ch1 in RPG_TMap.MapKeys(RPGChars)) foreach (string ch2 in RPG_TMap.MapKeys(RPGChars)) {
                         if (ch1 != ch2) {
-                            och1 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch1);
-                            och2 = (RPGCharacter)TMap.MapValueForKey(RPGChars, ch2);
-                            foreach (string stat in TMap.MapKeys(och1.Stats))
+                            och1 = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, ch1);
+                            och2 = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, ch2);
+                            foreach (string stat in RPG_TMap.MapKeys(och1.Stats))
                                 if (och1.Stat(stat) == och2.Stat(stat)) SaveRPGLink(BTE, "Stat", ch1, ch2, stat);
-                            foreach (string stat in TMap.MapKeys(och1.StrData))
-                                if (TMap.MapValueForKey(och1.StrData, stat) == TMap.MapValueForKey(och2.StrData, stat)) SaveRPGLink(BTE, "Data", ch1, ch2, stat);
-                            foreach (string stat in TMap.MapKeys(och1.Points))
-                                if (TMap.MapValueForKey(och1.Points, stat) == TMap.MapValueForKey(och2.Points, stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
-                            foreach (string stat in TMap.MapKeys(och1.Lists))
-                                if (TMap.MapValueForKey(och1.Lists, stat) == TMap.MapValueForKey(och2.Lists, stat)) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
+                            foreach (string stat in RPG_TMap.MapKeys(och1.StrData))
+                                if (RPG_TMap.MapValueForKey(och1.StrData, stat) == RPG_TMap.MapValueForKey(och2.StrData, stat)) SaveRPGLink(BTE, "Data", ch1, ch2, stat);
+                            foreach (string stat in RPG_TMap.MapKeys(och1.Points))
+                                if (RPG_TMap.MapValueForKey(och1.Points, stat) == RPG_TMap.MapValueForKey(och2.Points, stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
+                            foreach (string stat in RPG_TMap.MapKeys(och1.Lists))
+                                if (RPG_TMap.MapValueForKey(och1.Lists, stat) == RPG_TMap.MapValueForKey(och2.Lists, stat)) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
 
                         }
                     }
@@ -1238,7 +1241,7 @@ GALE_Register RPGChar,"RPGStats"
             if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
             var ST = ch1.Stat(statname);
             if (ST == null) throw new System.Exception("Source Character's stat doesn't exis{func}");
-            TMap.MapInsert(ch2.Stats, statname, ST);
+            RPG_TMap.MapInsert(ch2.Stats, statname, ST);
         }
 
         /// <summary>
@@ -1256,7 +1259,7 @@ GALE_Register RPGChar,"RPGStats"
             if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
             var ST = ch1.List(statname);
             if (ST == null) throw new System.Exception($"Source Character's list doesn't exist{func}");
-            TMap.MapInsert(ch2.Lists, statname, ST);
+            RPG_TMap.MapInsert(ch2.Lists, statname, ST);
         }
 
         /// <summary>
@@ -1273,7 +1276,7 @@ GALE_Register RPGChar,"RPGStats"
             if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
             var ST = ch1.Point(pointsname);
             if (ST == null) throw new System.Exception($"Source Character's points doesn't exist{func}");
-            TMap.MapInsert(ch2.Points, pointsname, ST);
+            RPG_TMap.MapInsert(ch2.Points, pointsname, ST);
         }
 
         static public void LinkData(string sourcechar, string targetchar, string dataname) {
@@ -1282,9 +1285,9 @@ GALE_Register RPGChar,"RPGStats"
             if (ch1 == null) throw new System.Exception($"Source Character doesn't exist{func}");
             var ch2 = GrabChar(targetchar);
             if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
-            var ST = /*(TRPGData)*/TMap.MapValueForKey(ch1.StrData, dataname);
+            var ST = /*(TRPGData)*/RPG_TMap.MapValueForKey(ch1.StrData, dataname);
             if (ST == null) throw new System.Exception($"Source Character's data doesn't exist{func}");
-            TMap.MapInsert(ch2.StrData, dataname, ST);
+            RPG_TMap.MapInsert(ch2.StrData, dataname, ST);
         }
 
 
