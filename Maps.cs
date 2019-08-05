@@ -19,6 +19,7 @@
 // EndLic
 
 using System;
+using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -77,7 +78,7 @@ namespace TrickyUnits {
             }
         }
 
-        MapValue this[MapKey key] {
+        public MapValue this[MapKey key] {
             set { Map[key] = value; }
             get {
                 if (!Map.ContainsKey(key)) {
@@ -89,5 +90,26 @@ namespace TrickyUnits {
             }
         }
         Dictionary<MapKey, MapValue>.KeyCollection Keys => Map.Keys;
+    }
+
+    class SBMap {
+        readonly TMap<string, StringBuilder> Map = new TMap<string, StringBuilder>();
+
+        public void Plus(string key,string app) => Map[key].Append(app);
+        public string this[string k] {
+            get => Map[k].ToString();
+            set {
+                if (value == "")
+                    Map.Map.Remove(k);
+                else {
+                    if (!Map.Map.ContainsKey(k))
+                        Map[k] = new StringBuilder(value);
+                    else {
+                        Map[k].Remove(0, Map[k].Length);
+                        Map[k].Append(value);
+                    }
+                }
+            }
+        }
     }
 }

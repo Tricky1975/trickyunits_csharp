@@ -100,10 +100,10 @@ namespace TrickyUnits {
 
         static public Dictionary<string, string>.KeyCollection MapKeys(RPG_StringMap M) => M.Map.Keys;
 
-        static public void SaveRPG_StringMap(TJCRCreate BT, string EntryName, RPG_StringMap M, string storage = "Store") => BT.NewRPG_StringMap(M.Map, EntryName, storage);
+        static public void SaveRPG_StringMap(TJCRCreate BT, string EntryName, RPG_StringMap M, string storage = "Store") => BT.NewStringMap(M.Map, EntryName, storage);
         static public RPG_StringMap LoadRPG_StringMap(TJCRDIR LoadFrom, string entry) {
             var r = new RPG_StringMap();
-            r.Map = LoadFrom.LoadRPG_StringMap(entry);
+            r.Map = LoadFrom.LoadStringMap(entry);
             return r;
         }
 
