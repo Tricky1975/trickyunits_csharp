@@ -174,12 +174,12 @@ namespace TrickyUnits.Dijkstra {
             } // Infinite loop, rememner!
         }
 
-        static Path QuickPath(bool[,] BlockMap, int startx, int starty, int endx, int endy) {
+        static public Path QuickPath(bool[,] BlockMap, int startx, int starty, int endx, int endy) {
             var a = new Dijkstra(BlockMap, startx, starty, endx, endy);
             return a.Start();
         }
 
-        static Path QuickPath(TPassible Passible, int width, int height, int startx, int starty, int endx, int endy) {
+        static public Path QuickPath(TPassible Passible, int width, int height, int startx, int starty, int endx, int endy) {
             var a = new Dijkstra(Passible, width, height, startx, starty, endx, endy);
             return a.Start();
         }
