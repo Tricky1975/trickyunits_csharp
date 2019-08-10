@@ -90,6 +90,14 @@ namespace TrickyUnits {
             }
         }
         Dictionary<MapKey, MapValue>.KeyCollection Keys => Map.Keys;
+
+        public TMap() {
+            Map = new Dictionary<MapKey, MapValue>();
+        }
+
+        public TMap(Dictionary<MapKey,MapValue> WithDict) {
+            Map = WithDict;
+        }
     }
 
     class SBMap {
