@@ -161,6 +161,7 @@ namespace TrickyUnits {
                         case '\b': ret += "\\b"; break;
                         case '\n': ret += "\\n"; break;
                         case '\r': ret += "\\r"; break;
+                        case '\\': ret += "\\\\"; break;
                         default:
                             ret += "\\" + Right($"00{Convert.ToString(a[i], 8)}", 3);
                             break;
