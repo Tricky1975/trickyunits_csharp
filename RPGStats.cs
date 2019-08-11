@@ -267,13 +267,13 @@ namespace TrickyUnits {
 
         static public bool MustHavePortrait = true;
 
-        static public TJCRDIR RPGJCR;
-        static public string RPGJCRDir;
+        static public TJCRDIR RPGJCR=null;
+        static public string RPGJCRDir="";
 
-        static public string RPGID;
-        static public string RPGEngine;
+        static public string RPGID="";
+        static public string RPGEngine="";
 
-        static public RPGCONSOLEVOID RPGConsoleWriter;
+        static public RPGCONSOLEVOID RPGConsoleWriter=null;
         static private void ConsoleWrite(string M, byte R = 255, byte G = 255, byte B = 255) {
             RPGConsoleWriter?.Invoke(M, R, G, B);
         }
