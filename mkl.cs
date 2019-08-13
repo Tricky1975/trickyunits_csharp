@@ -53,15 +53,18 @@ namespace TrickyUnits {
             LICENSES[f] = l;
         }
 
-
+        /// <summary>
+        /// Sets the width of the filename area in an "All" overview!
+        /// </summary>
+        static public int AllWidth = 40;
 
         /// <summary>Shows all version information</summary>
         /// <remarks>A weakness in this system is that C# requires classes and that those classes are only loaded if actually needed, or rather the first time they are called, or created for a variable. Due to this version summaries can change if this function is called before all require classes are loaded.</remarks>
         static public string All(bool showlic=true){
             var ret = "";
-            var dots = ""; for (var i = 0; i <= 40; i++) { dots += "."; }
+            var dots = ""; for (var i = 0; i <= AllWidth; i++) { dots += "."; }
             foreach(string k in VERSIONS.Keys){
-                var b = (k + " " + dots).Substring(0, 40)+" "+VERSIONS[k];
+                var b = (k + " " + dots).Substring(0, AllWidth)+" "+VERSIONS[k];
                 if (showlic && LICENSES.ContainsKey(k)) { b += " " + LICENSES[k]; } 
                 ret += b + "\n";
             }
@@ -102,7 +105,7 @@ namespace TrickyUnits {
                         sy = Int32.Parse(split[0]);
                         sm = Int32.Parse(split[1]);
                         sd = Int32.Parse(split[2]);
-                        total = Int32.Parse($"{sy}{sm+10}{sd+10}"); // This looks odd, but guarantees the best outcome. This number is never visible to users anyway. It is a bit dirty, though, I gotta admit that.
+                        total = Int32.Parse($"{sy}{sm+10}{sd+10}"); // This looks odd, but guarantees the best outcome. This number is never visible to users anyway. It is a bit dirty, though, I gotta admit that.                        
                     } catch {
                         Console.WriteLine("WARNING! Something DID get wrong with the version parsing!");
                     }
@@ -112,6 +115,7 @@ namespace TrickyUnits {
                         month = sm;
                         day = sd;
                         ret = $"{Right($"0{year}", 2)}.{Right($"0{month}", 2)}.{Right($"0{day}",2)}";
+                        hitotal = total;
                     }
                 }
                 return ret;
