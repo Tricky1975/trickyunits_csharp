@@ -18,11 +18,6 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 
-
-
-
-
-
 /* 
     LICENCE NOTES FROM THE ORIGINAL BLITZMAX CODE
     Please note the MPL license is no longer valid, as I now replaced it 
