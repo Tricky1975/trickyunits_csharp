@@ -117,7 +117,7 @@ namespace TrickyUnits {
 
 
 
-        public static string ExtractDir(string myFilePath) => System.IO.Path.GetDirectoryName(myFilePath);
+        public static string ExtractDir(string myFilePath) => System.IO.Path.GetDirectoryName(myFilePath).Replace("\\","/");
         public static string StripDir(string myFilePath) => System.IO.Path.GetFileName(myFilePath);
 
 
