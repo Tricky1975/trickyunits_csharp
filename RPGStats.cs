@@ -1,7 +1,7 @@
 // Lic:
 // RPGStats.cs
 // RPG Stat
-// version: 19.08.12
+// version: 19.08.13
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -17,6 +17,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 
 /* 
     LICENCE NOTES FROM THE ORIGINAL BLITZMAX CODE
@@ -121,6 +122,7 @@ namespace TrickyUnits {
         public bool Contains(string key) => Map.ContainsKey(key);
         static public void ClearMap(RPG_TMap M) => M.Map.Clear();
         static public Dictionary<object, object>.KeyCollection MapKeys(RPG_TMap M) => M.Map.Keys;
+        public Dictionary<object,object>.KeyCollection Keys => Map.Keys;
     }
     #endregion
 
@@ -168,6 +170,9 @@ namespace TrickyUnits {
         public string CallFunction = "";
         public int Value = 0;
         public int Modifier = 0;
+        public override string ToString() {
+            return $"{Value}";
+        }
     }
 
 
@@ -349,14 +354,14 @@ End Type
         //'	Field c1$,c2$,d$
         //'	End Type
         //'Global linkeddatalist:TList = New TList
-        private class TRPGData {
-            internal string d = "";
-        }
+        //private class TRPGData {
+        //    internal string d = "";
+        //}
         static RPG_StringMap dstr(RPG_TMap A) {
             //var k = "";
             var ret = new RPG_StringMap();
             foreach (string k in RPG_TMap.MapKeys(A))
-                RPG_StringMap.MapInsert(ret, k, ((TRPGData)RPG_TMap.MapValueForKey(A, k)).d);
+                RPG_StringMap.MapInsert(ret, k, ((RPGData)RPG_TMap.MapValueForKey(A, k)).d);
 
             return ret;
         }
@@ -364,9 +369,9 @@ End Type
         static RPG_TMap ddat(RPG_StringMap A) {
             //Local k$
             var ret = new RPG_TMap();
-            TRPGData t;
+            RPGData t;
             foreach (string k in RPG_StringMap.MapKeys(A)) {
-                t = new TRPGData();
+                t = new RPGData();
                 t.d = A.Value(k);
                 RPG_TMap.MapInsert(ret, k, t);
             }
@@ -563,11 +568,11 @@ Local ch:RPGCharacter = grabchar(char)
 If Not ch 
     GALE_Error("Character doesn't exist",["F,RPGChar.SetData","char,"+char])
     EndIf	
-Local td:trpgdata 
+Local td:RPGData 
 If MapContains(ch.strData,key) 
-    td = trpgdata(MapValueForKey(ch.strdata,key))
+    td = RPGData(MapValueForKey(ch.strdata,key))
     Else
-    td = New trpgdata; 
+    td = New RPGData; 
     MapInsert ch.strdata,key,td
     EndIf
 td.d=str
@@ -578,7 +583,7 @@ Local ch:RPGCharacter = grabchar(char)
 If Not ch 
     GALE_Error("Character doesn't exist",["F,RPGChar.SetData","char,"+char])
     EndIf	
-'Local td:trpgdata 
+'Local td:RPGData 
 Return MapContains(ch.strData,key) 
 End Method
 
@@ -597,7 +602,7 @@ Local ch1:RPGCharacter = grabchar(sourcechar)
 If Not ch1 GALE_Error("Source Character doesn't exist",["F,RPGChar.LinkData","sourcechar,"+sourcechar,"targetchar,"+targetchar,"stat,"+dataname])
 Local ch2:RPGCharacter = grabchar(targetchar)
 If Not ch2 GALE_Error("Target Character doesn't exist",["F,RPGChar.LinkData","sourcechar,"+sourcechar,"targetchar,"+targetchar,"stat,"+dataname])
-Local ST:trpgdata = trpgdata(MapValueForKey(ch1.strdata,dataname))
+Local ST:RPGData = RPGData(MapValueForKey(ch1.strdata,dataname))
 If Not ST GALE_Error("Source Character's data doesn't exist",["F,RPGChar.LinkData","sourcechar,"+sourcechar,"targetchar,"+targetchar,"stat,"+dataname])
 MapInsert ch2.strdata,dataname,ST	
 End Method
@@ -609,7 +614,7 @@ Method GetData$(char$,key$) ' BLD: Retrieve the data in a character
 Local ch:RPGCharacter = grabchar(char)
 If Not ch GALE_Error("Character doesn't exist",["F,RPGChar.GetData","char,"+char,"Data:"+key])
 'Return ch.strdata.value(key)
-Local td:trpgdata = trpgdata(MapValueForKey(ch.strdata,key))
+Local td:RPGData = RPGData(MapValueForKey(ch.strdata,key))
 If Not td Return ""
 Return td.d
 End Method
@@ -902,14 +907,14 @@ GALE_Register RPGChar,"RPGStats"
             BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Party"));
             ak = 0;
             RPGParty = new string[BT.ReadInt()];
-            while (BT.EOF) {
+            DebugLog($"Party has room for {RPGParty.Length} characters");
+            while (!BT.EOF) {
                 if (ak >= RPGParty.Length) {
                     DebugLog("WARNING! Too many party members in party!");
                     break;
                 }
                 RPGParty[ak] = BT.ReadString();
                 DebugLog($"Party Member #{ak}> {RPGParty[ak]}");
-
                 ak++;
             }
             BT.Close();
@@ -921,19 +926,24 @@ GALE_Register RPGChar,"RPGStats"
                     TN = qstr.ExtractDir(LoadFrom.Entries[F].Entry);
                     TN = qstr.StripDir(TN);
                     LChars.Add(TN);
+                    DebugLog($"Added character {TN} to load list!");
                 }
             }
             // Let's now load the characters
             foreach (string F in LChars) {
+                DebugLog($"Loading character: {F}");
                 ch = new RPGCharacter(F);
                 //RPG_TMap.MapInsert(RPGChars, F, ch);
                 // Name
                 BT = new QuickStream(LoadFrom.AsMemoryStream($"{D}Character/" + F + "/Name"));
                 ch.Name = BT.ReadString();
+                DebugLog($"\tName = {ch.Name}");
                 BT.Close();
                 // Data
+                DebugLog($"\tLoading Data");
                 ch.StrData = ddat(RPG_StringMap.LoadRPG_StringMap(LoadFrom, D + "Character/" + F + "/StrData"));
                 // Stats
+                DebugLog($"\tLoading Stats");
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Stats"));
                 while (!BT.EOF) {
                     tag = BT.ReadByte();
@@ -965,6 +975,7 @@ GALE_Register RPGChar,"RPGStats"
                 }
                 BT.Close();
                 // Lists
+                DebugLog("\tLoading Lists");
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Lists"));
                 while (!BT.EOF) {
                     tag = BT.ReadByte();
@@ -983,6 +994,7 @@ GALE_Register RPGChar,"RPGStats"
                 }
                 BT.Close();
                 // Points
+                DebugLog("\tLoading Points");
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Character/" + F + "/Points"));
                 while (!BT.EOF) {
                     tag = BT.ReadByte();
@@ -1006,7 +1018,7 @@ GALE_Register RPGChar,"RPGStats"
                             break;
                         default:
                             //EndGraphics
-                            throw new System.Exception($"FATAL ERROR:~n~nUnknown tag in character ({F}) points file ({tag}) within this savegame file ");
+                            throw new System.Exception($"FATAL ERROR:\n\nUnknown tag in character ({F}) points file ({tag}) within this savegame file ");
                     }
                 }
                 BT.Close();
@@ -1022,35 +1034,37 @@ GALE_Register RPGChar,"RPGStats"
                 //EndIf
                 //		EndIf
                 //	Next	
+            }
                 string linktype = "", linkch1 = "", linkch2 = "", linkstat = "";
-                if (LoadFrom.Exists(D + "Links")) {
-                    BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Links"));
-                    do { //Repeat
-                        tag = BT.ReadByte();
-                        switch (tag) {
-                            case 001:
-                                linktype = BT.ReadString();
-                                linkch1 = BT.ReadString();
-                                linkch2 = BT.ReadString();
-                                linkstat = BT.ReadString();
-                                switch (linktype.ToUpper()) {
-                                    case "STAT": LinkStat(linkch1, linkch2, linkstat); break;
-                                    case "PNTS": LinkPoints(linkch1, linkch2, linkstat); break;
-                                    case "DATA": LinkData(linkch1, linkch2, linkstat); break;
-                                    case "LIST": LinkList(linkch1, linkch2, linkstat); break;
-                                    default: DebugLog("ERROR! I don't know what a " + linktype + " is so I cannot link!"); break;
-                                }
-                                break;
-                            case 255:
-                                goto GetOutOfThisLinkLoop; // Nothing I hate more than "goto" commands, but due to the way switches are set up in C-dialects, I got no choice!
-                            default:
-                                throw new System.Exception($"ERROR! Unknown link command tag ({tag})");
+            if (LoadFrom.Exists(D + "Links")) {
+                DebugLog("Links found! Loading them!");
+                BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Links"));
+                do { //Repeat
+                    tag = BT.ReadByte();
+                    switch (tag) {
+                        case 001:
+                            linktype = BT.ReadString();
+                            linkch1 = BT.ReadString();
+                            linkch2 = BT.ReadString();
+                            linkstat = BT.ReadString();
+                            switch (linktype.ToUpper()) {
+                                case "STAT": LinkStat(linkch1, linkch2, linkstat); break;
+                                case "PNTS": LinkPoints(linkch1, linkch2, linkstat); break;
+                                case "DATA": LinkData(linkch1, linkch2, linkstat); break;
+                                case "LIST": LinkList(linkch1, linkch2, linkstat); break;
+                                default: DebugLog("ERROR! I don't know what a " + linktype + " is so I cannot link!"); break;
+                            }
+                            break;
+                        case 255:
+                            goto GetOutOfThisLinkLoop; // Nothing I hate more than "goto" commands, but due to the way switches are set up in C-dialects, I got no choice!
+                        default:
+                            throw new System.Exception($"ERROR! Unknown link command tag ({tag})");
 
-                        }
-                    } while (!BT.EOF); //Until Eof(bt)
-                GetOutOfThisLinkLoop:
-                    BT.Close();
-                }
+                    }
+                } while (!BT.EOF); //Until Eof(bt)
+            GetOutOfThisLinkLoop:
+                BT.Close();
+
             }
             //return true;
         }
@@ -1238,7 +1252,7 @@ GALE_Register RPGChar,"RPGStats"
             var ch2 = GrabChar(targetchar);
             if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
             var ST = ch1.Stat(statname);
-            if (ST == null) throw new System.Exception("Source Character's stat doesn't exis{func}");
+            if (ST == null) throw new System.Exception($"Source Character's stat doesn't exist{func}");
             RPG_TMap.MapInsert(ch2.Stats, statname, ST);
         }
 
@@ -1283,7 +1297,7 @@ GALE_Register RPGChar,"RPGStats"
             if (ch1 == null) throw new System.Exception($"Source Character doesn't exist{func}");
             var ch2 = GrabChar(targetchar);
             if (ch2 == null) throw new System.Exception($"Target Character doesn't exist{func}");
-            var ST = /*(TRPGData)*/RPG_TMap.MapValueForKey(ch1.StrData, dataname);
+            var ST = /*(RPGData)*/RPG_TMap.MapValueForKey(ch1.StrData, dataname);
             if (ST == null) throw new System.Exception($"Source Character's data doesn't exist{func}");
             RPG_TMap.MapInsert(ch2.StrData, dataname, ST);
         }
@@ -1293,6 +1307,7 @@ GALE_Register RPGChar,"RPGStats"
     }
     #endregion
 }
+
 
 
 
