@@ -1,7 +1,7 @@
 // Lic:
 // Swap.cs
 // Swap
-// version: 19.08.16
+// version: 19.08.17
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -18,10 +18,12 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 
+#define Swap_Debug
 
 using System;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace TrickyUnits {
@@ -33,14 +35,20 @@ namespace TrickyUnits {
     /// </summary>
     class Swap {
 
+        static void Chat(string s) {
+#if Swap_Debug
+            Debug.WriteLine($"SWAP DEBUG:> {s}");
+#endif
+        }
+
         private class SwapData {
             StringBuilder Data;
             public int Modifications { get; private set; } = 0;
             public DateTime Modified { get; private set; } = DateTime.Now;
-            public SwapData(StringBuilder a) { Data = a; }
-            public SwapData(string a) { Data = new StringBuilder(a); }
-            public SwapData(byte[] a) { Data = new StringBuilder(Encoding.Default.GetString(a)); }
-            public void Def(string a) { Data.Clear(); App(a); Modifications++; }
+            public SwapData(StringBuilder a,bool modified=false) { Data = a; if (modified) Modifications = 1; }
+            public SwapData(string a, bool modified = false) { Data = new StringBuilder(a); if (modified) Modifications = 1; }
+            public SwapData(byte[] a, bool modified = false) { Data = new StringBuilder(Encoding.Default.GetString(a)); if (modified) Modifications = 1; }
+            public void Def(string a) { Data.Clear(); Data.Append(a); Modifications++; }
             public void App(string a) { Data.Append(a); Modified = DateTime.Now; Modifications++; }
             override public string ToString() => Data.ToString();
         }
@@ -89,6 +97,7 @@ namespace TrickyUnits {
             Map.Kill(t);
             MD();
             if (File.Exists(f)) File.Delete(f);
+            Update();
         }
 
         void Update() {
@@ -98,17 +107,18 @@ namespace TrickyUnits {
             var ekill = new List<string>();
             foreach (string key in keys) {
                 var entry = Map[key];
-                int maxtime = (entry.Modifications * 2) - count;
+                int maxtime = ((entry.Modifications * 2) - count)+1;
                 int time = (int)nu.Subtract(entry.Modified).TotalMinutes;
                 if (time > maxtime) {
-                    QuickStream.SaveString(TagFile(key), entry.ToString());
+                    Chat($"Entry {key} is over time ({time} minutes elapsed, and {maxtime} where allowed). This entry was since put in RAM modified {entry.Modifications} time(s)");
+                    if (entry.Modifications>0) QuickStream.SaveString(TagFile(key), entry.ToString());
                     ekill.Add(key);
                 }
             }
             foreach (string key in ekill) Map.Kill(key);
         }
 
-        string[] Keys {
+        public string[] Keys {
             get {
                 MD();
                 var l = new List<string>();
@@ -123,7 +133,7 @@ namespace TrickyUnits {
         /// Creates a Lua script in which all keys are listed
         /// Specifically created for BUBBLE, but other Lua based engines can use it too, I suppose :P
         /// </summary>
-        string KeysLua {
+        public string KeysLua {
             get {
                 var comma = false;
                 var ret = new StringBuilder("return {");
@@ -147,6 +157,7 @@ namespace TrickyUnits {
                 var SW = Map[tag];
                 MD();
                 if (SW == null) {
+                    if (!File.Exists(fil)) return "";
                     SW = new SwapData(QuickStream.LoadString(fil));
                     Map[tag] = SW;
                 }
@@ -158,15 +169,35 @@ namespace TrickyUnits {
                 var fil = TagFile(tag);
                 var SW = Map[tag];
                 MD();
-                if (SW == null)
-                    Map[tag] = new SwapData(value);
-                else
-                    SW.App(value);
+                if (SW == null) {
+                    Chat($"Creating new entry: {tag}");
+                    Map[tag] = new SwapData(value,true);                    
+                } else {
+                    Chat($"Rewrite existing entry: {tag}");
+                    SW.Def(value);
+                }
                 Update();
             }
+        }
+
+        public void App(string key,string v) {
+            var tag = SafeTag(key);
+            var fil = TagFile(tag);
+            var SW = Map[tag];
+            if (SW == null) {
+                if (File.Exists(fil))
+                    SW = new SwapData(QuickStream.LoadString(fil));
+                else
+                    SW = new SwapData("");
+                Map[tag] = SW;
+            }
+            SW.App(v);
+            Update();
+
         }
 
     }
 
 }
+
 
