@@ -1,7 +1,7 @@
 // Lic:
 // Maps.cs
 // Alternate Maps
-// version: 19.08.10
+// version: 19.08.16
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -17,6 +17,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 
 
 using System;
@@ -90,7 +91,7 @@ namespace TrickyUnits {
                 return Map[key];
             }
         }
-        Dictionary<MapKey, MapValue>.KeyCollection Keys => Map.Keys;
+        public Dictionary<MapKey, MapValue>.KeyCollection Keys => Map.Keys;        
 
         public TMap() {
             Map = new Dictionary<MapKey, MapValue>();
@@ -99,6 +100,9 @@ namespace TrickyUnits {
         public TMap(Dictionary<MapKey,MapValue> WithDict) {
             Map = WithDict;
         }
+
+        public void Clear() => Map.Clear();
+        public void Kill(MapKey key) => Map.Remove(key);
     }
 
     class SBMap {
@@ -122,4 +126,5 @@ namespace TrickyUnits {
         }
     }
 }
+
 
