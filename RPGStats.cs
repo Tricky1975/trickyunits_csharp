@@ -119,6 +119,7 @@ namespace TrickyUnits {
             if (M.Map.ContainsKey(key)) return M.Map[key]; else return null;
 
         }
+        public int Count => Map.Count;
         static public bool MapContains(RPG_TMap amap, string key) => amap.Contains(key);
         public bool Contains(string key) => Map.ContainsKey(key);
         static public void ClearMap(RPG_TMap M) => M.Map.Clear();
@@ -1145,14 +1146,15 @@ GALE_Register RPGChar,"RPGStats"
             // Save Party members
             BTE = BT.NewEntry(D + "Party", JCRSTORAGE);
             BTE.WriteInt(RPGParty.Length);
-            foreach (string P in RPGParty)
+            foreach (string P in RPGParty) if (P!=null)
                 BTE.WriteString(P);
             BTE.Close();
             // Save all characters
             RPGCharacter ch;
+            Debug.WriteLine($"Saving {RPGChars.Count} characters");
             foreach (string key in RPG_TMap.MapKeys(RPGChars)){
                 ch = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, key);
-                if (ch != null)
+                if (ch == null)
                     DebugLog("WARNING! A wrong record in the chars map");
                 else {
                     // Name
