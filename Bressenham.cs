@@ -63,6 +63,7 @@ namespace TrickyUnits.Bressenham {
 
         static public Bressenham GenerateLine(int x1, int y1, int x2, int y2) {
             var ret = new Bressenham();
+            var stomp = Math.Abs(y1 - y2) > Math.Abs(x2 - x1);
             // Simple version
             if (x1 == x2 && y1 != y2) {
                 var N = new List<Node>();
