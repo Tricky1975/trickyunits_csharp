@@ -22,9 +22,14 @@ namespace TrickyUnits.Bressenham {
 
         private Bressenham() { }
         
-        static List<Node> basicline(int x0, int y0, int x1, int y1) {
+        static List<Node> basicline(int x0, int y0, int x1, int y1,bool swap=false) {
             var ret = new List<Node>();
-            void putpixel(int ax, int ay, int whatever = 0) => ret.Add(new Node(ax, ay));
+            void putpixel(int ax, int ay, int whatever = 0) {
+                if (swap)
+                    ret.Add(new Node(ay, ax));
+                else
+                    ret.Add(new Node(ax, ay));
+            }
 
             int dx, dy, p, x, y;
 
@@ -70,25 +75,40 @@ namespace TrickyUnits.Bressenham {
                 if (y1 < y2) for (int i = y1; i <= y2; i++) N.Add(new Node(x1, i));
                 if (y1 > y2) for (int i = y1; i >= y2; i--) N.Add(new Node(x1, i));
                 ret.Nodes = N.ToArray();
-            } else if (x1 <= x2 && y1 <= y2)
-                ret.Nodes = basicline(x1, y1, x2, y2).ToArray();
-            else if (x1 >= x2 && y1 >= y2) {
-                ret.Nodes = basicline(x2, y2, x1, y1).ToArray();
+            } else if (x1 <= x2 && y1 <= y2) {
+                if (stomp)
+                    ret.Nodes = basicline(y1, x1, y2, x2, true).ToArray();
+                else
+                    ret.Nodes = basicline(x1, y1, x2, y2).ToArray();
+            } else if (x1 >= x2 && y1 >= y2) {
+                if (stomp)
+                    ret.Nodes = basicline(y2, x2, y1, x1, true).ToArray();
+                else
+                    ret.Nodes = basicline(x2, y2, x1, y1).ToArray();
                 Array.Reverse(ret.Nodes);
             } else if (x1 < x2 && y1 > y2) {
-                ret.Nodes = basicline(x1, y2, x2, y1).ToArray();
+                if (stomp)
+                    ret.Nodes = basicline(y2, x1, y1, x2, true).ToArray();
+                else
+                    ret.Nodes = basicline(x1, y2, x2, y1).ToArray();
                 var N2 = new List<Node>();
                 var l = ret.Nodes.Length - 1;
                 for (int i = 0; i < ret.Nodes.Length; i++)
                     N2.Add(new Node(ret[i].x, ret[l - i].y));
                 ret.Nodes = N2.ToArray();
             } else if (x1 > x2 && y1 < y2) {
-                ret.Nodes = basicline(x1, y2, x2, y1).ToArray();
+                //if (stomp) {
+                    //ret.Nodes = basicline(y1, x2, y2, x1, true).ToArray();
+                    var r = GenerateLine(x2, y2, x1, y1); //.ToArray();
+                    Array.Reverse(r.Nodes);
+                    return r;
+                /*} else
+                    ret.Nodes = basicline(x1, y2, x2, y1).ToArray();
                 var N2 = new List<Node>();
                 var l = ret.Nodes.Length - 1;
                 for (int i = 0; i < ret.Nodes.Length; i++)
                     N2.Add(new Node(ret[l - i].x, ret[l].y));
-                ret.Nodes = N2.ToArray();
+                ret.Nodes = N2.ToArray();*/
             } else
                 throw new Exception("Request done that Bressenham doesn't support by itself, and for which no alternate support has yet been set up"); // Shouldn't be possible, but just in case!
             return ret;
