@@ -203,7 +203,7 @@ namespace TrickyUnits
             while (true) {
                 x = ReadByte();
                 if (x == 10 || x == 13 || EOF) break;
-                ret.Append(qstr.Chr(x)); // <<<--- THIS WILL SLOW THINGS DOWN!!!
+                ret.Append($"{(char)x}"); //(qstr.Chr(x)); 
             }
             if (!EOF) {
                 x2 = ReadByte();

@@ -177,6 +177,11 @@ namespace TrickyUnits {
             return lists[nlist.ToUpper()];
         }
 
+        public string this[string k] {
+            get => C(k);
+            set => D(k, value);
+        }
+
 
 
         /// <summary>

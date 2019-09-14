@@ -116,6 +116,14 @@ namespace TrickyUnits {
             return Right(ret, ret.Length - 1);
         }
 
+        public static string StripExt(string myFilePath) {
+            var d = ExtractDir(myFilePath);
+            var f = StripDir(myFilePath);
+            if (d=="")
+                return $"{f.Substring(0, f.Length - System.IO.Path.GetExtension(f).Length)}";
+            return $"{d}/{f.Substring(0, f.Length - System.IO.Path.GetExtension(f).Length)}";
+        }
+
 
 
         public static string ExtractDir(string myFilePath) => System.IO.Path.GetDirectoryName(myFilePath).Replace("\\","/");
