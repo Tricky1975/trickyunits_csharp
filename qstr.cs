@@ -53,6 +53,14 @@ namespace TrickyUnits {
         /// </summary>
         public static void Hello() { }
 
+        public static string EOLNType(string a) {
+            string ret = "LF";            
+            var i = a.IndexOf('\r'); if (i < 0) return "LF";
+            if (i == a.Length - 1 || Mid(a,i + 2, 1) != "\n") return "CR";
+            if (Mid(a, i + 2) == "\n") ret = "CRLF";
+            return ret;
+
+        }
 
         /// <summary>
         /// Calculates MD5 hash from string.
