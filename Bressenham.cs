@@ -1,7 +1,7 @@
 // Lic:
 // Bressenham.cs
 // Bresenham line drawer (sorry for the typo in the file name)
-// version: 19.09.14
+// version: 19.10.27
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -137,3 +137,4 @@ namespace TrickyUnits.Bressenham {
     }
 
 }
+
