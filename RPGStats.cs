@@ -126,6 +126,7 @@ namespace TrickyUnits {
         static public void ClearMap(RPG_TMap M) => M.Map.Clear();
         static public Dictionary<object, object>.KeyCollection MapKeys(RPG_TMap M) => M.Map.Keys;
         public Dictionary<object,object>.KeyCollection Keys => Map.Keys;
+        public void Kill(string key) => Map.Remove(key);
     }
     #endregion
 
