@@ -84,7 +84,12 @@ namespace TrickyUnits {
 
 
 
-
+        public static string Str(string str,int num) {
+            if (num < 0) throw new Exception("Negative numbers not allowed in qstr.Str() request!");
+            var ret = new StringBuilder(str.Length*num);
+            for (int i = 0; i < num; i++) ret.Append(str);
+            return ret.ToString();
+        }
 
         public static string Right(string s, int l = 1) {
             if (l > s.Length) return s;
@@ -107,7 +112,7 @@ namespace TrickyUnits {
             */
             // This is slower, but at least it works.... I hope!
             var ret = "";
-            for (int i = 0; i < l; i++) ret += s.Substring(i + (pos - 1), 1);
+            for (int i = 0; i < l && i<s.Length; i++) ret += s.Substring(i + (pos - 1), 1);
             return ret;
         }
 
