@@ -1,7 +1,7 @@
 // Lic:
 // XFileList.cs
 // X FileList
-// version: 19.10.27
+// version: 19.11.12
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -55,4 +55,5 @@ namespace TrickyUnits {
 
     }
 }
+
 

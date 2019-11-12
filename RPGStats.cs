@@ -1,7 +1,7 @@
 // Lic:
 // RPGStats.cs
 // RPG Stat
-// version: 19.08.16
+// version: 19.11.12
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -1312,6 +1312,7 @@ GALE_Register RPGChar,"RPGStats"
     }
     #endregion
 }
+
 
 
 
