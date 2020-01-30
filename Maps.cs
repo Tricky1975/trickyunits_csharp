@@ -68,7 +68,7 @@ namespace TrickyUnits {
     }
 
     class TMap<MapKey, MapValue> {
-        public readonly Dictionary<MapKey, MapValue> Map;
+        public readonly SortedDictionary<MapKey, MapValue> Map;
         public bool MustExist = false;
         MapError Err = delegate (string Msg) { Console.WriteLine(Msg); Debug.WriteLine(Msg); };
         public MapError Error {
@@ -83,21 +83,29 @@ namespace TrickyUnits {
         public MapValue this[MapKey key] {
             set { Map[key] = value; }
             get {
-                if (!Map.ContainsKey(key)) {
-                    if (MustExist)
-                        Err?.Invoke($"StringMap does not contain key {key.ToString()}");
+                try {
+                    if (!Map.ContainsKey(key)) {
+                        if (MustExist)
+                            Err?.Invoke($"StringMap does not contain key {key.ToString()}");
+                        return default(MapValue);
+                    }
+                } catch(Exception huh) {
+                    Debug.WriteLine($"{huh.Message}");
+                    Debug.WriteLine($"{huh.StackTrace}");
+                    Err?.Invoke($"ERROR! {huh.Message}");
                     return default(MapValue);
                 }
                 return Map[key];
             }
         }
-        public Dictionary<MapKey, MapValue>.KeyCollection Keys => Map.Keys;        
+        public SortedDictionary<MapKey, MapValue>.KeyCollection Keys => Map.Keys;
+        public int Count => Map.Count;
 
         public TMap() {
-            Map = new Dictionary<MapKey, MapValue>();
+            Map = new SortedDictionary<MapKey, MapValue>();
         }
 
-        public TMap(Dictionary<MapKey,MapValue> WithDict) {
+        public TMap(SortedDictionary<MapKey,MapValue> WithDict) {
             Map = WithDict;
         }
 

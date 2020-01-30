@@ -126,14 +126,15 @@ namespace TrickyUnits.Dijkstra {
         /// </summary>
         /// <returns></returns>
         public Path Start() {
-            if (EndX<0 || EndY<0 || StartX<0 || StartY<0 || EndX>=Nodes.maxwidth || StartX>=Nodes.maxwidth || EndY>=Nodes.maxheight || StartY>=Nodes.maxheight) {
+            bool Check(int x, int y) => Passible(x, y) && (!Nodes[x, y].visited);
+            void Catch(List<Node> NodeList,Node ParentNode, int x,int y) { if (Check(x, y)) { NodeList.Add(Nodes[x, y]); Nodes[x, y].parent = ParentNode; } }
+
+            if ((!Check(EndX,EndY)) || EndX<0 || EndY<0 || StartX<0 || StartY<0 || EndX>=Nodes.maxwidth || StartX>=Nodes.maxwidth || EndY>=Nodes.maxheight || StartY>=Nodes.maxheight) {
                 var ret = new Path();
                 ret.Nodes = new Node[0];
                 ret.Success = false;
                 return ret;
             }
-            bool Check(int x, int y) => Passible(x, y) && (!Nodes[x, y].visited);
-            void Catch(List<Node> NodeList,Node ParentNode, int x,int y) { if (Check(x, y)) { NodeList.Add(Nodes[x, y]); Nodes[x, y].parent = ParentNode; } }
                      
             Nodes[EndX, EndY].visited = true;
             var Latest = new List<Node>();

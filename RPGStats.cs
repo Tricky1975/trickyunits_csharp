@@ -1043,7 +1043,8 @@ GALE_Register RPGChar,"RPGStats"
             if (LoadFrom.Exists(D + "Links")) {
                 DebugLog("Links found! Loading them!");
                 BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Links"));
-                do { //Repeat
+                //do { //Repeat
+                while (!BT.EOF) { 
                     tag = BT.ReadByte();
                     switch (tag) {
                         case 001:
@@ -1065,7 +1066,7 @@ GALE_Register RPGChar,"RPGStats"
                             throw new System.Exception($"ERROR! Unknown link command tag ({tag})");
 
                     }
-                } while (!BT.EOF); //Until Eof(bt)
+                }// while (!BT.EOF); //Until Eof(bt)
             GetOutOfThisLinkLoop:
                 BT.Close();
 
@@ -1148,13 +1149,13 @@ GALE_Register RPGChar,"RPGStats"
             // Save Party members
             BTE = BT.NewEntry(D + "Party", JCRSTORAGE);
             BTE.WriteInt(RPGParty.Length);
-            foreach (string P in RPGParty) if (P!=null)
-                BTE.WriteString(P);
+            foreach (string P in RPGParty) if (P != null)
+                    BTE.WriteString(P);
             BTE.Close();
             // Save all characters
             RPGCharacter ch;
             Debug.WriteLine($"Saving {RPGChars.Count} characters");
-            foreach (string key in RPG_TMap.MapKeys(RPGChars)){
+            foreach (string key in RPG_TMap.MapKeys(RPGChars)) {
                 ch = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, key);
                 if (ch == null)
                     DebugLog("WARNING! A wrong record in the chars map");
@@ -1214,15 +1215,18 @@ GALE_Register RPGChar,"RPGStats"
                     //	EndIf
                     //EndIf
                 }
-                // If there are any links list them in the save file
-                BTE = BT.NewEntry(D + "Links", JCRSTORAGE);
-                //var ch1=""
-                //var ch2 = "";
-                //var stat = "";
-                RPGCharacter och1;
-                RPGCharacter och2;
-                foreach (string ch1 in RPG_TMap.MapKeys(RPGChars)) foreach (string ch2 in RPG_TMap.MapKeys(RPGChars)) {
-                        if (ch1 != ch2) {
+            }
+            // If there are any links list them in the save file
+            BTE = BT.NewEntry(D + "Links", JCRSTORAGE);
+            //var ch1=""
+            //var ch2 = "";
+            //var stat = "";
+            RPGCharacter och1;
+            RPGCharacter och2;
+            foreach (string ch1 in RPG_TMap.MapKeys(RPGChars)) foreach (string ch2 in RPG_TMap.MapKeys(RPGChars)) {
+                    if (ch1 != ch2) {
+                        Debug.WriteLine($"Comparing {ch1} and {ch2}");
+                        try {
                             och1 = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, ch1);
                             och2 = (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, ch2);
                             foreach (string stat in RPG_TMap.MapKeys(och1.Stats))
@@ -1233,12 +1237,20 @@ GALE_Register RPGChar,"RPGStats"
                                 if (RPG_TMap.MapValueForKey(och1.Points, stat) == RPG_TMap.MapValueForKey(och2.Points, stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
                             foreach (string stat in RPG_TMap.MapKeys(och1.Lists))
                                 if (RPG_TMap.MapValueForKey(och1.Lists, stat) == RPG_TMap.MapValueForKey(och2.Lists, stat)) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
-
+                            Debug.WriteLine("= All okay!");
+                        } catch (System.Exception Ex) {
+                            Debug.WriteLine($"= Error occurred: {Ex.Message}!");
+                        } finally {
+                            Debug.WriteLine("= End of record");
                         }
                     }
-            }
+                }
+
+            Debug.WriteLine("Closing link file");
             BTE.WriteByte(255);
             BTE.Close();
+            Debug.WriteLine($"Offset {BT.Entries["XTRA/PARTY/LINKS"].Offset} / {BT.Entries["XTRA/PARTY/LINKS"].Size}"); // High debug, must be commented on normal use!
+            Debug.WriteLine("Done!");
             // Close if needed
             if (SaveTo is string whatever) BT.Close();
         }

@@ -131,6 +131,19 @@ namespace TrickyUnits
         }
 
 
+        /// <summary>
+        /// Reads a string like a C null terminated string
+        /// </summary>
+        /// <param name="len"></param>
+        /// <returns></returns>
+        public string ReadNullTerminatedString(int len) {
+            var r = new StringBuilder(len);
+            var b = ReadBytes(len);
+            for (int i = 0; i < len && b[i] != 0; i++) r.Append((char)b[i]);
+            return r.ToString();
+        }
+
+
 
 		/// <summary>
 		/// Reads a 32bit integer from the stream.

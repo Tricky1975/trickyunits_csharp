@@ -18,14 +18,6 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 
-
-
-
-
-
-
-
-
 using System;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
@@ -125,9 +117,14 @@ namespace TrickyUnits {
         public static string Lower(string s) => s.ToLower(); // BlitzMax conversion
 
         public static string ExtractExt(string myFilePath) {
-            var ret = System.IO.Path.GetExtension(myFilePath);
-            if (ret == "") { return ""; }
-            return Right(ret, ret.Length - 1);
+            try {
+                var ret = System.IO.Path.GetExtension(myFilePath);
+                if (ret == "") { return ""; }
+                return Right(ret, ret.Length - 1);
+            } catch (Exception fuckyou) {
+                System.Diagnostics.Debug.WriteLine($"ERROR: {fuckyou.Message}");
+                return "";
+            }
         }
 
         public static string StripExt(string myFilePath) {
@@ -140,7 +137,15 @@ namespace TrickyUnits {
 
 
 
-        public static string ExtractDir(string myFilePath) => System.IO.Path.GetDirectoryName(myFilePath).Replace("\\","/");
+        public static string ExtractDir(string myFilePath) {
+            try {
+                if (myFilePath == "") return "";
+                return System.IO.Path.GetDirectoryName(myFilePath).Replace("\\", "/");
+            } catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine($"Error in Extractdir: {e.Message} ({myFilePath})");
+                return "";
+            }
+        }
         public static string StripDir(string myFilePath) => System.IO.Path.GetFileName(myFilePath);
 
 

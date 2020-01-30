@@ -133,6 +133,20 @@ namespace TrickyUnits
             }
         }
 
+        static public string[] AltDriveList {
+            get {
+                var a = new List<string>();
+                foreach (string k in AltDrives.Keys) {
+                    var k2 =k ;
+                    // while (k2[k2.Length - 1] == '\\') k2 = k2.Substring(0, k2.Length - 1);
+                    if (k2[k2.Length - 1] != '\\')
+                        a.Add(k2);
+                }
+                a.Sort();
+                return a.ToArray();
+            }
+        }
+
         static public void InitAltDrives(string linuxmountdir = "~/media") {
             switch (Environment.OSVersion.Platform) {
                 case PlatformID.MacOSX:
