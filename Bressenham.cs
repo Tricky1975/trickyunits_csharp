@@ -22,10 +22,13 @@ using System;
 using System.Collections.Generic;
 
 /*
- * This is an experimental project to calculate lines using the Bressenham algorithm
+ * This is an experimental project to calculate lines using the Bresenham algorithm
  * Please note, Bressenham can only draw lines from left to right and only when the angle between horizontal and the line is 45 degrees or smaller
  * All else must be faked with clever maths. Now I could already tackle a few issues, like drawing from right to left, but the beyond 45 degrees issue is one I'm still trying to get a good
  * calculation for!
+ * 
+ * Apologies for the typo in Bresenham's name. This mistake was only discovered when the code was in a state that changing it would damage other projects of mine.
+ * 
  */ 
 
 namespace TrickyUnits.Bressenham {
