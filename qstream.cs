@@ -1,7 +1,7 @@
 // Lic:
 // qstream.cs
 // TrickyUnits - Quick Stream
-// version: 19.09.14
+// version: 20.02.25
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -371,7 +371,7 @@ namespace TrickyUnits
         public static Stack<string> PushedDirs = new Stack<string>();
 
 		public static void Hello() {
-			MKL.Version("Tricky Units for C# - qstream.cs","19.09.14");
+			MKL.Version("Tricky Units for C# - qstream.cs","20.02.25");
 			MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
 		} // Basically does nothing, but it forces the MKL data to be parsed when called.
 
@@ -546,10 +546,3 @@ namespace TrickyUnits
 	}
 
 }
-
-
-
-
-
-
-

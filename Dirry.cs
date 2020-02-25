@@ -1,7 +1,7 @@
 // Lic:
 // Dirry.cs
 // TrickyUnits - Dirry
-// version: 19.04.24
+// version: 20.02.25
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -47,7 +47,7 @@ namespace TrickyUnits
     {
         static Dirry()
         {
-            MKL.Version("Tricky Units for C# - Dirry.cs","19.04.24");
+            MKL.Version("Tricky Units for C# - Dirry.cs","20.02.25");
             MKL.Lic    ("Tricky Units for C# - Dirry.cs","ZLib License");
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             nodollar = false;
@@ -204,5 +204,3 @@ namespace TrickyUnits
     }
 
 }
-
-

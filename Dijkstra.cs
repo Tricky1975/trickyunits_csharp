@@ -1,7 +1,7 @@
 // Lic:
 // Dijkstra.cs
 // Dijkstra Pathfinding Algorithm
-// version: 19.08.12
+// version: 20.02.25
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -195,4 +195,3 @@ namespace TrickyUnits.Dijkstra {
     }
 
 }
-

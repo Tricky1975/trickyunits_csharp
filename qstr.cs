@@ -1,7 +1,7 @@
 // Lic:
 // qstr.cs
 // TrickyUnits - Quick String
-// version: 19.11.12
+// version: 20.02.25
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -36,7 +36,7 @@ namespace TrickyUnits {
     /// </summary>
     class qstr {
         static qstr() {
-            MKL.Version("Tricky Units for C# - qstr.cs","19.11.12");
+            MKL.Version("Tricky Units for C# - qstr.cs","20.02.25");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -84,6 +84,7 @@ namespace TrickyUnits {
         }
 
         public static string Right(string s, int l = 1) {
+            if (s == null) return "";
             if (l > s.Length) return s;
             return s.Substring(s.Length - l, l);
         }
@@ -146,7 +147,14 @@ namespace TrickyUnits {
                 return "";
             }
         }
-        public static string StripDir(string myFilePath) => System.IO.Path.GetFileName(myFilePath);
+        public static string StripDir(string myFilePath) {
+            try {
+                return System.IO.Path.GetFileName(myFilePath);
+            } catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine($"Error in ExtractDir -- {e.Message}");
+                return "";
+            }
+        }
 
 
 
@@ -322,14 +330,3 @@ namespace TrickyUnits {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
