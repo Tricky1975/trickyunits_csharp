@@ -17,6 +17,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+using System;
 namespace TrickyUnits {
 
 
@@ -24,6 +25,15 @@ namespace TrickyUnits {
         static Rand() {
             MKL.Lic    ("Tricky Units for C# - Rand.cs","ZLib License");
             MKL.Version("Tricky Units for C# - Rand.cs","20.02.25");
+        }
+
+        static Random work = new Random();
+        static public int Int(int min, int max) => work.Next(min, max+1);
+        static public int Int(int max) => work.Next(0, max+1);
+
+        static public int StepInt(int min,int max,int step) {
+            var r = Int(min, max);
+            return Math.Max(r - (r % step),0);
         }
     }
 
