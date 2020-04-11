@@ -1,7 +1,7 @@
 // Lic:
 // qstream.cs
 // TrickyUnits - Quick Stream
-// version: 20.02.25
+// version: 20.04.11
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -176,7 +176,8 @@ namespace TrickyUnits
             if (l == 0) { l = ReadInt(); }
             var ret = new byte[l];
             for (int i = 0; i < l; i++) { ret[i] = ReadByte(); }
-            return Encoding.Default.GetString(ret);
+            //return Encoding.Default.GetString(ret);
+            return Encoding.ASCII.GetString(ret);
         }
 
 
@@ -243,7 +244,8 @@ namespace TrickyUnits
                     chs.Add(ch);
                 }
             } while (ch > 0);
-            return Encoding.Default.GetString(chs.ToArray());
+            //return Encoding.Default.GetString(chs.ToArray());
+            return Encoding.ASCII.GetString(chs.ToArray());
         }
 
 
@@ -371,7 +373,7 @@ namespace TrickyUnits
         public static Stack<string> PushedDirs = new Stack<string>();
 
 		public static void Hello() {
-			MKL.Version("Tricky Units for C# - qstream.cs","20.02.25");
+			MKL.Version("Tricky Units for C# - qstream.cs","20.04.11");
 			MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
 		} // Basically does nothing, but it forces the MKL data to be parsed when called.
 
