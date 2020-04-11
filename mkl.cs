@@ -1,7 +1,7 @@
 // Lic:
 // mkl.cs
 // TrickyUnits - MKL
-// version: 19.08.13
+// version: 20.04.11
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -21,9 +21,6 @@
 
 
 
-
-
-
 using System;
 using System.Collections.Generic;
 
@@ -31,9 +28,16 @@ using System.Collections.Generic;
 
 namespace TrickyUnits {
     /// <summary>MKL (MaKe License) was a system I set up for automatically adding license texts and version numbering. This way I can always be sure version changes never go without nummeric changes. It's a very simplistic system, but it does what it has to do. :)</summary>
-    class MKL
-    {
-        static public string MyExe => System.Reflection.Assembly.GetEntryAssembly().Location;
+    public class MKL {
+        static internal string MyExe {
+            get {
+#if !LIBRARY
+                return System.Reflection.Assembly.GetEntryAssembly().Location;
+#else
+                return "This property cannot be called in a library environment!";
+#endif
+            }
+        }
 
 
         static SortedDictionary<string, string> VERSIONS = new SortedDictionary<string, string>();
@@ -132,14 +136,9 @@ namespace TrickyUnits {
 
         static MKL(){
             // Despite C# considering this as "obsolete" the "MKL." prefixes MUST be present here, or MKL_Update won't onderstand these values have to be updated.
-            MKL.Version("Tricky Units for C# - mkl.cs","19.08.13");
+            MKL.Version("Tricky Units for C# - mkl.cs","20.04.11");
             MKL.Lic    ("Tricky Units for C# - mkl.cs","ZLib License");
         }
 
     }
 }
-
-
-
-
-
