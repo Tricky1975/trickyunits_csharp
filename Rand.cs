@@ -1,7 +1,7 @@
 // Lic:
 // Rand.cs
 // Quick randomizer
-// version: 20.02.25
+// version: 20.04.11
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,7 @@ namespace TrickyUnits {
     static class Rand {
         static Rand() {
             MKL.Lic    ("Tricky Units for C# - Rand.cs","ZLib License");
-            MKL.Version("Tricky Units for C# - Rand.cs","20.02.25");
+            MKL.Version("Tricky Units for C# - Rand.cs","20.04.11");
         }
 
         static Random work = new Random();
