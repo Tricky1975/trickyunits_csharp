@@ -1,7 +1,7 @@
 // Lic:
 // qstr.cs
 // TrickyUnits - Quick String
-// version: 20.02.25
+// version: 20.04.11
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -34,9 +34,9 @@ namespace TrickyUnits {
     /// Just some quick functions to use with strings.
     /// Nothing special :P
     /// </summary>
-    class qstr {
+    public class qstr {
         static qstr() {
-            MKL.Version("Tricky Units for C# - qstr.cs","20.02.25");
+            MKL.Version("Tricky Units for C# - qstr.cs","20.04.11");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -156,6 +156,7 @@ namespace TrickyUnits {
             }
         }
 
+        public static string StripAll(string myFilePath) => StripDir(StripExt(myFilePath));
 
 
         public static bool Prefixed(string mystring, string prefix) => Left(mystring, prefix.Length) == prefix;
@@ -321,7 +322,8 @@ namespace TrickyUnits {
 
 
 
-        public static void printf(string input, params object[] inpVars) => Console.Write(input, inpVars);
+        public static void printf(string input, params object[] inpVars) => Console.Write(sprintf(input, inpVars));
+        public static void printfln(string input, params object[] inpVars) => Console.WriteLine(sprintf(input, inpVars));
 
         public static string OrText(string One, string Two) { if (One.Trim() != "") return One; else return Two; }
 
