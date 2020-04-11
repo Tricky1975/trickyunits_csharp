@@ -1,7 +1,7 @@
 // Lic:
 // Dirry.cs
 // TrickyUnits - Dirry
-// version: 20.02.25
+// version: 20.04.11
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -47,7 +47,7 @@ namespace TrickyUnits
     {
         static Dirry()
         {
-            MKL.Version("Tricky Units for C# - Dirry.cs","20.02.25");
+            MKL.Version("Tricky Units for C# - Dirry.cs","20.04.11");
             MKL.Lic    ("Tricky Units for C# - Dirry.cs","ZLib License");
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             nodollar = false;
@@ -198,7 +198,7 @@ namespace TrickyUnits
             if (sp.Length != 2) return s;
             var k = sp[0].ToUpper();
             if (!AltDrives.ContainsKey(k)) return s;
-            return $"{AltDrives[k]}{sp[1]}";
+            return $"{AltDrives[k]}{sp[1].Replace("\\","/")}";
         }
 
     }
