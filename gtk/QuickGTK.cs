@@ -1,7 +1,7 @@
 // Lic:
 // gtk/QuickGTK.cs
 // QuickGTK
-// version: 19.03.09
+// version: 20.04.11
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -189,17 +189,17 @@ namespace TrickyUnits.GTK{
 
         static void MessageDialogBox(string message,MessageType MT,Window pwin=null){
 
+            try {
 
-
-            MessageDialog md = new MessageDialog(pwin ?? MyMainWindow,
-
-                 DialogFlags.DestroyWithParent, MT,
-
-                 ButtonsType.Close, message);
-
-            md.Run();
-
-            md.Destroy();
+                MessageDialog md = new MessageDialog(pwin ?? MyMainWindow,
+                     DialogFlags.DestroyWithParent, MT,
+                     ButtonsType.Close, message);
+                md.Run();
+                md.Destroy();
+            } catch (System.Exception E) {
+                System.Console.Beep();
+                System.Diagnostics.Debug.WriteLine($"Exception {E} >> MessageDialogBox(\"{message}\",MessageType.{MT},{pwin}");
+            }
 
         }        
 
@@ -363,7 +363,7 @@ namespace TrickyUnits.GTK{
 
         public QuickGTK(){
 
-            MKL.Version("Tricky Units for C# - QuickGTK.cs","19.03.09");
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","20.04.11");
 
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
 
@@ -379,7 +379,7 @@ namespace TrickyUnits.GTK{
 
         static public void Hello() {
 
-            MKL.Version("Tricky Units for C# - QuickGTK.cs","19.03.09");
+            MKL.Version("Tricky Units for C# - QuickGTK.cs","20.04.11");
 
             MKL.Lic    ("Tricky Units for C# - QuickGTK.cs","ZLib License");
 
@@ -414,4 +414,3 @@ namespace TrickyUnits.GTK{
 
 
 }
-
