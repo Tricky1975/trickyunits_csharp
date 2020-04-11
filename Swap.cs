@@ -1,7 +1,7 @@
 // Lic:
 // Swap.cs
 // Swap
-// version: 19.08.17
+// version: 20.04.11
 // Copyright (C)  Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -109,8 +109,8 @@ namespace TrickyUnits {
                 var entry = Map[key];
                 int maxtime = ((entry.Modifications * 2) - count)+1;
                 int time = (int)nu.Subtract(entry.Modified).TotalMinutes;
-                if (time > maxtime) {
-                    Chat($"Entry {key} is over time ({time} minutes elapsed, and {maxtime} where allowed). This entry was since put in RAM modified {entry.Modifications} time(s)");
+                if (time > maxtime || count>5 ) {
+                    Chat($"Entry {key} is over time ({time} minutes elapsed, and {maxtime} were allowed). This entry was since put in RAM modified {entry.Modifications} time(s)");
                     if (entry.Modifications>0) QuickStream.SaveString(TagFile(key), entry.ToString());
                     ekill.Add(key);
                 }
@@ -199,5 +199,3 @@ namespace TrickyUnits {
     }
 
 }
-
-
