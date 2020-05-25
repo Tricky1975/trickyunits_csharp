@@ -1,8 +1,8 @@
 // Lic:
 // GINI Is Not Ini.cs
 // TrickyUnits - GINI Is Not Ini
-// version: 19.09.14
-// Copyright (C)  Jeroen P. Broks
+// version: 20.05.26
+// Copyright (C) 2018, 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -452,99 +452,50 @@ namespace TrickyUnits {
         /// <summary>Converts gini data into a string you can save as a GINI file</summary>
 
         public string ToSource() {
-
             var tme = DateTime.Now.ToString(); //:=time.Now()
-
-            var ret = "[rem]\nGenerated file!\n\n";
-
+            var ret = new StringBuilder("[rem]\nGenerated file!\n\n");
             //ret+=fmt.Sprintf("Generated: %d/%d/%d",tme.Month(),tme.Day(),tme.Year())+"\n\n"
-
-            ret += $"Generated: {tme}\n\n";
-
-            ret += "[vars]\n";
-
+            ret.Append($"Generated: {tme}\n\n");
+            ret.Append("[vars]\n");
             var tret = new List<string>();//[] string{}
-
             foreach (string k in vars.Keys) //for k,v:=range g.vars
-
             {
-
                 var v = vars[k];
-
                 //ret+=k+"="+v+"\n"
-
                 tret.Add(k + "=" + v);
-
             }
-
             tret.Sort(); //sort.Strings(tret)
-
-            foreach (string l in tret) { ret += l + "\n"; }
-
-            ret += "\n\n";
-
+            foreach (string l in tret) { ret.Append( l + "\n"); }
+            ret.Append("\n\n");
             var ldone = new Dictionary<string, bool>();
-
             foreach (string list in lists.Keys) {
-
                 var point = lists[list];
-
-                var slists = "";
-
+                var slists = new StringBuilder("");
                 //for k,p:=range g.listpointer
-
                 if (!ldone.ContainsKey(list)) {
-
                     foreach (string k in lists.Keys) {
-
                         var p = lists[k];
-
                         if (p == point) {
-
-                            if (slists != "") { slists += ","; }
-
-                            slists += k;
-
-
-
+                            if ($"{slists}" != "") { slists.Append(","); }
+                            slists.Append(k);
                         }
-
                     }
-
                     //if (slists == "")
-
                     //{
-
                     //fmt.Printf("ERROR! List pointer -- without references!", point)
-
                     //  }
-
                     ldone[list] = true;
-
                     //} else {
-
-                    ret += "[List:" + slists + "]\n";
-
+                    ret.Append( "[List:" + slists + "]\n");
                     foreach (string v in lists[list]) {
-
-                        ret += v + "\n";
-
+                        ret.Append( v + "\n");
                         //TrickyUnits.GTK.QuickGTK.Info($"I save {v} from {list} // {lists[list].Count}"); // DEBUG ONLY!!!!
-
                     }
-
                     //for _, v:= range list { ret += v + "\n"}
-
-                    ret += "\n";
-
-
-
+                    ret .Append( "\n");
                 }
-
             }
-
-            return ret;
-
+            return $"{ret}";
         }
 
 
@@ -689,7 +640,7 @@ namespace TrickyUnits {
         static public void Hello() { }
 
         static  GINI() {
-            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","19.09.14");
+            MKL.Version("Tricky Units for C# - GINI Is Not Ini.cs","20.05.26");
             MKL.Lic    ("Tricky Units for C# - GINI Is Not Ini.cs","ZLib License");
             var tb = debug;
 
@@ -698,9 +649,3 @@ namespace TrickyUnits {
     }
 
 }
-
-
-
-
-
-
