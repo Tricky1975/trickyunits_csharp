@@ -1,8 +1,8 @@
 // Lic:
 // RegExTree.cs
 // RegExTree
-// version: 20.04.21
-// Copyright (C)  Jeroen P. Broks
+// version: 20.05.26
+// Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -111,7 +111,7 @@ namespace TrickyUnits {
 
         static RegExTree() {
             MKL.Lic    ("Tricky Units for C# - RegExTree.cs","ZLib License");
-            MKL.Version("Tricky Units for C# - RegExTree.cs","20.04.21");
+            MKL.Version("Tricky Units for C# - RegExTree.cs","20.05.26");
         }
 
     }
