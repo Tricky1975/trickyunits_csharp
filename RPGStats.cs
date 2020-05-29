@@ -1,8 +1,8 @@
 // Lic:
 // RPGStats.cs
 // RPG Stat
-// version: 20.02.25
-// Copyright (C)  Jeroen P. Broks
+// version: 20.05.29
+// Copyright (C) 2019 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -242,6 +242,15 @@ namespace TrickyUnits {
             var ST = (RPGData)RPG_TMap.MapValueForKey(StrData, dataname);
             if (ST == null) throw new System.Exception("Source Character's data doesn't exist"); //, ["F,RPGChar.LinkData", "sourcechar," + sourcechar, "targetchar," + targetchar, "stat," + dataname]);
             RPG_TMap.MapInsert(ch2.StrData, dataname, ST);
+        }
+
+
+        public void LinkStat(string targetchar, string statname) {
+            var ch2 = RPG.GrabChar(targetchar);
+            if (ch2 == null) throw new System.Exception($"Target Character `{targetchar}` doesn't exist"); //, ["F,RPGChar.LinkData","sourcechar,"+sourcechar,"targetchar,"+targetchar,"stat,"+dataname])
+            var ST = (RPGStat)RPG_TMap.MapValueForKey(Stats, statname);
+            if (ST == null) throw new System.Exception("Source Character's data doesn't exist"); //, ["F,RPGChar.LinkData", "sourcechar," + sourcechar, "targetchar," + targetchar, "stat," + dataname]);
+            RPG_TMap.MapInsert(ch2.Stats, statname, ST);
         }
 
 
