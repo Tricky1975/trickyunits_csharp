@@ -1,8 +1,8 @@
 // Lic:
 // GINIE.cs
 // GINIE Is Not INI Either
-// version: 20.02.25
-// Copyright (C)  Jeroen P. Broks
+// version: 20.08.16
+// Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -65,7 +65,7 @@ namespace TrickyUnits {
 
         static public void Hello() {
             MKL.Lic    ("Tricky Units for C# - GINIE.cs","ZLib License");
-            MKL.Version("Tricky Units for C# - GINIE.cs","20.02.25");
+            MKL.Version("Tricky Units for C# - GINIE.cs","20.08.16");
         }
 
         private GINIE() { Hello(); }
@@ -159,6 +159,14 @@ namespace TrickyUnits {
 
         public void ListAddNew(string sec,string key,string value,bool sort=true) {
             if (!List(sec, key).Contains(value)) ListAdd(sec, key,value,sort);            
+        }
+
+        public SortedDictionary<string, SortedDictionary<string, string>>.KeyCollection EachSections => Values.Keys;
+
+        public SortedDictionary<string, string>.KeyCollection Each(string sec) {
+            sec = sec.ToUpper();
+            if (!Values.ContainsKey(sec)) return null;
+            return Values[sec].Keys;
         }
 
         public string this[string sec, string key] {
