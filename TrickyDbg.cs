@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 
 namespace TrickyUnits {
-    class TrickyDebug {
+    public class TrickyDebug {
 
         /// <summary>
         /// Outputs to the console, but only in debug builds!
