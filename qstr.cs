@@ -1,8 +1,8 @@
 // Lic:
 // qstr.cs
 // TrickyUnits - Quick String
-// version: 20.04.11
-// Copyright (C)  Jeroen P. Broks
+// version: 20.08.16
+// Copyright (C) 2018, 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -36,7 +36,7 @@ namespace TrickyUnits {
     /// </summary>
     public class qstr {
         static qstr() {
-            MKL.Version("Tricky Units for C# - qstr.cs","20.04.11");
+            MKL.Version("Tricky Units for C# - qstr.cs","20.08.16");
             MKL.Lic    ("Tricky Units for C# - qstr.cs","ZLib License");
         }
 
@@ -326,6 +326,14 @@ namespace TrickyUnits {
         public static void printfln(string input, params object[] inpVars) => Console.WriteLine(sprintf(input, inpVars));
 
         public static string OrText(string One, string Two) { if (One.Trim() != "") return One; else return Two; }
+
+        static public string bsdec(string ori) {
+            var ret = new StringBuilder();
+            for(int i = 0; i < ori.Length; ++i) {
+                ret.Append($"{"\\"}{Right($"00{(byte)ori[i]}", 3)}");
+            }
+            return ret.ToString();
+        }
 
     }
 
