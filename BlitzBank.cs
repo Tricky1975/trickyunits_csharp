@@ -1,8 +1,8 @@
 // Lic:
 // BlitzBank.cs
 // Blitz Bank
-// version: 19.08.12
-// Copyright (C)  Jeroen P. Broks
+// version: 20.08.16
+// Copyright (C) 2019 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -26,7 +26,7 @@ namespace TrickyUnits {
      This is just a fake class, to make conversions from Blitz to C# easier
     */
 
-        enum BlitzEndian { None,Little,Big }
+    enum BlitzEndian { None, Little, Big }
 
     class BlitzBank {
 
@@ -48,7 +48,7 @@ namespace TrickyUnits {
         }
 
 
-        public BlitzBank(int size,BlitzEndian Endian=BlitzEndian.Little) { Buffer = new byte[size]; WantEndian = Endian; }
+        public BlitzBank(int size, BlitzEndian Endian = BlitzEndian.Little) { Buffer = new byte[size]; WantEndian = Endian; }
 
         public void ResizeBank(int size) {
             Buffer = new byte[size];
@@ -78,7 +78,7 @@ namespace TrickyUnits {
             bf[1] = Peek(addr + 1);
             bf[2] = 0;
             bf[3] = 0;
-            return BitConverter.ToInt32(bf,0);
+            return BitConverter.ToInt32(bf, 0);
         }
     }
-
+}
