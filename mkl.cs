@@ -1,8 +1,8 @@
 // Lic:
 // mkl.cs
 // TrickyUnits - MKL
-// version: 20.04.11
-// Copyright (C)  Jeroen P. Broks
+// version: 20.08.16
+// Copyright (C) 2018, 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -29,7 +29,7 @@ using System.Collections.Generic;
 namespace TrickyUnits {
     /// <summary>MKL (MaKe License) was a system I set up for automatically adding license texts and version numbering. This way I can always be sure version changes never go without nummeric changes. It's a very simplistic system, but it does what it has to do. :)</summary>
     public class MKL {
-        static internal string MyExe {
+        static public string MyExe {
             get {
 #if !LIBRARY
                 return System.Reflection.Assembly.GetEntryAssembly().Location;
@@ -40,23 +40,25 @@ namespace TrickyUnits {
         }
 
 
-        static SortedDictionary<string, string> VERSIONS = new SortedDictionary<string, string>();
-        static SortedDictionary<string, string> LICENSES = new SortedDictionary<string, string>();
+        SortedDictionary<string, string> TVERSIONS = new SortedDictionary<string, string>();
+        SortedDictionary<string, string> TLICENSES = new SortedDictionary<string, string>();
+
+        static MKL MySelf = new MKL();
+
+        static SortedDictionary<string, string> VERSIONS => MySelf.TVERSIONS;
+        static SortedDictionary<string, string> LICENSES => MySelf.TLICENSES;
 
 
 
         /// <summary>Defines version number</summary>
-        static public void Version(string f, string v){
-            VERSIONS[f] = v;
-        }
+        static public void Version(string f, string v){            VERSIONS[f] = v;        }
+        public void SetVersion(string f,string v) { TVERSIONS[f] = v; }
 
 
 
         /// <summary>Defines license field</summary>
-        static public void Lic(string f, string l){
-
-            LICENSES[f] = l;
-        }
+        static public void Lic(string f, string l){            LICENSES[f] = l;        }
+        public void SetLic(string f,string l) { TLICENSES[f] = l; }
 
         /// <summary>
         /// Sets the width of the filename area in an "All" overview!
@@ -65,16 +67,17 @@ namespace TrickyUnits {
 
         /// <summary>Shows all version information</summary>
         /// <remarks>A weakness in this system is that C# requires classes and that those classes are only loaded if actually needed, or rather the first time they are called, or created for a variable. Due to this version summaries can change if this function is called before all require classes are loaded.</remarks>
-        static public string All(bool showlic=true){
+        public string GetAll(bool showlic=true){
             var ret = "";
             var dots = ""; for (var i = 0; i <= AllWidth; i++) { dots += "."; }
-            foreach(string k in VERSIONS.Keys){
-                var b = (k + " " + dots).Substring(0, AllWidth)+" "+VERSIONS[k];
-                if (showlic && LICENSES.ContainsKey(k)) { b += " " + LICENSES[k]; } 
+            foreach(string k in TVERSIONS.Keys){
+                var b = (k + " " + dots).Substring(0, AllWidth)+" "+TVERSIONS[k];
+                if (showlic && TLICENSES.ContainsKey(k)) { b += " " + TLICENSES[k]; } 
                 ret += b + "\n";
             }
             return ret;
         }
+        static public string All(bool showlic = true) => MySelf.GetAll(showlic);
 
 
 
@@ -95,14 +98,14 @@ namespace TrickyUnits {
         /// <summary>
         /// Shows you the 'newest version' based on the used sources
         /// </summary>
-        static public string Newest{
+        public string GetNewest{
             get{
                 var ret = " 0.00.00";
                 var year = 0;
                 var month = 0;
                 var day = 0;
                 var hitotal = 0;
-                foreach(string mvalue in VERSIONS.Values){
+                foreach(string mvalue in TVERSIONS.Values){
                     var split = mvalue.Split('.');
                     int sy=0; int sm=0; int sd=0;
                     int total = 0;
@@ -127,16 +130,19 @@ namespace TrickyUnits {
             }
         }
 
-        static public string CYear(int iyear) {
-            var nyear = $"20{Left(Newest,2)}";
+        static public string Newest => MySelf.GetNewest;
+
+        public string GetCYear(int iyear) {
+            var nyear = $"20{Left(GetNewest,2)}";
             if ($"{iyear}" != nyear) return $"{iyear}-{nyear}";
             return $"{iyear}";
         }
+        static public string CYear(int iyear) => MySelf.GetCYear(iyear);
 
 
         static MKL(){
             // Despite C# considering this as "obsolete" the "MKL." prefixes MUST be present here, or MKL_Update won't onderstand these values have to be updated.
-            MKL.Version("Tricky Units for C# - mkl.cs","20.04.11");
+            MKL.Version("Tricky Units for C# - mkl.cs","20.08.16");
             MKL.Lic    ("Tricky Units for C# - mkl.cs","ZLib License");
         }
 
