@@ -70,6 +70,12 @@ namespace TrickyUnits {
 
         private GINIE() { Hello(); }
 
+
+        /// <summary>
+        ///  Parse GINIE source into data
+        /// </summary>
+        /// <param name="source">Source code</param>
+        /// <returns></returns>
         static public GINIE FromSource(string[] source) {
             var ret = new GINIE();
             var tag = "";
@@ -124,7 +130,7 @@ namespace TrickyUnits {
             }
             return ret;
         }
-
+        
         static public GINIE FromSource(string source) => FromSource(source.Split('\n'));
         static public GINIE FromSource(List<string> source) => FromSource(source.ToArray());
 
@@ -149,6 +155,13 @@ namespace TrickyUnits {
             if (!Lists.ContainsKey(sec)) Lists[sec] = new SortedDictionary<string, List<string>>();
             if (!Lists[sec].ContainsKey(key)) Lists[sec][key] = new List<string>();
             return Lists[sec][key];
+        }
+
+        public bool HasList(string sec,string key) {
+            sec = sec.ToUpper();
+            key = key.ToUpper();
+            if (!Lists.ContainsKey(sec)) return false;
+            return Lists[sec].ContainsKey(key);
         }
 
         public void ListAdd(string sec,string key,string value,bool sort = true) {
