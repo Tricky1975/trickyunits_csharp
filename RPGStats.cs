@@ -1,8 +1,8 @@
 // Lic:
 // RPGStats.cs
 // RPG Stat
-// version: 20.05.29
-// Copyright (C) 2019 Jeroen P. Broks
+// version: 20.09.27
+// Copyright (C) 2019, 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -174,6 +174,7 @@ namespace TrickyUnits {
         public string CallFunction = "";
         public int Value = 0;
         public int Modifier = 0;
+        public string Script = ""; // Not yet used in C#, but the C++ version needs it, and it's only convenient to have it here, as well (if there are ever future versions).
         public override string ToString() {
             return $"{Value}";
         }
@@ -981,9 +982,12 @@ GALE_Register RPGChar,"RPGStats"
                         case 5:
                             sv.Modifier = BT.ReadInt();
                             break;
+                        case 6:
+                            sv.Script = BT.ReadString();
+                            break;
                         default:
                             //EndGraphics
-                            throw new System.Exception($"FATAL ERROR:~n~nUnknown tag in character ({F}) stat file ({tag}) within this savegame file ");
+                            throw new System.Exception($"FATAL ERROR:\n\nUnknown tag in character ({F}) stat file ({tag}) within this savegame file ");
                     }
                 }
                 BT.Close();
