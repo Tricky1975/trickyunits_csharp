@@ -1,8 +1,8 @@
 // Lic:
 // FileList.cs
 // TrickyUnits - FileList
-// version: 19.10.27
-// Copyright (C)  Jeroen P. Broks
+// version: 21.09.11
+// Copyright (C) 2018, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -20,7 +20,7 @@
 
 
 
-
+#define SymLink_Debug_LoudMouth
 
 using System;
 using System.Collections.Generic;
@@ -32,12 +32,26 @@ namespace TrickyUnits {
         static string FLError = "";
 
         /// <summary>
+        /// True if file is a SymLink (there is some controverse over this function, as it's said it could return false positives, however by lack of a better function, this will have to do).
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        static public bool IsSymbolic(string path) {
+            FileInfo pathInfo = new FileInfo(path);
+            var ret = pathInfo.Attributes.HasFlag(FileAttributes.ReparsePoint);
+#if SymLink_Debug_LoudMouth
+            if (ret) System.Diagnostics.Debug.WriteLine($"{path} has been identified as a SymLink");
+#endif
+            return ret;
+        }
+
+        /// <summary>
         /// Just gets a string list of all files in a path
         /// path   = the path to search (duh!)
         /// gt     = search type 0 is files only, with setting 1 directories can be listed as well, 2 will list directories only, and 3 will generate a tree with all directories.
         /// hidden = Allow hidden files in the search results. Please note, hidden means by UNIX STANDARDS, so it will only check if a file is prefixed with a "." or not!
         /// </summary>
-        static public string[] GetDir(string path, int gt = 0, bool sorted = true, bool hidden = false) {
+        static public string[] GetDir(string path, int gt = 0, bool sorted = true, bool hidden = false, bool allowsymlinks=true) {
             // init
             FLError = "";
             var w = new List<string>();
@@ -49,7 +63,8 @@ namespace TrickyUnits {
             }
             // Listout
             foreach (FileInfo fi in di.GetFiles()) {
-                if ((gt == 0 || gt == 1 || gt == 3) && (hidden || fi.Name.Substring(0, 1) != ".")) w.Add(fi.Name);
+                if ((gt == 0 || gt == 1 || gt == 3) && (hidden || fi.Name.Substring(0, 1) != ".") && (allowsymlinks||(!IsSymbolic($"{path}/{fi.Name }")))) 
+                    w.Add(fi.Name);
             }
             foreach (DirectoryInfo fi in di.GetDirectories()) {
                 if (hidden || fi.Name.Substring(0, 1) != ".") {
@@ -93,14 +108,10 @@ namespace TrickyUnits {
 
 
         static FileList() {
-            MKL.Version("Tricky Units for C# - FileList.cs","19.10.27");
+            MKL.Version("Tricky Units for C# - FileList.cs","21.09.11");
             MKL.Lic    ("Tricky Units for C# - FileList.cs","ZLib License");
         }
 
     }
 
 }
-
-
-
-
