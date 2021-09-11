@@ -478,7 +478,9 @@ namespace TrickyUnits
 					#region s - string
 					case 's':   // string
 						string t = "{0" + ( fieldLength != int.MinValue ? "," + ( flagLeft2Right ? "-" : String.Empty ) + fieldLength.ToString() : String.Empty ) + ":s}";
-						w = o.ToString();
+						if (o == null) w = "null";
+						else
+							w = o.ToString();
 						if ( fieldPrecision >= 0 )
 							w = w.Substring( 0, fieldPrecision );
 
