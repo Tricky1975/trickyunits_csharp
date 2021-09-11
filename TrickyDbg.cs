@@ -24,6 +24,7 @@ namespace TrickyUnits {
         /// Please note that when you use VS on Mac or Linux, this can cause two keypresses to be asked, based on how your terminal has been configured/developed.
         /// </summary>
         public static void AttachWait() {
+            Console.ResetColor();
             if (Debugger.IsAttached) {
                 Console.Write("Please hit any key to continue. . . "); Console.ReadKey();
                 Console.Write("                                    \r");
