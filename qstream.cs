@@ -1,8 +1,8 @@
 // Lic:
 // qstream.cs
 // TrickyUnits - Quick Stream
-// version: 20.08.16
-// Copyright (C) 2018, 2020 Jeroen P. Broks
+// version: 21.09.11
+// Copyright (C) 2018, 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -31,8 +31,22 @@ namespace TrickyUnits {
         Stream mystream;
         long truepos;
         bool closed = false;
+        /// <summary>
+        /// Gets the size of a file.
+        /// </summary>
+        /// <param name="File">File to get the size of</param>
+        /// <returns>The size in bytes if succesful and -1 if unsuccesful!</returns>
+        public static long FileSize (string File) {
+            try {
+                var B = ReadFile(File);
+                var R = B.Size;
+                B.Close();
+                return R;
+            } catch {
+                return -1;
+            }
 
-
+        }
 
         /// <summary>
         /// Gets the size of a stream.
@@ -117,6 +131,7 @@ namespace TrickyUnits {
             truepos += number;
             return ret;
         }
+        
 
 
         /// <summary>
@@ -131,6 +146,12 @@ namespace TrickyUnits {
             return r.ToString();
         }
 
+
+        /// <summary>
+        /// Reads a 162bit integer from the stream.
+        /// </summary>
+        /// <returns>The int.</returns>
+        public short ReadShort() { return BitConverter.ToInt16(GrabBytes(2), 0); }
 
 
         /// <summary>
@@ -157,6 +178,11 @@ namespace TrickyUnits {
             mystream.Read(b, 0, 1);
             truepos++;
             return b[0];
+        }
+
+        public char ReadChar() {
+            byte b = ReadByte();
+            return Convert.ToChar(b);
         }
 
         public string ReadString(int length = 0) {
@@ -295,6 +321,11 @@ namespace TrickyUnits {
             PutBytes(bytes);
         }
 
+        public void WriteShort(short i) {
+            byte[] bytes = BitConverter.GetBytes(i);
+            PutBytes(bytes);
+        }
+
         /// <summary>
         /// Writes a string. When "raw" is set to true, WriteString will only write the string itself. When set to false, it will prefix it with an 32bit integer containing the length of the string. (the byteorder of this interger depends on the Endian Settings given when opening the stream).
         /// </summary>
@@ -377,7 +408,7 @@ namespace TrickyUnits {
         public static Stack<string> PushedDirs = new Stack<string>();
 
         public static void Hello() {
-            MKL.Version("Tricky Units for C# - qstream.cs","20.08.16");
+            MKL.Version("Tricky Units for C# - qstream.cs","21.09.11");
             MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
         } // Basically does nothing, but it forces the MKL data to be parsed when called.
 
@@ -440,6 +471,10 @@ namespace TrickyUnits {
             // var bt = WriteFile(filename);
             // bt.WriteString(thestring, true);
             //bt.Close();
+        }
+
+        public static void SaveString(string filename,StringBuilder thestring) {
+            SaveString(filename, thestring.ToString());
         }
 
         public static void SaveBytes(string filename, byte[] buf) => File.WriteAllBytes(filename, buf);
