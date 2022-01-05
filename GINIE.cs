@@ -178,9 +178,11 @@ namespace TrickyUnits {
 
         public SortedDictionary<string, string>.KeyCollection Each(string sec) {
             sec = sec.ToUpper();
-            if (!Values.ContainsKey(sec)) return null;
+            if (!Values.ContainsKey(sec)) return null;            
             return Values[sec].Keys;
         }
+
+        
 
         public string this[string sec, string key] {
             get {
