@@ -17,11 +17,13 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
+
 namespace TrickyUnits {
 
     class GINIE_IllegalTag : Exception {
@@ -61,7 +63,7 @@ namespace TrickyUnits {
     /// <summary>
     /// GINIE = GINIE is not INIE, either! A class almost compatible with INI, but with a few different twists.
     /// </summary>
-    class GINIE {
+    public class GINIE {
 
         static public void Hello() {
             MKL.Lic    ("Tricky Units for C# - GINIE.cs","ZLib License");
