@@ -241,7 +241,10 @@ namespace TrickyUnits {
         }
 
 
-        public void SaveSource(string file) => QuickStream.SaveString(file, ToSource());
+        public void SaveSource(string file) {
+            Directory.CreateDirectory(qstr.ExtractDir(file));
+            QuickStream.SaveString(file, ToSource());
+        }
         
     }
 }
