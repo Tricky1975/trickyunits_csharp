@@ -26,227 +26,335 @@ using System.Collections.Generic;
 
 namespace TrickyUnits {
 
-    class GINIE_IllegalTag : Exception {
-        public GINIE_IllegalTag() { }
+	class GINIE_IllegalTag : Exception {
+		public GINIE_IllegalTag() { }
 
-        override public string Message => "Illegal tag in source. Was \"[\" closed by a proper \"]\"?";
-        
-    }
+		override public string Message => "Illegal tag in source. Was \"[\" closed by a proper \"]\"?";
+		
+	}
 
-    class GINIE_SysRequestNotUnderstood : Exception {
-        public GINIE_SysRequestNotUnderstood(string req) { this.req = req; }
-        private string req;
+	class GINIE_SysRequestNotUnderstood : Exception {
+		public GINIE_SysRequestNotUnderstood(string req) { this.req = req; }
+		private string req;
 
-        override public string Message => $"System request not understood => {req}";
+		override public string Message => $"System request not understood => {req}";
 
-    }
+	}
 
-    class GINIE_IllegalEnd : Exception {
-        public GINIE_IllegalEnd() { }
+	class GINIE_IllegalEnd : Exception {
+		public GINIE_IllegalEnd() { }
 
-        override public string Message => "*END instruction unexpected";
+		override public string Message => "*END instruction unexpected";
 
-    }
+	}
 
-    class GINIE_NoTag : Exception {
-        public GINIE_NoTag() { }
-        public override string Message => "No tag";
-    }
+	class GINIE_NoTag : Exception {
+		public GINIE_NoTag() { }
+		public override string Message => "No tag";
+	}
 
-    class GINIE_IllegalDefinition:Exception {
-        public GINIE_IllegalDefinition(string d) { this.d = d; }
-        string d;
-        public override string Message => $"Illegal Defintiion: {d}";
-    }
+	class GINIE_IllegalDefinition : Exception {
+		public GINIE_IllegalDefinition(string d) { this.d = d; }
+		string d;
+		public override string Message => $"Illegal Defintiion: {d}";
+	}
 
-    // GINIE is not INI, either!
-    /// <summary>
-    /// GINIE = GINIE is not INIE, either! A class almost compatible with INI, but with a few different twists.
-    /// </summary>
-    public class GINIE {
+	class GINIE_ByteNotGINIE : Exception {
+		public GINIE_ByteNotGINIE() { }
+		public override string Message => "Byte code is NOT GINIE";
+	}
 
-        static public void Hello() {
-            MKL.Lic    ("Tricky Units for C# - GINIE.cs","ZLib License");
-            MKL.Version("Tricky Units for C# - GINIE.cs","21.09.11");
-        }
+	class GINIE_ByteUnkTag : Exception {
+		byte tag = 0;
+		public GINIE_ByteUnkTag(byte _tag) { tag = tag; }
+		public override string Message => $"Unknown instruction tag in byte code: ({tag})";
+	}
 
-        private GINIE() { Hello(); }
+	// GINIE is not INI, either!
+	/// <summary>
+	/// GINIE = GINIE is not INIE, either! A class almost compatible with INI, but with a few different twists.
+	/// </summary>
+	public class GINIE {
 
+		static public void Hello() {
+			MKL.Lic    ("Tricky Units for C# - GINIE.cs","ZLib License");
+			MKL.Version("Tricky Units for C# - GINIE.cs","21.09.11");
+		}
 
-        /// <summary>
-        ///  Parse GINIE source into data
-        /// </summary>
-        /// <param name="source">Source code</param>
-        /// <returns></returns>
-        static public GINIE FromSource(string[] source) {
-            var ret = new GINIE();
-            var tag = "";
-            var list = "";
-            foreach (string l in source) {
-                var line = l.Trim();
-                if (line != "") {
-                    switch (line[0]) {
-                        case '\\':
-                            line = line.Substring(1);
-                            goto default;
-                        case '#':
-                        case ';':
-                            break;
-                        case '[':
-                            if (line[line.Length - 1] != ']') {
-                                Debug.WriteLine($"Line=\"{line}\"; #line={line.Length}; 0='{line[0]}' {line.Length-1}='{line[line.Length-1]}'");
-                                throw new GINIE_IllegalTag();
-                            }
-                            tag = line.Substring(1, line.Length - 2).Trim().ToUpper();
-                            break;
-                        case '*':
-                            if (qstr.Prefixed(line.ToUpper(), "*LIST:")) {
-                                if (tag == "") throw new GINIE_NoTag();
-                                list = line.Substring(6);
-                                break;
-                            }
-                            if (line.ToUpper()=="*END") {
-                                if (list!="") { list = "";break; }
-                                throw new GINIE_IllegalEnd();
-                            }
-                            throw new GINIE_SysRequestNotUnderstood(line);
-                        default:
-                            if (tag == "") throw new GINIE_NoTag();
-                            if (tag == "*LIC*" || tag == "*REM*") break;
-                            if (list != "") {
-                                ret.List(tag, list).Add(line);
-                                break;
-                            }
-                            var p = line.IndexOf('=');
-                            if (p <= -1) throw new GINIE_IllegalDefinition(line);
-                            var key = line.Substring(0, p);
-                            var val = line.Substring(p + 1);
-                            for(int c = 0; c < 255; c++) {
-                                key = key.Replace($"\\{c.ToString("03d")}", $"{(char)c}");
-                                val = val.Replace($"\\{c.ToString("03d")}", $"{(char)c}");
-                            }
-                            ret[tag, key] = val;
-                            break;
-                    }
-                }
-            }
-            return ret;
-        }
-        
-        static public GINIE FromSource(string source) => FromSource(source.Split('\n'));
-        static public GINIE FromSource(List<string> source) => FromSource(source.ToArray());
-
-        static public GINIE FromFile(string file,bool allownonexistent = true) {
-            if (!File.Exists(file)) {
-                if (allownonexistent)
-                    return new GINIE();
-                else
-                    return null;                    
-            }
-            // TODO: Auto-detect binary form if existent
-            return FromSource(QuickStream.LoadString(file));
-        }
-
-        SortedDictionary<string, SortedDictionary<string, string>> Values = new SortedDictionary<string, SortedDictionary<string, string>>();
-        SortedDictionary<string, SortedDictionary<string, List<string>>> Lists  = new SortedDictionary<string, SortedDictionary<string, List<string>>>();
-        public string AutoSaveSource = "";
-
-        public List<string> List(string sec, string key) {
-            sec = sec.ToUpper();
-            key = key.ToUpper();
-            if (!Lists.ContainsKey(sec)) Lists[sec] = new SortedDictionary<string, List<string>>();
-            if (!Lists[sec].ContainsKey(key)) Lists[sec][key] = new List<string>();
-            return Lists[sec][key];
-        }
-
-        public bool HasList(string sec,string key) {
-            sec = sec.ToUpper();
-            key = key.ToUpper();
-            if (!Lists.ContainsKey(sec)) return false;
-            return Lists[sec].ContainsKey(key);
-        }
-
-        public void ListAdd(string sec,string key,string value,bool sort = true) {
-            List(sec, key).Add( value);
-            if (sort) List(sec, value).Sort();
-            if (AutoSaveSource != "") SaveSource(AutoSaveSource);
-        }
-
-        public void ListAddNew(string sec,string key,string value,bool sort=true) {
-            if (!List(sec, key).Contains(value)) ListAdd(sec, key,value,sort);
-        }
-
-        public SortedDictionary<string, SortedDictionary<string, string>>.KeyCollection EachSections => Values.Keys;
-
-        public SortedDictionary<string, string>.KeyCollection Each(string sec) {
-            sec = sec.ToUpper();
-            if (!Values.ContainsKey(sec)) return null;            
-            return Values[sec].Keys;
-        }
-
-        
-
-        public string this[string sec, string key] {
-            get {
-                sec = sec.ToUpper();
-                key = key.ToUpper();
-                if (!Values.ContainsKey(sec)) return "";
-                if (!Values[sec].ContainsKey(key)) return "";
-                return Values[sec][key];
-            }
-            set {
-                sec = sec.ToUpper();
-                key = key.ToUpper();
-                if (!Values.ContainsKey(sec)) Values[sec] = new SortedDictionary<string, string>();
-                Values[sec][key] = value;
-                if (AutoSaveSource != "") {
-                    SaveSource(AutoSaveSource);
-                }
-            }
-        }
-        /*
-        System.Collections.Generic.List<string> List(string sec, string key) {
-            sec = sec.ToUpper();
-            key = key.ToUpper();
-            if (!Lists.ContainsKey(sec)) Lists[sec] = new SortedDictionary<string, System.Collections.Generic.List<string>>();
-            if (!Lists[sec].ContainsKey(key)) Lists[sec][ key] = new System.Collections.Generic.List<string>();
-            return Lists[sec][key];
-        }
-        */
-
-        public string ToSource() {
-            var Done = new List<string>();
-            var ret = new StringBuilder();
-            foreach (string k in Values.Keys) {
-                ret.Append($"[{k}]\n");
-                Done.Add(k);
-                foreach (string key in Values[k].Keys) ret.Append($"{qstr.SafeString(key)}={qstr.SafeString(Values[k][key])}\n");
-                if (Lists.ContainsKey(k)) {
-                    foreach (string key in Lists[k].Keys) {
-                        ret.Append($"*list:{qstr.SafeString(key)}\n");
-                        foreach (string item in Lists[k][key]) ret.Append($"\t{qstr.SafeString(item)}\n");
-                        ret.Append($"*end\n");
-                    }
-                }
-            }
-            foreach (string k in Lists.Keys) {
-                if (!Done.Contains(k)) {
-                    ret.Append($"[{k}]\n");
-                    foreach (string key in Lists[k].Keys) {
-                        ret.Append($"*list:{qstr.SafeString(key)}\n");
-                        foreach (string item in Lists[k][key]) ret.Append($"\t{qstr.SafeString(item)}\n");
-                        ret.Append($"*end\n");
-                    }
-                }
-            }
-            return ret.ToString();
-        }
+		private GINIE() { Hello(); }
 
 
-        public void SaveSource(string file) {
-            Directory.CreateDirectory(qstr.ExtractDir(file));
-            QuickStream.SaveString(file, ToSource());
-        }
-        
-    }
+		/// <summary>
+		///  Parse GINIE source into data
+		/// </summary>
+		/// <param name="source">Source code</param>
+		/// <returns></returns>
+		static public GINIE FromSource(string[] source) {
+			var ret = new GINIE();
+			var tag = "";
+			var list = "";
+			//if (!merge) Clear();
+			foreach (string l in source) {
+				var line = l.Trim();
+				if (line != "") {
+					switch (line[0]) {
+						case '\\':
+							line = line.Substring(1);
+							goto default;
+						case '#':
+						case ';':
+							break;
+						case '[':
+							if (line[line.Length - 1] != ']') {
+								Debug.WriteLine($"Line=\"{line}\"; #line={line.Length}; 0='{line[0]}' {line.Length-1}='{line[line.Length-1]}'");
+								throw new GINIE_IllegalTag();
+							}
+							tag = line.Substring(1, line.Length - 2).Trim().ToUpper();
+							break;
+						case '*':
+							if (qstr.Prefixed(line.ToUpper(), "*LIST:")) {
+								if (tag == "") throw new GINIE_NoTag();
+								list = line.Substring(6);
+								break;
+							}
+							if (line.ToUpper()=="*END") {
+								if (list!="") { list = "";break; }
+								throw new GINIE_IllegalEnd();
+							}
+							throw new GINIE_SysRequestNotUnderstood(line);
+						default:
+							if (tag == "") throw new GINIE_NoTag();
+							if (tag == "*LIC*" || tag == "*REM*") break;
+							if (list != "") {
+								ret.List(tag, list).Add(line);
+								break;
+							}
+							var p = line.IndexOf('=');
+							if (p <= -1) throw new GINIE_IllegalDefinition(line);
+							var key = line.Substring(0, p);
+							var val = line.Substring(p + 1);
+							for(int c = 0; c < 255; c++) {
+								key = key.Replace($"\\{c.ToString("03d")}", $"{(char)c}");
+								val = val.Replace($"\\{c.ToString("03d")}", $"{(char)c}");
+							}
+							ret[tag, key] = val;
+							break;
+					}
+				}
+			}
+			return ret;
+		}
+		
+		static public GINIE FromSource(string source) => FromSource(source.Split('\n'));
+		static public GINIE FromSource(List<string> source) => FromSource(source.ToArray());
+
+		static public GINIE FromFile(string file,bool allownonexistent = true) {
+			if (!File.Exists(file)) {
+				if (allownonexistent)
+					return new GINIE();
+				else
+					return null;                    
+			}
+			// TODO: Auto-detect binary form if existent
+			return FromSource(QuickStream.LoadString(file));
+		}
+
+		SortedDictionary<string, SortedDictionary<string, string>> Values = new SortedDictionary<string, SortedDictionary<string, string>>();
+		SortedDictionary<string, SortedDictionary<string, List<string>>> Lists  = new SortedDictionary<string, SortedDictionary<string, List<string>>>();
+		public string AutoSaveSource = "";
+
+		public List<string> List(string sec, string key) {
+			sec = sec.ToUpper();
+			key = key.ToUpper();
+			if (!Lists.ContainsKey(sec)) Lists[sec] = new SortedDictionary<string, List<string>>();
+			if (!Lists[sec].ContainsKey(key)) Lists[sec][key] = new List<string>();
+			return Lists[sec][key];
+		}
+
+		public bool HasList(string sec,string key) {
+			sec = sec.ToUpper();
+			key = key.ToUpper();
+			if (!Lists.ContainsKey(sec)) return false;
+			return Lists[sec].ContainsKey(key);
+		}
+
+		public void ListAdd(string sec,string key,string value,bool sort = true) {
+			List(sec, key).Add( value);
+			if (sort) List(sec, value).Sort();
+			if (AutoSaveSource != "") SaveSource(AutoSaveSource);
+		}
+
+		public void ListAddNew(string sec,string key,string value,bool sort=true) {
+			if (!List(sec, key).Contains(value)) ListAdd(sec, key,value,sort);
+		}
+
+		public SortedDictionary<string, SortedDictionary<string, string>>.KeyCollection EachSections => Values.Keys;
+
+		public SortedDictionary<string, string>.KeyCollection Each(string sec) {
+			sec = sec.ToUpper();
+			if (!Values.ContainsKey(sec)) return null;            
+			return Values[sec].Keys;
+		}
+
+		
+
+		public string this[string sec, string key] {
+			get {
+				sec = sec.ToUpper();
+				key = key.ToUpper();
+				if (!Values.ContainsKey(sec)) return "";
+				if (!Values[sec].ContainsKey(key)) return "";
+				return Values[sec][key];
+			}
+			set {
+				sec = sec.ToUpper();
+				key = key.ToUpper();
+				if (!Values.ContainsKey(sec)) Values[sec] = new SortedDictionary<string, string>();
+				Values[sec][key] = value;
+				if (AutoSaveSource != "") {
+					SaveSource(AutoSaveSource);
+				}
+			}
+		}
+		/*
+		System.Collections.Generic.List<string> List(string sec, string key) {
+			sec = sec.ToUpper();
+			key = key.ToUpper();
+			if (!Lists.ContainsKey(sec)) Lists[sec] = new SortedDictionary<string, System.Collections.Generic.List<string>>();
+			if (!Lists[sec].ContainsKey(key)) Lists[sec][ key] = new System.Collections.Generic.List<string>();
+			return Lists[sec][key];
+		}
+		*/
+
+		public string ToSource() {
+			var Done = new List<string>();
+			var ret = new StringBuilder();
+			foreach (string k in Values.Keys) {
+				ret.Append($"[{k}]\n");
+				Done.Add(k);
+				foreach (string key in Values[k].Keys) ret.Append($"{qstr.SafeString(key)}={qstr.SafeString(Values[k][key])}\n");
+				if (Lists.ContainsKey(k)) {
+					foreach (string key in Lists[k].Keys) {
+						ret.Append($"*list:{qstr.SafeString(key)}\n");
+						foreach (string item in Lists[k][key]) ret.Append($"\t{qstr.SafeString(item)}\n");
+						ret.Append($"*end\n");
+					}
+				}
+			}
+			foreach (string k in Lists.Keys) {
+				if (!Done.Contains(k)) {
+					ret.Append($"[{k}]\n");
+					foreach (string key in Lists[k].Keys) {
+						ret.Append($"*list:{qstr.SafeString(key)}\n");
+						foreach (string item in Lists[k][key]) ret.Append($"\t{qstr.SafeString(item)}\n");
+						ret.Append($"*end\n");
+					}
+				}
+			}
+			return ret.ToString();
+		}
+
+		/// <summary>
+		/// Clears all data inside the GINIE object
+		/// </summary>
+		public void Clear() {
+			Values.Clear();
+			Lists.Clear();
+		}
+
+		/// <summary>
+		/// Reading GINIE data from byte code
+		/// </summary>
+		/// <param name="buf">Byte code</param>
+		/// <param name="merge">If set to true it merges from existing Data</param>
+		public void FromBytes(byte[] buf,bool merge=false) {
+			const string Head = "GENIE\x1b";
+			var bt = new QuickStream(new MemoryStream(buf));
+			if (buf.Length < 7) throw new GINIE_ByteNotGINIE();
+			if (!merge) Clear();
+			for (byte i = 0; i < Head.Length; ++i) {
+				var b = bt.ReadByte();
+#if DEBUG
+				Debug.WriteLine($"GINIE HEADER {i}: {b}.{(byte)Head[i]}({(char)b}/{Head[i]})");
+#endif
+
+				if (b != Head[i]) throw new GINIE_ByteNotGINIE();
+			}
+			string cat = "";
+			while (!bt.EOF) {
+				var wtag = bt.ReadByte();
+				switch (wtag) {
+					case 1:
+						cat = bt.ReadString64().ToUpper();
+						break;
+					case 2:
+						this[cat, bt.ReadString64().ToUpper()] = bt.ReadString64();
+						break;
+					case 3: {
+							var len = bt.ReadULong();
+							var key = bt.ReadString64().ToUpper();
+							if (!Lists.ContainsKey(cat)) Lists[cat] = new SortedDictionary<string, List<string>>();
+							for (ulong i = 0; i < len; i++) Lists[cat][key].Add(bt.ReadString());
+						}
+						break;
+					case 0:
+					case 255:
+						bt.Close();
+						return;
+					default:
+						throw new GINIE_ByteUnkTag(wtag);                        
+				}
+			}
+		}
+
+		/// <summary>
+		/// Converts GINIE code into byte code
+		/// </summary>
+		/// <returns>The buffer containing the byte code</returns>
+		public byte[] ToBytes() {
+			byte[] head = new byte[] { (byte)'G', (byte)'E', (byte)'N', (byte)'I', (byte)'E', (byte)'\x1b' };
+			byte[] buf;
+			var ms = new MemoryStream();
+			var bt = new QuickStream(ms);
+			foreach (var h in head) bt.Write(h);
+			bt.Position = bt.Size;
+			var Done = new Dictionary<string, bool>();
+			foreach (var cat in Values) {
+				bt.WriteByte(1);
+				bt.WriteString64(cat.Key);
+				foreach (var v in cat.Value) {
+					bt.WriteByte(2);
+					bt.WriteString64(v.Key);
+					bt.WriteString64(v.Value);
+				}
+				if (Lists.ContainsKey(cat.Key)) {
+					foreach (var v in Lists[cat.Key]) {
+						bt.WriteByte(3);
+						bt.Write((ulong)Lists[cat.Key][v.Key].Count);
+						foreach (var e in Lists[cat.Key][v.Key]) bt.WriteString64(e);
+						Done[$"{cat.Key}:{v.Key}"] = true;
+					}					
+				}
+			}
+			foreach (var cat in Lists) {
+				foreach (var v in Lists[cat.Key]) {
+					if ((!Done.ContainsKey($"{cat.Key}:{v.Key}")) && (!Done[$"{cat.Key}:{v.Key}"])) {
+						bt.WriteByte(3);
+						bt.Write((ulong)Lists[cat.Key][v.Key].Count);
+						foreach (var e in Lists[cat.Key][v.Key]) bt.WriteString64(e);
+					}
+				}
+			}
+			buf = ms.ToArray();
+			bt.Close();
+			return buf;
+		}
+
+
+		public void SaveSource(string file) {
+			Directory.CreateDirectory(qstr.ExtractDir(file));
+			QuickStream.SaveString(file, ToSource());
+		}
+		
+	}
 }
