@@ -159,6 +159,8 @@ namespace TrickyUnits {
 			return FromSource(QuickStream.LoadString(file));
 		}
 
+		static public GINIE Empty() => new GINIE();
+
 		SortedDictionary<string, SortedDictionary<string, string>> Values = new SortedDictionary<string, SortedDictionary<string, string>>();
 		SortedDictionary<string, SortedDictionary<string, List<string>>> Lists  = new SortedDictionary<string, SortedDictionary<string, List<string>>>();
 		public string AutoSaveSource = "";
