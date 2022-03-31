@@ -265,6 +265,32 @@ namespace TrickyUnits {
             } catch { return 0; }
         }
 
+        public static bool IsInt(string s) {
+            var s2i = s;
+            try {
+                switch (s[0]) {
+                    case '$':
+                        s2i = Right(s, s.Length - 1);
+                        System.Int32.Parse(s2i, System.Globalization.NumberStyles.HexNumber);
+                        return true;
+                    case '%':
+                        s2i = Right(s, s.Length - 1);
+                        //int bit = 1;
+                        for (int i = s2i.Length; i > 0; i--) {
+                            switch (Mid(s2i, i, 1)) {
+                                case "1": 
+                                case "0": break;
+                                default: return false;
+                            }                            
+                        }
+                        return true;
+                }
+                System.Int32.Parse(s2i);
+                return true;
+
+            } catch { return false; }
+        }        
+
 
 
         /// <summary>
