@@ -289,7 +289,11 @@ namespace TrickyUnits {
                 return true;
 
             } catch { return false; }
-        }        
+        }
+        
+        public static string YesNo(bool b) {
+            if (b) return "Yes"; else return "No";
+        }
 
 
 
