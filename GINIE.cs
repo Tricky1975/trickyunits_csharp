@@ -148,6 +148,44 @@ namespace TrickyUnits {
 		static public GINIE FromSource(string source) => FromSource(source.Split('\n'));
 		static public GINIE FromSource(List<string> source) => FromSource(source.ToArray());
 
+		static public GINIE FromSource(byte[] source) => FromSource(Encoding.Default.GetString(source));
+
+		static public GINIE FromAuto(byte[] Buf) {			
+			const string Head = "GENIE\x1b";
+			bool ByteCode = Buf.Length == Head.Length;
+			for (byte i = 0; i < Head.Length; i++) ByteCode = ByteCode && Head[i] == Buf[i];
+			if (ByteCode) {
+				var ret = new GINIE();
+				ret.FromBytes(Buf);
+				return ret;
+			} else {
+				return FromSource(Buf);
+			}
+				
+		}
+
+		public void Auto(byte[] Buf) {
+			const string Head = "GENIE\x1b";
+			bool ByteCode = Buf.Length == Head.Length;
+			for (byte i = 0; i < Head.Length; i++) ByteCode = ByteCode && Head[i] == Buf[i];
+			if (ByteCode) {
+				var ret = new GINIE();
+				ret.FromBytes(Buf);
+				/*
+				Lists.Clear();
+				Values.Clear();
+				foreach(var c in ret.Lists) {
+					foreach (var k in c.Value)
+						List(c.Key, k.Key).AddRange(ret.List(c.Key, k.Key));
+				}
+				*/
+				Lists = ret.Lists;
+				Values = ret.Values;
+			} else {
+				FromSource(Buf);
+			}
+		}
+
 		static public GINIE FromFile(string file,bool allownonexistent = true) {
 			if (!File.Exists(file)) {
 				if (allownonexistent)
@@ -182,7 +220,16 @@ namespace TrickyUnits {
 
 		public void ListAdd(string sec,string key,string value,bool sort = true) {
 			List(sec, key).Add( value);
-			if (sort) List(sec, value).Sort();
+			if (sort) List(sec, key).Sort();
+			if (AutoSaveSource != "") SaveSource(AutoSaveSource);
+		}
+
+		public void ListRemove(string sec, string key, string value, bool keeptrying = true) {
+			var L = List(sec, key);
+			if (!L.Contains(value)) return;
+			do {
+				L.Remove(value);
+			} while (keeptrying && L.Contains(value));
 			if (AutoSaveSource != "") SaveSource(AutoSaveSource);
 		}
 
@@ -296,6 +343,7 @@ namespace TrickyUnits {
 							var len = bt.ReadULong();
 							var key = bt.ReadString64().ToUpper();
 							if (!Lists.ContainsKey(cat)) Lists[cat] = new SortedDictionary<string, List<string>>();
+							if (!Lists[cat].ContainsKey(key)) Lists[cat][key] = new List<string>();
 							for (ulong i = 0; i < len; i++) Lists[cat][key].Add(bt.ReadString());
 						}
 						break;
@@ -340,7 +388,7 @@ namespace TrickyUnits {
 			}
 			foreach (var cat in Lists) {
 				foreach (var v in Lists[cat.Key]) {
-					if ((!Done.ContainsKey($"{cat.Key}:{v.Key}")) && (!Done[$"{cat.Key}:{v.Key}"])) {
+					if ((!Done.ContainsKey($"{cat.Key}:{v.Key}")) || (!Done[$"{cat.Key}:{v.Key}"])) {
 						bt.WriteByte(3);
 						bt.Write((ulong)Lists[cat.Key][v.Key].Count);
 						foreach (var e in Lists[cat.Key][v.Key]) bt.WriteString64(e);
