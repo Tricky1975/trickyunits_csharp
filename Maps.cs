@@ -44,7 +44,7 @@ namespace TrickyUnits {
             }
         }
 
-        string this[string key] {
+        public string this[string key] {
             get {
                 if (!Map.ContainsKey(key)) {
                     if (MustExist)
@@ -56,7 +56,8 @@ namespace TrickyUnits {
             set => Map[key] = value;
         }
 
-        SortedDictionary<string, string>.KeyCollection Keys => Map.Keys;
+        public SortedDictionary<string, string>.KeyCollection Keys => Map.Keys;
+        public SortedDictionary<string, string>.ValueCollection Values => Map.Values;
 
 
         public StringMap() { Map = new SortedDictionary<string, string>(); }
@@ -99,6 +100,7 @@ namespace TrickyUnits {
             }
         }
         public SortedDictionary<MapKey, MapValue>.KeyCollection Keys => Map.Keys;
+        public SortedDictionary<MapKey, MapValue>.ValueCollection Values => Map.Values;
         public int Count => Map.Count;
 
         public TMap() {
