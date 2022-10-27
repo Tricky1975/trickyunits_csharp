@@ -66,7 +66,7 @@ namespace TrickyUnits {
 
 	class GINIE_ByteUnkTag : Exception {
 		byte tag = 0;
-		public GINIE_ByteUnkTag(byte _tag) { tag = tag; }
+		public GINIE_ByteUnkTag(byte _tag) { tag = _tag; }
 		public override string Message => $"Unknown instruction tag in byte code: ({tag})";
 	}
 
@@ -103,8 +103,16 @@ namespace TrickyUnits {
 							goto default;
 						case '#':
 						case ';':
+							if (list != "") {
+								ret.List(tag, list).Add(line);
+								break;
+							}
 							break;
 						case '[':
+							if (list != "") {
+								ret.List(tag, list).Add(line);
+								break;
+							}
 							if (line[line.Length - 1] != ']') {
 								Debug.WriteLine($"Line=\"{line}\"; #line={line.Length}; 0='{line[0]}' {line.Length-1}='{line[line.Length-1]}'");
 								throw new GINIE_IllegalTag();
@@ -115,6 +123,7 @@ namespace TrickyUnits {
 							if (qstr.Prefixed(line.ToUpper(), "*LIST:")) {
 								if (tag == "") throw new GINIE_NoTag();
 								list = line.Substring(6);
+								ret.List(tag, list); // Make sure the list exists!
 								break;
 							}
 							if (line.ToUpper()=="*END") {
@@ -123,7 +132,12 @@ namespace TrickyUnits {
 							}
 							throw new GINIE_SysRequestNotUnderstood(line);
 						default:
-							if (tag == "") throw new GINIE_NoTag();
+							if (tag == "") {
+#if DEBUG
+								Console.WriteLine($"No tag in line '{line}'");
+#endif
+								throw new GINIE_NoTag();
+							}
 							if (tag == "*LIC*" || tag == "*REM*") break;
 							if (list != "") {
 								ret.List(tag, list).Add(line);
@@ -203,6 +217,19 @@ namespace TrickyUnits {
 		SortedDictionary<string, SortedDictionary<string, List<string>>> Lists  = new SortedDictionary<string, SortedDictionary<string, List<string>>>();
 		public string AutoSaveSource = "";
 
+		public void ClearCat(string sec) {
+			sec = sec.ToUpper();
+			if (Lists.ContainsKey(sec)) Lists[sec].Clear();
+			if (Values.ContainsKey(sec)) Values[sec].Clear();
+			if (AutoSaveSource != "") SaveSource(AutoSaveSource);
+		}
+
+		public void KillCat(string sec) {
+			if (Lists.ContainsKey(sec)) Lists.Remove(sec);
+			if (Values.ContainsKey(sec)) Values.Remove(sec);
+			if (AutoSaveSource != "") SaveSource(AutoSaveSource);
+		}
+
 		public List<string> List(string sec, string key) {
 			sec = sec.ToUpper();
 			key = key.ToUpper();
@@ -214,6 +241,8 @@ namespace TrickyUnits {
 		public bool HasList(string sec,string key) {
 			sec = sec.ToUpper();
 			key = key.ToUpper();
+			//Console.WriteLine($"HASLIST[{sec},{key}] -> {Lists.ContainsKey(sec)}"); // debug only
+			//foreach(var dbg in Lists) { Console.WriteLine($"{dbg.Key} -> {dbg.Value.Count} items"); } // debug only
 			if (!Lists.ContainsKey(sec)) return false;
 			return Lists[sec].ContainsKey(key);
 		}
@@ -238,6 +267,7 @@ namespace TrickyUnits {
 		}
 
 		public SortedDictionary<string, SortedDictionary<string, string>>.KeyCollection EachSections => Values.Keys;
+		public bool HasSection(string sec) => Values.ContainsKey(sec.ToUpper()) || Lists.ContainsKey(sec.ToUpper());
 
 		public SortedDictionary<string, string>.KeyCollection Each(string sec) {
 			sec = sec.ToUpper();
@@ -295,7 +325,12 @@ namespace TrickyUnits {
 					ret.Append($"[{k}]\n");
 					foreach (string key in Lists[k].Keys) {
 						ret.Append($"*list:{qstr.SafeString(key)}\n");
-						foreach (string item in Lists[k][key]) ret.Append($"\t{qstr.SafeString(item)}\n");
+						foreach (string item in Lists[k][key]) {
+							if (item.Length > 0 && item[0] == '#')
+								ret.Append($"\t\\{qstr.SafeString(item)}\n");
+							else
+								ret.Append($"\t{qstr.SafeString(item)}\n");
+						}
 						ret.Append($"*end\n");
 					}
 				}
