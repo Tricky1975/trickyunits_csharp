@@ -22,12 +22,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Text;
-
-
-
-
-
-
+using System.Collections.Generic;
 
 namespace TrickyUnits {
     /// <summary>
@@ -192,14 +187,14 @@ namespace TrickyUnits {
         public static string SafeString(string a){
             var ret = "";
             for (int i = 0; i < a.Length;i++){
-                if (a[i] > 30 && a[i] < 123 && a[i]!='"') ret += Chr(a[i]);
+                if (a[i] > 30 && a[i] < 127 && a[i]!='"') ret += Chr(a[i]);
                 else {
-                    switch (a[i]){
+                    switch (a[i]) {
                         case '"': ret += "\\\""; break;
                         case '\b': ret += "\\b"; break;
                         case '\n': ret += "\\n"; break;
                         case '\r': ret += "\\r"; break;
-                        case '\\': ret += "\\\\"; break;
+                        case '\\': ret += "\\\\"; break;                         
                         default:
                             ret += "\\" + Right($"00{Convert.ToString(a[i], 8)}", 3);
                             break;
@@ -364,6 +359,10 @@ namespace TrickyUnits {
             }
             return ret.ToString();
         }
+
+        static public byte[] StringToBytes(string ori)=> Encoding.ASCII.GetBytes(ori);
+        static public string BytesToString(byte[] bytes)=> Encoding.UTF8.GetString(bytes, 0, bytes.Length); 
+        static public string BytesToString(List<byte> bytes) => BytesToString(bytes.ToArray());
 
     }
 
