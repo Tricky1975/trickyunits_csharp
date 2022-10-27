@@ -1,8 +1,8 @@
 // Lic:
 // GINIE.cs
 // GINIE Is Not INI Either
-// version: 21.09.11
-// Copyright (C) 2020, 2021 Jeroen P. Broks
+// version: 22.10.27
+// Copyright (C) 2020, 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -78,7 +78,7 @@ namespace TrickyUnits {
 
 		static public void Hello() {
 			MKL.Lic    ("Tricky Units for C# - GINIE.cs","ZLib License");
-			MKL.Version("Tricky Units for C# - GINIE.cs","21.09.11");
+			MKL.Version("Tricky Units for C# - GINIE.cs","22.10.27");
 		}
 
 		private GINIE() { Hello(); }

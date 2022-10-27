@@ -1,8 +1,8 @@
 // Lic:
 // Roman.cs
 // Roman
-// version: 21.09.11
-// Copyright (C) 2021 Jeroen P. Broks
+// version: 22.10.27
+// Copyright (C) 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
