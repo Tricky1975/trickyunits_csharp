@@ -198,6 +198,10 @@ namespace TrickyUnits {
 
         public bool HasStat(string st) => Stats.Contains(st);
         public RPGStat Stat(string St) => (RPGStat)RPG_TMap.MapValueForKey(Stats, St);
+        public RPGStat SafeStat(string st) {
+            if (!Stats.Contains(st)) CreateStat(st, true);
+            return Stat(st);
+        }
         public List<string> List(string lst) => (List<string>)RPG_TMap.MapValueForKey(Lists, lst);
         public RPGPoints Point(string p, bool CreateIfNeeded = false) {
             if (CreateIfNeeded && (!Points.Contains(p))) RPG_TMap.MapInsert(Points, p, new RPGPoints());
