@@ -211,6 +211,12 @@ namespace TrickyUnits {
 			return FromSource(QuickStream.LoadString(file));
 		}
 
+		static public GINIE FromFileAuto(string file, bool allownonexistent = true) {
+			GINIE ret=FromFile(file,allownonexistent);
+			ret.AutoSaveSource = file;
+			return ret;
+        }
+
 		static public GINIE Empty() => new GINIE();
 
 		SortedDictionary<string, SortedDictionary<string, string>> Values = new SortedDictionary<string, SortedDictionary<string, string>>();
