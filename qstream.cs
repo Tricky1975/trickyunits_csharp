@@ -132,7 +132,7 @@ namespace TrickyUnits {
 			return ret;
 		}
 
-		public byte[] LoadBytes(string File,bool checkendian=false) {
+		public static byte[] LoadBytes(string File,bool checkendian=false) {
 			var BT=ReadFile(File); 
 			var r=BT.ReadBytes((int)BT.Size,checkendian);
 			BT.Close();
