@@ -137,7 +137,7 @@ namespace TrickyUnits {
 			var r=BT.ReadBytes((int)BT.Size,checkendian);
 			BT.Close();
 			return r;
-        }
+		}
 		
 
 
@@ -266,7 +266,7 @@ namespace TrickyUnits {
 		public void WriteString64(string s) {
 			WriteULong((ulong)s.Length);
 			WriteString(s, true);
-        }
+		}
 
 
 
@@ -589,6 +589,13 @@ namespace TrickyUnits {
 			bt.Close();
 			return ret;
 		}
+
+
+		public static string MD5(string filename) {
+			var d=LoadString(filename);
+			return qstr.md5(d);
+		}
+		public static string md5(string filename) => MD5(filename);
 	}
 
 
