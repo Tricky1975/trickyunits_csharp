@@ -1,8 +1,8 @@
 // Lic:
 // RPGStats.cs
 // RPG Stat
-// version: 20.09.27
-// Copyright (C) 2019, 2020 Jeroen P. Broks
+// version: 23.08.30
+// Copyright (C) 2019, 2020, 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.

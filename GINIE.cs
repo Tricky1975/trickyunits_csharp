@@ -1,8 +1,8 @@
 // Lic:
 // GINIE.cs
 // GINIE Is Not INI Either
-// version: 22.10.27
-// Copyright (C) 2020, 2021, 2022 Jeroen P. Broks
+// version: 23.08.30
+// Copyright (C) 2020, 2021, 2022, 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -78,7 +78,7 @@ namespace TrickyUnits {
 
 		static public void Hello() {
 			MKL.Lic    ("Tricky Units for C# - GINIE.cs","ZLib License");
-			MKL.Version("Tricky Units for C# - GINIE.cs","22.10.27");
+			MKL.Version("Tricky Units for C# - GINIE.cs","23.08.30");
 		}
 
 		private GINIE() { Hello(); }
@@ -215,7 +215,7 @@ namespace TrickyUnits {
 			GINIE ret=FromFile(file,allownonexistent);
 			ret.AutoSaveSource = file;
 			return ret;
-        }
+		}
 
 		static public GINIE Empty() => new GINIE();
 
@@ -259,6 +259,12 @@ namespace TrickyUnits {
 			if (AutoSaveSource != "") SaveSource(AutoSaveSource);
 		}
 
+		public void SortList(string sec,string key) {
+			if (!HasList(sec, key)) return;
+			List(sec, key).Sort();
+			if (AutoSaveSource != "") SaveSource(AutoSaveSource);
+		}
+
 		public void ListRemove(string sec, string key, string value, bool keeptrying = true) {
 			var L = List(sec, key);
 			if (!L.Contains(value)) return;
@@ -295,6 +301,7 @@ namespace TrickyUnits {
 				sec = sec.ToUpper();
 				key = key.ToUpper();
 				if (!Values.ContainsKey(sec)) Values[sec] = new SortedDictionary<string, string>();
+				if (Values[sec].ContainsKey(key) && Values[sec][key] == value) return; // Don't waste any time.
 				Values[sec][key] = value;
 				if (AutoSaveSource != "") {
 					SaveSource(AutoSaveSource);
@@ -443,7 +450,9 @@ namespace TrickyUnits {
 
 
 		public void SaveSource(string file) {
-			Directory.CreateDirectory(qstr.ExtractDir(file));
+			var dir = qstr.ExtractDir(file);
+			if (dir != "")
+				Directory.CreateDirectory(dir);
 			QuickStream.SaveString(file, ToSource());
 		}
 		
