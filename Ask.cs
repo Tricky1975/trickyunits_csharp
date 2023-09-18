@@ -1,7 +1,7 @@
 // Lic:
 // Ask.cs
 // Ask
-// version: 23.08.30
+// version: 23.09.18
 // Copyright (C) 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
