@@ -1,7 +1,7 @@
 // Lic:
 // GINIE.cs
 // GINIE Is Not INI Either
-// version: 23.08.30
+// version: 23.09.18
 // Copyright (C) 2020, 2021, 2022, 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -78,7 +78,7 @@ namespace TrickyUnits {
 
 		static public void Hello() {
 			MKL.Lic    ("Tricky Units for C# - GINIE.cs","ZLib License");
-			MKL.Version("Tricky Units for C# - GINIE.cs","23.08.30");
+			MKL.Version("Tricky Units for C# - GINIE.cs","23.09.18");
 		}
 
 		private GINIE() { Hello(); }
@@ -318,6 +318,12 @@ namespace TrickyUnits {
 		}
 		*/
 
+		public void NewValue(string cat,string key,string value) {
+			cat = cat.ToUpper();
+			key = key.ToUpper();
+			if (Values.ContainsKey(cat) && Values[cat].ContainsKey(key)) return;
+			this[cat, key] = value;
+		}
 		public string ToSource() {
 			var Done = new List<string>();
 			var ret = new StringBuilder();
