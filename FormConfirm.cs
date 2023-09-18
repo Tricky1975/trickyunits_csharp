@@ -1,8 +1,8 @@
 // Lic:
 // FormConfirm.cs
 // Form Confirm
-// version: 20.08.16
-// Copyright (C) 2019 Jeroen P. Broks
+// version: 23.09.18
+// Copyright (C) 2019, 2023 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -31,7 +31,7 @@ namespace TrickyUnits {
 
         static Confirm() {
             MKL.Lic    ("Tricky Units for C# - FormConfirm.cs","ZLib License");
-            MKL.Version("Tricky Units for C# - FormConfirm.cs","20.08.16");
+            MKL.Version("Tricky Units for C# - FormConfirm.cs","23.09.18");
         }
 
         public static void Hello() { }
@@ -66,6 +66,7 @@ namespace TrickyUnits {
 
         static public void Annoy(string msg, string caption = "", MessageBoxIcon Icon = MessageBoxIcon.Information) => MessageBox.Show(msg, caption, MessageBoxButtons.OK, Icon);
 
+        static public void Error(string msg, string caption = "Error!") => Annoy(msg, caption, MessageBoxIcon.Error);
     }
 
 }
