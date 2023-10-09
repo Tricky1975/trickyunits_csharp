@@ -507,16 +507,19 @@ namespace TrickyUnits {
 		/// </summary>
 		/// <param name="filename">Filename.</param>
 		/// <param name="thestring">The string.</param>
-		public static void SaveString(string filename, string thestring) {
+		public static void SaveString(string filename, string thestring, bool autodir = false) {
+			if (autodir) {
+				var dir=qstr.ExtractDir(filename);
+				if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+			}
 			File.WriteAllText(filename, thestring);
 			// var bt = WriteFile(filename);
 			// bt.WriteString(thestring, true);
 			//bt.Close();
 		}
 
-		public static void SaveString(string filename,StringBuilder thestring) {
-			SaveString(filename, thestring.ToString());
-		}
+		public static void SaveString(string filename, StringBuilder thestring, bool autodir = false) => SaveString(filename, thestring.ToString(), autodir);
+	
 
 		public static void SaveBytes(string filename, byte[] buf) => File.WriteAllBytes(filename, buf);
 

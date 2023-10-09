@@ -324,6 +324,7 @@ namespace TrickyUnits {
 			if (Values.ContainsKey(cat) && Values[cat].ContainsKey(key)) return;
 			this[cat, key] = value;
 		}
+
 		public string ToSource() {
 			var Done = new List<string>();
 			var ret = new StringBuilder();
