@@ -1,8 +1,8 @@
 // Lic:
 // qstream.cs
 // TrickyUnits - Quick Stream
-// version: 23.08.30
-// Copyright (C) 2018, 2020, 2021, 2022, 2023 Jeroen P. Broks
+// version: 24.02.01
+// Copyright (C) 2018, 2020, 2021, 2022, 2023, 2024 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -338,12 +338,17 @@ namespace TrickyUnits {
 			PutBytes(bytes);
 		}
 
+        public void WriteUInt(uint i) {
+            byte[] bytes = BitConverter.GetBytes(i);
+            PutBytes(bytes);
+        }
 
-		/// <summary>
-		/// Writes a 64bit integer to the file
-		/// </summary>
-		/// <param name="i">The index.</param>
-		public void WriteLong(long i) {
+
+        /// <summary>
+        /// Writes a 64bit integer to the file
+        /// </summary>
+        /// <param name="i">The index.</param>
+        public void WriteLong(long i) {
 			byte[] bytes = BitConverter.GetBytes(i);
 			PutBytes(bytes);
 		}
@@ -383,7 +388,8 @@ namespace TrickyUnits {
 		public void Write(bool b) => WriteBool(b);
 		public void Write(byte b) => WriteByte(b);
 		public void Write(int i) => WriteInt(i);
-		public void Write(long l) => WriteLong(l);
+        public void Write(uint i) => WriteUInt(i);
+        public void Write(long l) => WriteLong(l);
 		public void Write(ulong l) => WriteULong(l);
 		public void Write(string s, bool raw = false) => WriteString(s, raw);
 		public void Write(StringBuilder s, bool raw = false) => WriteString(s.ToString(), raw);
@@ -449,7 +455,7 @@ namespace TrickyUnits {
 		public static Stack<string> PushedDirs = new Stack<string>();
 
 		public static void Hello() {
-			MKL.Version("Tricky Units for C# - qstream.cs","23.08.30");
+			MKL.Version("Tricky Units for C# - qstream.cs","24.02.01");
 			MKL.Lic    ("Tricky Units for C# - qstream.cs","ZLib License");
 		} // Basically does nothing, but it forces the MKL data to be parsed when called.
 

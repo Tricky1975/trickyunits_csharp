@@ -112,6 +112,17 @@ namespace TrickyUnits {
         public static string Upper(string s) => s.ToUpper(); // BlitzMax conversion
         public static string Lower(string s) => s.ToLower(); // BlitzMax conversion
 
+        public static string Join(string[] sl, string sep = "") {
+            var ret = new StringBuilder();
+            foreach (var s in sl) {
+                if (ret.Length > 0) ret.Append(sep);
+                ret.Append(s);
+            }
+            return ret.ToString();
+        }
+
+        public static string Join(List<string> sl, string sep = "") => Join(sl.ToArray(), sep);
+
         public static string ExtractExt(string myFilePath) {
             try {
                 var ret = System.IO.Path.GetExtension(myFilePath);
